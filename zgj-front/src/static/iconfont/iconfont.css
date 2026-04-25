@@ -1,0 +1,15 @@
+/* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
+@font-face {
+  font-family: 'iconfont';  /* Project id 5168279 */
+  src: url('//at.alicdn.com/t/c/font_5168279_y0dm1n4pl5s.woff2?t=1777190091876') format('woff2'),
+       url('//at.alicdn.com/t/c/font_5168279_y0dm1n4pl5s.woff?t=1777190091876') format('woff'),
+       url('//at.alicdn.com/t/c/font_5168279_y0dm1n4pl5s.ttf?t=1777190091876') format('truetype');
+}
+/* ✅ 必须添加：图标基础样式（核心） */
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px; /* 默认图标大小 */
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
