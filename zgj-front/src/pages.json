@@ -3,7 +3,8 @@
 		{
 			"path": "pages/detail/index",
 			"style": {
-				"navigationBarTitleText": "Detail"
+				"navigationBarTitleText": "Detail",
+				"navigationStyle": "custom"
 			}
 		},
 		{
@@ -15,7 +16,8 @@
 		{
 			"path": "pages/record/index",
 			"style": {
-				"navigationBarTitleText": "Record"
+				"navigationBarTitleText": "Record",
+				"navigationStyle": "custom"
 			}
 		},
 		{

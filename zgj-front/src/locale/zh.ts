@@ -14,8 +14,20 @@ export default {
     title: 'Account Manager'
   },
   detail: {
-    title: 'Detail',
-    subtitle: 'Transaction details'
+    appTitle: 'Account Manager',
+    year: 'Year',
+    month: 'Month',
+    income: 'Income',
+    expense: 'Expense',
+    bill: 'Bill',
+    budget: 'Budget',
+    assets: 'Assets',
+    cashback: 'Cashback',
+    more: 'More',
+    dayExpense: 'Daily Expense',
+    food: 'Food',
+    transport: 'Transport',
+    salary: 'Salary'
   },
   statistics: {
     title: 'Statistics',
@@ -23,7 +35,20 @@ export default {
   },
   record: {
     title: 'Record',
-    subtitle: 'Record new transaction'
+    subtitle: 'Record new transaction',
+    expense: 'Expense',
+    income: 'Income',
+    cancel: 'Cancel',
+    submit: 'Submit',
+    remarkPlaceholder: 'Add remark...',
+    selectDate: 'Select Date',
+    confirm: 'Confirm',
+    year: 'Year',
+    month: 'Month',
+    day: 'Day',
+    pleaseInputAmount: 'Please input amount',
+    pleaseSelectCategory: 'Please select category',
+    submitSuccess: 'Record success'
   },
   analysis: {
     title: 'Analysis',
