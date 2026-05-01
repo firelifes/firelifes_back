@@ -5,6 +5,8 @@ import { Category } from '../entity/category.entity';
 import { CategoryGroup } from '../entity/category_group.entity';
 import { Icon } from '../entity/icon.entity';
 import { UserCategoryCustomization } from '../entity/user_category_customization.entity';
+import { UserCategoryGroup } from '../entity/user_category_group.entity';
+import { UserIcon } from '../entity/user_icon.entity';
 
 @Provide()
 export class CategoryService {
@@ -19,6 +21,12 @@ export class CategoryService {
 
   @InjectEntityModel(UserCategoryCustomization)
   customizationModel: Repository<UserCategoryCustomization>;
+
+  @InjectEntityModel(UserCategoryGroup)
+  userCategoryGroupModel: Repository<UserCategoryGroup>;
+
+  @InjectEntityModel(UserIcon)
+  userIconModel: Repository<UserIcon>;
 
   private defaultIcons: Omit<Icon, 'id' | 'createdAt' | 'updatedAt'>[] = [
     { name: '餐饮', url: '🍜', iconType: 'emoji', sortOrder: 1 },
@@ -69,16 +77,16 @@ export class CategoryService {
   ];
 
   private defaultGroups: Omit<CategoryGroup, 'id' | 'createdAt' | 'updatedAt'>[] = [
-    { name: '饮食消费', iconId: 1, sortOrder: 1 },
-    { name: '居家居住', iconId: 10, sortOrder: 2 },
-    { name: '交通出行', iconId: 4, sortOrder: 3 },
-    { name: '形象与消费', iconId: 9, sortOrder: 4 },
-    { name: '兴趣与成长', iconId: 20, sortOrder: 5 },
-    { name: '社交关系', iconId: 14, sortOrder: 6 },
-    { name: '健康与医疗', iconId: 18, sortOrder: 7 },
-    { name: '职场工作', iconId: 23, sortOrder: 8 },
-    { name: '金融理财', iconId: 31, sortOrder: 9 },
-    { name: '其他类型', iconId: 35, sortOrder: 10 },
+    { name: '饮食消费', sortOrder: 1 },
+    { name: '居家居住', sortOrder: 2 },
+    { name: '交通出行', sortOrder: 3 },
+    { name: '形象与消费', sortOrder: 4 },
+    { name: '兴趣与成长', sortOrder: 5 },
+    { name: '社交关系', sortOrder: 6 },
+    { name: '健康与医疗', sortOrder: 7 },
+    { name: '职场工作', sortOrder: 8 },
+    { name: '金融理财', sortOrder: 9 },
+    { name: '其他类型', sortOrder: 10 },
   ];
 
   private defaultCategories: (Omit<Category, 'id'> & { id: string })[] = [
@@ -131,19 +139,16 @@ export class CategoryService {
 
   @Init()
   async init() {
-    // 1. 初始化图标数据
     const iconCount = await this.iconModel.count();
     if (iconCount === 0) {
       await this.iconModel.save(this.defaultIcons as any);
     }
 
-    // 2. 初始化一级分类
     const groupCount = await this.categoryGroupModel.count();
     if (groupCount === 0) {
       await this.categoryGroupModel.save(this.defaultGroups as any);
     }
 
-    // 3. 初始化二级分类
     const categoryCount = await this.categoryModel.count();
     if (categoryCount === 0) {
       await this.categoryModel.save(this.defaultCategories as any);
@@ -163,7 +168,6 @@ export class CategoryService {
 
     const result = groups.map(group => ({
       ...group,
-      icon: iconMap.get(group.iconId),
       children: categories
         .filter(c => c.groupId === group.id)
         .map(c => ({
@@ -192,7 +196,6 @@ export class CategoryService {
     return groups
       .map(group => ({
         ...group,
-        icon: iconMap.get(group.iconId),
         children: categories
           .filter(c => c.groupId === group.id)
           .map(c => ({
@@ -208,76 +211,37 @@ export class CategoryService {
   }
 
   async getUserCategories(userId: number, type: 'income' | 'expense') {
-    const groups = await this.categoryGroupModel.find({
+    const userGroups = await this.userCategoryGroupModel.find({
+      where: { userId, isEnabled: true },
       order: { sortOrder: 'ASC' },
     });
-    const globalCategories = await this.categoryModel.find({
-      where: { type },
+    const userCategories = await this.customizationModel.find({
+      where: { userId, type, isEnabled: true },
+      relations: ['icon'],
       order: { sortOrder: 'ASC' },
     });
-    const icons = await this.iconModel.find();
-    const customizations = await this.customizationModel.find({
-      where: { userId, type },
-    });
 
-    const iconMap = new Map(icons.map(i => [i.id, i]));
-    const customizationMap = new Map(customizations.map(c => [c.categoryId, c]));
-
-    const result = groups
-      .map(group => {
-        const groupCategories = globalCategories.filter(c => c.groupId === group.id);
-        if (groupCategories.length === 0) return null;
-
-        const children = groupCategories.map(cat => {
-          const customization = customizationMap.get(cat.id);
-          const isHidden = customization && customization.isEnabled === false;
-
-          return {
-            id: cat.id,
-            name: customization?.customName || cat.name,
-            iconId: customization?.customIconId || cat.iconId,
-            icon: iconMap.get(customization?.customIconId || cat.iconId),
-            sortOrder: customization?.sortOrder ?? cat.sortOrder,
-            isHidden,
-            isUserCreated: false,
-            groupId: cat.groupId,
-            type: cat.type,
-          };
-        });
-
-        const visibleChildren = children.filter(c => !c.isHidden);
+    const result = userGroups
+      .map(userGroup => {
+        const children = userCategories.filter(c => c.groupId === userGroup.id);
 
         return {
-          id: group.id,
-          name: group.name,
-          icon: iconMap.get(group.iconId),
-          children: visibleChildren.sort((a, b) => a.sortOrder - b.sortOrder),
+          id: userGroup.id,
+          name: userGroup.name,
+          sortOrder: userGroup.sortOrder,
+          children: children.map(cat => ({
+            id: cat.id,
+            name: cat.name,
+            iconUrl: cat.icon?.url || '📦',
+            iconId: cat.iconId,
+            sortOrder: cat.sortOrder,
+            isUserCreated: cat.isUserCreated,
+            groupId: cat.groupId,
+            type: cat.type,
+          })),
         };
       })
-      .filter(g => g && g.children.length > 0);
-
-    const userCreatedCategories = customizations
-      .filter(c => c.isUserCreated && c.isEnabled)
-      .map(c => ({
-        id: c.id,
-        name: c.customName,
-        iconId: c.customIconId,
-        icon: iconMap.get(c.customIconId),
-        sortOrder: c.sortOrder,
-        isHidden: false,
-        isUserCreated: true,
-        groupId: c.groupId,
-        type: c.type,
-      }));
-
-    if (userCreatedCategories.length > 0) {
-      result.push({
-        id: -1,
-        name: '我的分类',
-        icon: { id: 0, name: '自定义', url: '✨', iconType: 'emoji', sortOrder: 0 } as any,
-        children: userCreatedCategories.sort((a, b) => a.sortOrder - b.sortOrder) as any,
-      });
-    }
+      .filter(g => g.children.length > 0);
 
     return result;
   }
@@ -286,5 +250,107 @@ export class CategoryService {
     return this.iconModel.find({
       order: { sortOrder: 'ASC' },
     });
+  }
+
+  async initUserCategories(userId: number) {
+    console.log(`[分类初始化] 开始为用户 ${userId} 初始化数据`);
+    
+    try {
+      const existingGroups = await this.userCategoryGroupModel.count({ where: { userId } });
+      if (existingGroups > 0) {
+        console.log(`[分类初始化] 用户 ${userId} 已有分类数据，跳过`);
+        return;
+      }
+
+      const globalGroups = await this.categoryGroupModel.find({ order: { sortOrder: 'ASC' } });
+      console.log(`[分类初始化] 找到 ${globalGroups.length} 个全局大类`);
+      
+      const globalCategories = await this.categoryModel.find({ order: { sortOrder: 'ASC' } });
+      console.log(`[分类初始化] 找到 ${globalCategories.length} 个全局分类`);
+
+      const userGroupEntities: UserCategoryGroup[] = [];
+      for (const group of globalGroups) {
+        const userGroup = this.userCategoryGroupModel.create({
+          userId,
+          name: group.name,
+          sortOrder: group.sortOrder,
+          isEnabled: true,
+        });
+        userGroupEntities.push(userGroup);
+      }
+      await this.userCategoryGroupModel.save(userGroupEntities);
+      console.log(`[分类初始化] 已保存 ${userGroupEntities.length} 个用户大类`);
+
+      await this.initUserIcons(userId);
+
+      const userIcons = await this.userIconModel.find({ where: { userId } });
+      console.log(`[分类初始化] 用户 ${userId} 有 ${userIcons.length} 个图标`);
+      
+      const globalIcons = await this.iconModel.find();
+      console.log(`[分类初始化] 全局有 ${globalIcons.length} 个图标`);
+      
+      const iconIdToUserIconIdMap = new Map<number, number>();
+      for (let i = 0; i < globalIcons.length; i++) {
+        iconIdToUserIconIdMap.set(globalIcons[i].id, userIcons[i]?.id);
+      }
+
+      const userCategoryEntities: UserCategoryCustomization[] = [];
+      for (const category of globalCategories) {
+        const globalGroupIndex = globalGroups.findIndex(g => g.id === category.groupId);
+        const userGroup = userGroupEntities[globalGroupIndex];
+
+        const userIconId = iconIdToUserIconIdMap.get(category.iconId);
+
+        const userCategory = this.customizationModel.create({
+          userId,
+          name: category.name,
+          iconId: userIconId || userIcons[0]?.id,
+          type: category.type,
+          groupId: userGroup.id,
+          sortOrder: category.sortOrder,
+          isEnabled: true,
+          isUserCreated: false,
+        });
+        userCategoryEntities.push(userCategory);
+      }
+      await this.customizationModel.save(userCategoryEntities);
+      console.log(`[分类初始化] 用户 ${userId} 分类和大类已初始化完成，共 ${userCategoryEntities.length} 个分类`);
+    } catch (error) {
+      console.error(`[分类初始化] 用户 ${userId} 初始化失败:`, error);
+      throw error;
+    }
+  }
+
+  async initUserIcons(userId: number) {
+    console.log(`[图标初始化] 开始为用户 ${userId} 初始化图标`);
+    
+    try {
+      const existingIcons = await this.userIconModel.count({ where: { userId } });
+      if (existingIcons > 0) {
+        console.log(`[图标初始化] 用户 ${userId} 已有图标数据，跳过`);
+        return;
+      }
+
+      const globalIcons = await this.iconModel.find({ order: { sortOrder: 'ASC' } });
+      console.log(`[图标初始化] 找到 ${globalIcons.length} 个全局图标`);
+
+      const userIconEntities: UserIcon[] = [];
+      for (const icon of globalIcons) {
+        const userIcon = this.userIconModel.create({
+          userId,
+          name: icon.name,
+          url: icon.url,
+          iconType: icon.iconType,
+          sortOrder: icon.sortOrder,
+          isEnabled: true,
+        });
+        userIconEntities.push(userIcon);
+      }
+      await this.userIconModel.save(userIconEntities);
+      console.log(`[图标初始化] 用户 ${userId} 图标已初始化完成，共 ${userIconEntities.length} 个`);
+    } catch (error) {
+      console.error(`[图标初始化] 用户 ${userId} 初始化失败:`, error);
+      throw error;
+    }
   }
 }

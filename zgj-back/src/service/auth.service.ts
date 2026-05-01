@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { User } from '../entity/user.entity';
 import { SmsService } from './sms.service';
+import { CategoryService } from './category.service';
 
 export interface ILoginOptions {
   username?: string;
@@ -35,6 +36,9 @@ export class AuthService {
   @Inject()
   smsService: SmsService;
 
+  @Inject()
+  categoryService: CategoryService;
+
   private readonly JWT_SECRET = process.env.JWT_SECRET || 'firelifes_jwt_secret_key_2024';
   private readonly JWT_EXPIRES_IN = '7d';
   private readonly SALT_ROUNDS = 10;
@@ -55,6 +59,8 @@ export class AuthService {
       throw new Error('手机号已注册');
     }
 
+    console.log(`[注册] 开始为手机号 ${phone} 创建用户`);
+
     const hashedPassword = await bcrypt.hash(password, this.SALT_ROUNDS);
 
     const user = this.userModel.create({
@@ -66,6 +72,11 @@ export class AuthService {
     });
 
     await this.userModel.save(user);
+    console.log(`[注册] 用户创建成功，ID: ${user.id}`);
+
+    console.log(`[注册] 开始初始化用户 ${user.id} 的分类数据`);
+    await this.categoryService.initUserCategories(user.id);
+    console.log(`[注册] 用户 ${user.id} 分类初始化完成`);
 
     const token = this.generateToken({
       userId: user.id,
@@ -98,6 +109,7 @@ export class AuthService {
       }
       user = await this.userModel.findOne({ where: { phone } });
       if (!user) {
+        console.log(`[验证码登录] 手机号 ${phone} 未注册，创建新用户`);
         const hashedPassword = await bcrypt.hash(`SMS_${code}_${Date.now()}`, this.SALT_ROUNDS);
         user = this.userModel.create({
           username: `user_${Date.now()}`,
@@ -107,7 +119,9 @@ export class AuthService {
           isActive: true,
         });
         await this.userModel.save(user);
-        console.log(`[自动注册] 手机号 ${phone} 通过验证码登录自动注册成功`);
+        console.log(`[验证码登录] 用户创建成功，ID: ${user.id}`);
+        await this.categoryService.initUserCategories(user.id);
+        console.log(`[验证码登录] 用户 ${user.id} 分类初始化完成`);
       }
     } else if (password && (username || phone)) {
       user = await this.userModel.findOne({
@@ -170,6 +184,9 @@ export class AuthService {
         isActive: true,
       });
       await this.userModel.save(user);
+      console.log(`[微信登录] 用户创建成功，ID: ${user.id}`);
+      await this.categoryService.initUserCategories(user.id);
+      console.log(`[微信登录] 用户 ${user.id} 分类初始化完成`);
     } else if (wechatInfo) {
       if (wechatInfo.unionid) user.wechatUnionid = wechatInfo.unionid;
       if (wechatInfo.nickname) user.nickname = wechatInfo.nickname;

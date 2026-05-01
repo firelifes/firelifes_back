@@ -75,8 +75,8 @@ export class UserController {
   async updateCustomization(
     @Param('categoryId') categoryId: string,
     @Body() body: {
-      customName?: string;
-      customIconId?: number;
+      name?: string;
+      iconId?: number;
       isEnabled?: boolean;
       sortOrder?: number;
     }
@@ -87,7 +87,7 @@ export class UserController {
         return { success: false, message: '请先登录' };
       }
 
-      const customization = await this.userService.updateCategoryCustomization(userId, categoryId, body);
+      const customization = await this.userService.updateUserCategory(userId, parseInt(categoryId), body);
       return { success: true, data: customization, message: '更新成功' };
     } catch (error) {
       return { success: false, message: (error as Error).message };
@@ -141,7 +141,7 @@ export class UserController {
         return { success: false, message: '请先登录' };
       }
 
-      const customization = await this.userService.enableCategory(userId, categoryId);
+      const customization = await this.userService.enableCategory(userId, parseInt(categoryId));
       return { success: true, data: customization, message: '已启用' };
     } catch (error) {
       return { success: false, message: (error as Error).message };
@@ -156,8 +156,94 @@ export class UserController {
         return { success: false, message: '请先登录' };
       }
 
-      const customization = await this.userService.disableCategory(userId, categoryId);
+      const customization = await this.userService.disableCategory(userId, parseInt(categoryId));
       return { success: true, data: customization, message: '已禁用' };
+    } catch (error) {
+      return { success: false, message: (error as Error).message };
+    }
+  }
+
+  @Get('/groups')
+  async getGroups(): Promise<IApiResponse> {
+    try {
+      const userId = this.ctx.state.user?.userId;
+      if (!userId) {
+        return { success: false, message: '请先登录' };
+      }
+
+      const groups = await this.userService.getUserGroups(userId);
+      return { success: true, data: groups };
+    } catch (error) {
+      return { success: false, message: (error as Error).message };
+    }
+  }
+
+  @Post('/groups')
+  async addGroup(@Body() body: {
+    name: string;
+    sortOrder?: number;
+  }): Promise<IApiResponse> {
+    try {
+      const userId = this.ctx.state.user?.userId;
+      if (!userId) {
+        return { success: false, message: '请先登录' };
+      }
+
+      const group = await this.userService.addUserGroup(userId, body);
+      return { success: true, data: group, message: '添加成功' };
+    } catch (error) {
+      return { success: false, message: (error as Error).message };
+    }
+  }
+
+  @Del('/groups/:id')
+  async deleteGroup(@Param('id') id: string): Promise<IApiResponse> {
+    try {
+      const userId = this.ctx.state.user?.userId;
+      if (!userId) {
+        return { success: false, message: '请先登录' };
+      }
+
+      const success = await this.userService.deleteUserGroup(userId, parseInt(id));
+      if (success) {
+        return { success: true, message: '删除成功' };
+      }
+      return { success: false, message: '记录不存在' };
+    } catch (error) {
+      return { success: false, message: (error as Error).message };
+    }
+  }
+
+  @Get('/icons')
+  async getIcons(): Promise<IApiResponse> {
+    try {
+      const userId = this.ctx.state.user?.userId;
+      if (!userId) {
+        return { success: false, message: '请先登录' };
+      }
+
+      const icons = await this.userService.getUserIcons(userId);
+      return { success: true, data: icons };
+    } catch (error) {
+      return { success: false, message: (error as Error).message };
+    }
+  }
+
+  @Post('/icons')
+  async addIcon(@Body() body: {
+    name: string;
+    url: string;
+    iconType?: 'emoji' | 'image';
+    sortOrder?: number;
+  }): Promise<IApiResponse> {
+    try {
+      const userId = this.ctx.state.user?.userId;
+      if (!userId) {
+        return { success: false, message: '请先登录' };
+      }
+
+      const icon = await this.userService.addUserIcon(userId, body);
+      return { success: true, data: icon, message: '添加成功' };
     } catch (error) {
       return { success: false, message: (error as Error).message };
     }

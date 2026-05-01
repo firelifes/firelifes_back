@@ -1,36 +1,38 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { UserIcon } from './user_icon.entity';
 
 @Entity({ schema: 'firelifes', name: 'user_category_customizations', comment: '用户分类定制表' })
 export class UserCategoryCustomization {
-  @PrimaryGeneratedColumn('increment', { comment: '定制记录ID' })
+  @PrimaryGeneratedColumn('increment', { comment: '记录ID' })
   id: number;
 
   @Column({ name: 'user_id', comment: '用户ID' })
   userId: number;
 
-  @Column({ name: 'category_id', length: 50, nullable: true, comment: '关联的全局分类ID，空表示用户自定义分类' })
-  categoryId: string;
+  @Column({ length: 50, comment: '分类名称' })
+  name: string;
 
-  @Column({ name: 'custom_name', length: 50, nullable: true, comment: '自定义名称' })
-  customName: string;
+  @Column({ name: 'icon_id', type: 'int', comment: '图标ID，关联user_icons表' })
+  iconId: number;
 
-  @Column({ name: 'custom_icon_id', nullable: true, comment: '自定义图标ID' })
-  customIconId: number;
-
-  @Column({ name: 'group_id', type: 'int', nullable: true, comment: '所属一级分类ID' })
-  groupId: number;
-
-  @Column({ name: 'sort_order', type: 'int', default: 0, comment: '用户自定义排序' })
-  sortOrder: number;
-
-  @Column({ name: 'is_enabled', type: 'boolean', default: true, comment: '是否启用，false表示用户隐藏了该分类' })
-  isEnabled: boolean;
-
-  @Column({ name: 'is_user_created', type: 'boolean', default: false, comment: '是否是用户自创分类，true表示用户新增的分类' })
-  isUserCreated: boolean;
+  @ManyToOne(() => UserIcon)
+  @JoinColumn({ name: 'icon_id' })
+  icon: UserIcon;
 
   @Column({ length: 10, comment: '类型：income-收入，expense-支出' })
   type: 'income' | 'expense';
+
+  @Column({ name: 'group_id', type: 'int', comment: '所属大类ID，关联user_category_groups表' })
+  groupId: number;
+
+  @Column({ name: 'sort_order', type: 'int', default: 0, comment: '排序' })
+  sortOrder: number;
+
+  @Column({ name: 'is_enabled', type: 'boolean', default: true, comment: '是否启用' })
+  isEnabled: boolean;
+
+  @Column({ name: 'is_user_created', type: 'boolean', default: false, comment: '是否用户自创' })
+  isUserCreated: boolean;
 
   @CreateDateColumn({ name: 'created_at', comment: '创建时间' })
   createdAt: Date;

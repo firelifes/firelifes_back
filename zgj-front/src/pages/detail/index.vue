@@ -98,36 +98,32 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { recordApi } from '../../api/record'
-import { categoryApi } from '../../api/category'
+import { categoryApi, type CategoryGroup } from '../../api/category'
 
 interface RecordItem {
-  id: string
-  typeId: string
+  id: number
+  typeId: number
   type: 'income' | 'expense'
   amount: number
-  remark: string
+  remark?: string
   date: string
   createdAt?: string
 }
 
-interface CategoryItem {
-  id: string
-  name: string
-  icon: string
-  type: 'income' | 'expense'
-}
-
 const records = ref<RecordItem[]>([])
-const categories = ref<CategoryItem[]>([])
+const categories = ref<CategoryGroup[]>([])
 const loading = ref(false)
 
 const currentYear = ref('2026')
 const currentMonth = ref('04')
 
-const getCategoryInfo = (typeId: string): { name: string; icon: string } => {
-  const category = categories.value.find(c => c.id === typeId)
-  if (category) {
-    return { name: category.name, icon: category.icon }
+const getCategoryInfo = (typeId: number): { name: string; icon: string } => {
+  for (const group of categories.value) {
+    for (const cat of group.children) {
+      if (cat.id === typeId) {
+        return { name: cat.name, icon: cat.iconUrl }
+      }
+    }
   }
   return { name: '其他', icon: '📦' }
 }

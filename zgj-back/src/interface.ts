@@ -9,8 +9,8 @@ export interface IUserOptions {
  * @description Transaction record interface
  */
 export interface IRecord {
-  id: string;
-  typeId: string;
+  id: number;
+  typeId: number;
   date: string;
   amount: number;
   type: 'income' | 'expense';
@@ -22,7 +22,7 @@ export interface IRecord {
  */
 export interface ICreateRecordOptions {
   userId: number;
-  typeId: string;
+  typeId: number;
   date: string;
   amount: number;
   type: 'income' | 'expense';
@@ -33,8 +33,8 @@ export interface ICreateRecordOptions {
  * @description Update record options
  */
 export interface IUpdateRecordOptions {
-  id: string;
-  typeId?: string;
+  id: number;
+  typeId?: number;
   date?: string;
   amount?: number;
   type?: 'income' | 'expense';

@@ -24,8 +24,9 @@
     <view class="content" :class="{ 'has-form': selectedCategory }">
       <!-- 分类选择区 -->
       <CategorySelector
+        ref="categorySelectorRef"
         :transactionType="transactionType"
-        :selectedCategory="selectedCategory"
+        :selectedCategoryId="selectedCategory?.id || 0"
         @select="selectCategory"
       />
 
@@ -60,7 +61,7 @@ import DatePicker from './components/DatePicker.vue'
 import { recordApi } from '../../api/record'
 
 const transactionType = ref<'income' | 'expense'>('expense')
-const selectedCategory = ref('')
+const selectedCategory = ref<{ id: number; name: string; icon: string } | null>(null)
 const displayAmount = ref('')
 const remark = ref('')
 const selectedDate = ref(new Date().toISOString().split('T')[0])
@@ -69,11 +70,11 @@ const isSubmitting = ref(false)
 
 const switchType = (type: 'income' | 'expense') => {
   transactionType.value = type
-  selectedCategory.value = ''
+  selectedCategory.value = null
 }
 
-const selectCategory = (category: { name: string; icon: string }) => {
-  selectedCategory.value = category.name
+const selectCategory = (category: { id: number; name: string; icon: string }) => {
+  selectedCategory.value = category
 }
 
 const handleCancel = () => {
@@ -99,7 +100,7 @@ const handleComplete = async () => {
     const finalAmount = transactionType.value === 'expense' ? -amount : amount
 
     const res = await recordApi.createRecord({
-      typeId: selectedCategory.value,
+      typeId: selectedCategory.value.id,
       type: transactionType.value,
       amount: finalAmount,
       remark: remark.value,

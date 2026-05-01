@@ -7,6 +7,8 @@ import { CategoryGroup } from '../entity/category_group.entity';
 import { Icon } from '../entity/icon.entity';
 import { User } from '../entity/user.entity';
 import { UserCategoryCustomization } from '../entity/user_category_customization.entity';
+import { UserCategoryGroup } from '../entity/user_category_group.entity';
+import { UserIcon } from '../entity/user_icon.entity';
 import { SmsCode } from '../entity/sms_code.entity';
 import { Ad } from '../entity/ad.entity';
 
@@ -42,7 +44,7 @@ export default {
         schema: 'firelifes',
         synchronize: true,
         logging: false,
-        entities: [Record, Category, CategoryGroup, Icon, User, UserCategoryCustomization, SmsCode, Ad],
+        entities: [Record, Category, CategoryGroup, Icon, User, UserCategoryCustomization, UserCategoryGroup, UserIcon, SmsCode, Ad],
       },
     },
   },

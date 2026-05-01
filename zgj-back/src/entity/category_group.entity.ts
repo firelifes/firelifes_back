@@ -8,9 +8,6 @@ export class CategoryGroup {
   @Column({ length: 50, comment: '分组名称' })
   name: string;
 
-  @Column({ name: 'icon_id', comment: '图标ID，关联icons表' })
-  iconId: number;
-
   @Column({ name: 'sort_order', type: 'int', default: 0, comment: '排序序号' })
   sortOrder: number;
 

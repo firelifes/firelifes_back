@@ -35,7 +35,7 @@ export class RecordService {
     return this.recordModel.save(record);
   }
 
-  async getRecordById(id: string): Promise<Record | null> {
+  async getRecordById(id: number): Promise<Record | null> {
     return this.recordModel.findOne({ where: { id } });
   }
 
@@ -52,7 +52,7 @@ export class RecordService {
     });
   }
 
-  async deleteRecord(id: string): Promise<boolean> {
+  async deleteRecord(id: number): Promise<boolean> {
     const result = await this.recordModel.delete(id);
     return (result.affected ?? 0) > 0;
   }

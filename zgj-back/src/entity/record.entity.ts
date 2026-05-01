@@ -3,13 +3,13 @@ import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 @Entity({ schema: 'firelifes', name: 'records', comment: '记账记录表' })
 export class Record {
   @PrimaryGeneratedColumn('increment', { comment: '记录ID，主键自增' })
-  id: string;
+  id: number;
 
   @Column({ name: 'user_id', type: 'int', comment: '用户ID，关联users表' })
   userId: number;
 
-  @Column({ name: 'type_id', length: 50, comment: '分类ID，关联categories表' })
-  typeId: string;
+  @Column({ name: 'type_id', type: 'int', comment: '分类ID，关联user_category_customizations表' })
+  typeId: number;
 
   @Column({ type: 'date', comment: '记账日期' })
   date: string;

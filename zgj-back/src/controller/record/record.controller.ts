@@ -54,7 +54,7 @@ export class RecordController {
   ) {
     try {
       const record = await this.recordService.updateRecord({
-        id,
+        id: parseInt(id),
         ...options,
       });
       if (!record) {
@@ -84,7 +84,7 @@ export class RecordController {
   @Get('/:id')
   async getRecord(@Param('id') id: string) {
     try {
-      const record = await this.recordService.getRecordById(id);
+      const record = await this.recordService.getRecordById(parseInt(id));
       if (!record) {
         return {
           success: false,
@@ -141,7 +141,7 @@ export class RecordController {
   @Del('/:id')
   async deleteRecord(@Param('id') id: string) {
     try {
-      const success = await this.recordService.deleteRecord(id);
+      const success = await this.recordService.deleteRecord(parseInt(id));
       if (!success) {
         return {
           success: false,

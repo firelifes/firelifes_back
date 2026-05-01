@@ -4,8 +4,8 @@
 import request from './request'
 
 export interface RecordData {
-  id: string
-  typeId: string
+  id: number
+  typeId: number
   date: string
   amount: number
   type: 'income' | 'expense'
@@ -18,7 +18,7 @@ export const recordApi = {
    * 创建记账记录
    */
   createRecord: (data: {
-    typeId: string
+    typeId: number
     type: 'income' | 'expense'
     amount: number
     remark?: string
@@ -35,9 +35,9 @@ export const recordApi = {
    * 更新记账记录
    */
   updateRecord: (
-    id: string,
+    id: number,
     data: {
-      typeId?: string
+      typeId?: number
       type?: 'income' | 'expense'
       amount?: number
       remark?: string
@@ -54,7 +54,7 @@ export const recordApi = {
   /**
    * 获取单条记账记录
    */
-  getRecord: (id: string) => {
+  getRecord: (id: number) => {
     return request<RecordData>({
       url: `/record/${id}`,
       method: 'GET',
@@ -74,7 +74,7 @@ export const recordApi = {
   /**
    * 删除记账记录
    */
-  deleteRecord: (id: string) => {
+  deleteRecord: (id: number) => {
     return request({
       url: `/record/${id}`,
       method: 'DELETE',

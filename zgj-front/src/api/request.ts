@@ -1,7 +1,7 @@
 import config from '../config/index'
 import { storage } from '../utils/storage'
 
-interface RequestOptions {
+interface RequestOptions<T = any> {
   url: string
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
   data?: any
@@ -9,20 +9,20 @@ interface RequestOptions {
   needAuth?: boolean
 }
 
-interface ResponseData {
+interface ResponseData<T = any> {
   success: boolean
   message: string
-  data: any
+  data: T
 }
 
-const request = (options: RequestOptions): Promise<ResponseData> => {
+const request = <T = any>(options: RequestOptions): Promise<ResponseData<T>> => {
   const { url, method = 'GET', data = {}, header = {}, needAuth = true } = options
-  
+
   const token = storage.get(config.tokenKey)
   if (needAuth && token) {
     header['Authorization'] = `Bearer ${token}`
   }
-  
+
   return new Promise((resolve, reject) => {
     uni.request({
       url: `${config.apiBaseUrl}${url}`,
@@ -33,7 +33,7 @@ const request = (options: RequestOptions): Promise<ResponseData> => {
         ...header
       },
       success: (res: any) => {
-        const result = res.data as ResponseData
+        const result = res.data as ResponseData<T>
         if (result.success) {
           resolve(result)
         } else {
