@@ -176,63 +176,112 @@ onMounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: flex-end;
   justify-content: center;
   z-index: 1000;
+  backdrop-filter: blur(5rpx);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .date-picker-content {
-  background-color: #fff;
-  border-radius: 16rpx 16rpx 0 0;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 32rpx 32rpx 0 0;
   width: 100%;
   max-height: 70vh;
+  box-shadow: 0 -10rpx 40rpx rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(20rpx);
+  border-top: 1rpx solid rgba(255, 255, 255, 0.6);
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
 .picker-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20rpx 30rpx;
-  border-bottom: 1rpx solid #e0e0e0;
+  padding: 24rpx 32rpx;
+  border-bottom: 1rpx solid rgba(229, 231, 235, 0.6);
 }
 
 .picker-cancel {
   font-size: 28rpx;
-  color: #999;
+  color: #9CA3AF;
+  font-weight: 500;
+  padding: 8rpx 16rpx;
+  border-radius: 12rpx;
+  transition: all 0.2s ease;
+}
+
+.picker-cancel:active {
+  background: rgba(156, 163, 175, 0.1);
+  color: #6B7280;
 }
 
 .picker-title {
   font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
+  font-weight: 600;
+  color: #2D3436;
 }
 
 .picker-confirm {
   font-size: 28rpx;
-  color: #FFD166;
-  font-weight: bold;
+  color: #FFB347;
+  font-weight: 600;
+  padding: 8rpx 20rpx;
+  border-radius: 12rpx;
+  transition: all 0.2s ease;
+}
+
+.picker-confirm:active {
+  background: rgba(255, 179, 71, 0.15);
+  transform: scale(0.95);
 }
 
 .picker-body {
   padding: 20rpx 0;
-  height: 400rpx;
+  height: 420rpx;
 }
 
 .picker-view {
   width: 100%;
-  height: 400rpx;
+  height: 420rpx;
 }
 
 .picker-item {
-  font-size: 28rpx;
-  color: #666;
+  font-size: 30rpx;
+  color: #6C757D;
   padding: 20rpx 0;
   text-align: center;
   height: 80rpx;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.picker-item.active {
+  color: #2D3436;
+  font-weight: 600;
+  font-size: 34rpx;
 }
 </style>

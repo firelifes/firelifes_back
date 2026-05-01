@@ -21,6 +21,7 @@ export interface IRecord {
  * @description Create record options
  */
 export interface ICreateRecordOptions {
+  userId: number;
   typeId: string;
   date: string;
   amount: number;

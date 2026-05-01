@@ -13,9 +13,9 @@
       <view class="header-content">
         <!-- 月份选择器 -->
         <view class="month-selector">
-          <text class="year">2026年</text>
-          <view class="month-arrow-container">
-            <text class="month">04月</text>
+          <text class="year">{{ currentYear }}年</text>
+          <view class="month-arrow-container" @tap="handleMonthChange('next')">
+            <text class="month">{{ currentMonth }}月</text>
             <text class="arrow">▼</text>
           </view>
         </view>
@@ -23,12 +23,12 @@
         <view class="header-amounts">
           <view class="amount-item">
             <text class="amount-label">收入</text>
-            <text class="amount-value income">42996.25</text>
+            <text class="amount-value income">{{ monthIncome.toFixed(2) }}</text>
           </view>
           <view class="amount-divider"></view>
           <view class="amount-item">
             <text class="amount-label">支出</text>
-            <text class="amount-value expense">23749.01</text>
+            <text class="amount-value expense">{{ monthExpense.toFixed(2) }}</text>
           </view>
         </view>
       </view>
@@ -60,124 +60,182 @@
 
     <!-- 账单明细区 -->
     <view class="bill-list">
-      <!-- 04月25日 -->
-      <view class="bill-section">
-        <view class="bill-date">
-          <text class="date-text">04月25日 星期六</text>
-          <text class="day-total">支出: 376.55</text>
-        </view>
-        <view class="bill-items">
-          <view class="bill-item">
-            <view class="item-left">
-              <view class="item-icon">🎮</view>
-              <text class="item-category">娱乐</text>
-            </view>
-            <text class="item-amount expense">-30</text>
-          </view>
-          <view class="bill-item">
-            <view class="item-left">
-              <view class="item-icon">🚌</view>
-              <text class="item-category">交通</text>
-            </view>
-            <text class="item-amount expense">-20</text>
-          </view>
-          <view class="bill-item">
-            <view class="item-left">
-              <view class="item-icon">🍜</view>
-              <text class="item-category">餐饮</text>
-            </view>
-            <text class="item-amount expense">-11</text>
-          </view>
-          <view class="bill-item">
-            <view class="item-left">
-              <view class="item-icon">🎮</view>
-              <text class="item-category">娱乐</text>
-            </view>
-            <text class="item-amount expense">-150</text>
-          </view>
-          <view class="bill-item">
-            <view class="item-left">
-              <view class="item-icon">🚌</view>
-              <text class="item-category">交通</text>
-            </view>
-            <text class="item-amount expense">-40.89</text>
-          </view>
-          <view class="bill-item">
-            <view class="item-left">
-              <view class="item-icon">🚌</view>
-              <text class="item-category">交通</text>
-            </view>
-            <text class="item-amount expense">-45.6</text>
-          </view>
-          <view class="bill-item">
-            <view class="item-left">
-              <view class="item-icon">🛍️</view>
-              <text class="item-category">购物</text>
-            </view>
-            <text class="item-amount expense">-62.7</text>
-          </view>
-          <view class="bill-item">
-            <view class="item-left">
-              <view class="item-icon">🚌</view>
-              <text class="item-category">交通</text>
-            </view>
-            <text class="item-amount expense">-8.18</text>
-          </view>
-          <view class="bill-item">
-            <view class="item-left">
-              <view class="item-icon">🚌</view>
-              <text class="item-category">交通</text>
-            </view>
-            <text class="item-amount expense">-8.18</text>
-          </view>
-        </view>
+      <!-- 空状态 -->
+      <view v-if="sortedDates.length === 0" class="empty-state">
+        <text class="empty-text">暂无记账记录</text>
+        <text class="empty-hint">点击下方按钮开始记账</text>
       </view>
 
-      <!-- 04月24日 -->
-      <view class="bill-section">
+      <!-- 按日期分组的账单列表 -->
+      <view v-for="date in sortedDates" :key="date" class="bill-section">
         <view class="bill-date">
-          <text class="date-text">04月24日 星期五</text>
-          <text class="day-total">支出: 7648.36</text>
+          <text class="date-text">{{ formatDate(date) }}</text>
+          <text class="day-total">支出: {{ getDayTotal(date) }}</text>
         </view>
         <view class="bill-items">
-          <view class="bill-item">
+          <view v-for="record in groupedRecords[date]" :key="record.id" class="bill-item">
             <view class="item-left">
-              <view class="item-icon">🏠</view>
-              <text class="item-category">居住</text>
+              <view class="item-icon">{{ getCategoryInfo(record.typeId).icon }}</view>
+              <text class="item-category">{{ getCategoryInfo(record.typeId).name }}</text>
             </view>
-            <text class="item-amount expense">-7500</text>
-          </view>
-          <view class="bill-item">
-            <view class="item-left">
-              <view class="item-icon">🍜</view>
-              <text class="item-category">餐饮</text>
-            </view>
-            <text class="item-amount expense">-148.36</text>
+            <text :class="['item-amount', record.type]">
+              {{ record.type === 'expense' ? '-' : '+' }}{{ formatAmount(record.amount) }}
+            </text>
           </view>
         </view>
       </view>
     </view>
 
+    <!-- 底部添加按钮 -->
+    <view class="add-button-container">
+      <view class="add-button" @tap="handleAddTransaction">
+        <text class="add-button-text">+ 记账</text>
+      </view>
+    </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { recordApi } from '../../api/record'
+import { categoryApi } from '../../api/category'
 
-const currentMonth = ref('04')
+interface RecordItem {
+  id: string
+  typeId: string
+  type: 'income' | 'expense'
+  amount: number
+  remark: string
+  date: string
+  createdAt?: string
+}
+
+interface CategoryItem {
+  id: string
+  name: string
+  icon: string
+  type: 'income' | 'expense'
+}
+
+const records = ref<RecordItem[]>([])
+const categories = ref<CategoryItem[]>([])
+const loading = ref(false)
+
 const currentYear = ref('2026')
+const currentMonth = ref('04')
 
-const handleMonthChange = () => {
-  // 月份选择逻辑
+const getCategoryInfo = (typeId: string): { name: string; icon: string } => {
+  const category = categories.value.find(c => c.id === typeId)
+  if (category) {
+    return { name: category.name, icon: category.icon }
+  }
+  return { name: '其他', icon: '📦' }
+}
+
+const filteredRecords = computed(() => {
+  return records.value.filter(record => {
+    const recordDate = new Date(record.date)
+    const month = (recordDate.getMonth() + 1).toString().padStart(2, '0')
+    return month === currentMonth.value
+  })
+})
+
+const groupedRecords = computed(() => {
+  const groups: { [key: string]: RecordItem[] } = {}
+  filteredRecords.value.forEach(record => {
+    const dateStr = record.date
+    if (!groups[dateStr]) {
+      groups[dateStr] = []
+    }
+    groups[dateStr].push(record)
+  })
+  return groups
+})
+
+const sortedDates = computed(() => {
+  return Object.keys(groupedRecords.value).sort((a, b) => 
+    new Date(b).getTime() - new Date(a).getTime()
+  )
+})
+
+const monthIncome = computed(() => {
+  return filteredRecords.value
+    .filter(r => r.type === 'income')
+    .reduce((sum, r) => sum + r.amount, 0)
+})
+
+const monthExpense = computed(() => {
+  return filteredRecords.value
+    .filter(r => r.type === 'expense')
+    .reduce((sum, r) => sum + Math.abs(r.amount), 0)
+})
+
+const formatDate = (dateStr: string) => {
+  const date = new Date(dateStr)
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+  const weekDay = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'][date.getDay()]
+  return `${month}月${day}日 ${weekDay}`
+}
+
+const getDayTotal = (dateStr: string) => {
+  const dayRecords = groupedRecords.value[dateStr] || []
+  const expense = dayRecords
+    .filter(r => r.type === 'expense')
+    .reduce((sum, r) => sum + Math.abs(r.amount), 0)
+  return expense.toFixed(2)
+}
+
+const formatAmount = (amount: number) => {
+  return Math.abs(amount).toFixed(2)
+}
+
+const handleMonthChange = (direction: 'prev' | 'next') => {
+  let month = parseInt(currentMonth.value)
+  if (direction === 'prev') {
+    month = month === 1 ? 12 : month - 1
+  } else {
+    month = month === 12 ? 1 : month + 1
+  }
+  currentMonth.value = month.toString().padStart(2, '0')
+  if (month === 1) {
+    currentYear.value = (parseInt(currentYear.value) - 1).toString()
+  } else if (month === 12 && currentMonth.value === '01') {
+    currentYear.value = (parseInt(currentYear.value) + 1).toString()
+  }
 }
 
 const handleAddTransaction = () => {
   uni.switchTab({ url: '/pages/record/index' })
 }
 
-const navigateTo = (page: string) => {
-  uni.switchTab({ url: `/pages/${page}/index` })
+const loadData = async () => {
+  loading.value = true
+  try {
+    const [recordsRes, categoriesRes] = await Promise.all([
+      recordApi.getAllRecords(),
+      categoryApi.getAllCategories()
+    ])
+    
+    if (recordsRes.success && recordsRes.data) {
+      records.value = recordsRes.data
+    }
+    if (categoriesRes.success && categoriesRes.data) {
+      categories.value = [...categoriesRes.data.expense, ...categoriesRes.data.income]
+    }
+  } catch (error) {
+    console.error('加载数据失败:', error)
+  } finally {
+    loading.value = false
+  }
 }
+
+onMounted(() => {
+  const now = new Date()
+  currentYear.value = now.getFullYear().toString()
+  currentMonth.value = (now.getMonth() + 1).toString().padStart(2, '0')
+  loadData()
+})
 </script>
 
 <style>

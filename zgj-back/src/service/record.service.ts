@@ -1,69 +1,59 @@
 import { Provide } from '@midwayjs/core';
-import { IRecord, ICreateRecordOptions, IUpdateRecordOptions } from '../interface';
+import { InjectEntityModel } from '@midwayjs/typeorm';
+import { Repository } from 'typeorm';
+import { Record } from '../entity/record.entity';
+import { ICreateRecordOptions, IUpdateRecordOptions } from '../interface';
 
 @Provide()
 export class RecordService {
-  // 模拟数据库存储
-  private records: Map<string, IRecord> = new Map();
+  @InjectEntityModel(Record)
+  recordModel: Repository<Record>;
 
-  /**
-   * 生成唯一ID
-   */
-  private generateId(): string {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-  }
-
-  /**
-   * 新增记账记录
-   */
-  async createRecord(options: ICreateRecordOptions): Promise<IRecord> {
-    const record: IRecord = {
-      id: this.generateId(),
+  async createRecord(options: ICreateRecordOptions): Promise<Record> {
+    const record = this.recordModel.create({
       typeId: options.typeId,
       date: options.date,
       amount: options.amount,
       type: options.type,
-      remark: options.remark,
-    };
-    this.records.set(record.id, record);
-    return record;
+      remark: options.remark || '',
+    });
+    return this.recordModel.save(record);
   }
 
-  /**
-   * 更新记账记录
-   */
-  async updateRecord(options: IUpdateRecordOptions): Promise<IRecord | null> {
-    const record = this.records.get(options.id);
+  async updateRecord(options: IUpdateRecordOptions): Promise<Record | null> {
+    const record = await this.recordModel.findOne({ where: { id: options.id } });
     if (!record) {
       return null;
     }
 
-    const updatedRecord: IRecord = {
-      ...record,
-      ...options,
-    };
-    this.records.set(options.id, updatedRecord);
-    return updatedRecord;
+    if (options.typeId !== undefined) record.typeId = options.typeId;
+    if (options.date !== undefined) record.date = options.date;
+    if (options.amount !== undefined) record.amount = options.amount;
+    if (options.type !== undefined) record.type = options.type;
+    if (options.remark !== undefined) record.remark = options.remark;
+
+    return this.recordModel.save(record);
   }
 
-  /**
-   * 根据ID获取记账记录
-   */
-  async getRecordById(id: string): Promise<IRecord | null> {
-    return this.records.get(id) || null;
+  async getRecordById(id: string): Promise<Record | null> {
+    return this.recordModel.findOne({ where: { id } });
   }
 
-  /**
-   * 获取所有记账记录
-   */
-  async getAllRecords(): Promise<IRecord[]> {
-    return Array.from(this.records.values());
+  async getAllRecords(): Promise<Record[]> {
+    return this.recordModel.find({
+      order: { date: 'DESC', createdAt: 'DESC' },
+    });
   }
 
-  /**
-   * 删除记账记录
-   */
+  async getRecordsByUserId(userId: number): Promise<Record[]> {
+    return this.recordModel.find({
+      where: { userId },
+      order: { date: 'DESC', createdAt: 'DESC' },
+    });
+  }
+
   async deleteRecord(id: string): Promise<boolean> {
-    return this.records.delete(id);
+    const result = await this.recordModel.delete(id);
+    return (result.affected ?? 0) > 0;
   }
 }

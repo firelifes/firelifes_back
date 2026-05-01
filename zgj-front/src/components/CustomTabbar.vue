@@ -73,11 +73,11 @@ const updateTab = () => {
 
 onMounted(() => {
   updateTab()
-  uni.onTabItemTap(updateTab)
+  ;(uni as any).onTabItemTap(updateTab)
 })
 
 onUnmounted(() => {
-  uni.offTabItemTap(updateTab)
+  ;(uni as any).offTabItemTap(updateTab)
 })
 </script>
 

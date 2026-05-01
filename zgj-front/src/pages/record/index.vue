@@ -57,13 +57,15 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import CategorySelector from './components/CategorySelector.vue'
 import TransactionForm from './components/TransactionForm.vue'
 import DatePicker from './components/DatePicker.vue'
+import { recordApi } from '../../api/record'
 
-const transactionType = ref('expense')
+const transactionType = ref<'income' | 'expense'>('expense')
 const selectedCategory = ref('')
 const displayAmount = ref('')
 const remark = ref('')
 const selectedDate = ref(new Date().toISOString().split('T')[0])
 const showDatePicker = ref(false)
+const isSubmitting = ref(false)
 
 const switchType = (type: 'income' | 'expense') => {
   transactionType.value = type
@@ -75,11 +77,11 @@ const selectCategory = (category: { name: string; icon: string }) => {
 }
 
 const handleCancel = () => {
-  // 跳转到明细页面作为默认返回页面
+  uni.showTabBar()
   uni.switchTab({ url: '/pages/detail/index' })
 }
 
-const handleComplete = () => {
+const handleComplete = async () => {
   if (!displayAmount.value) {
     uni.showToast({ title: '请输入金额', icon: 'none' })
     return
@@ -88,30 +90,45 @@ const handleComplete = () => {
     uni.showToast({ title: '请选择分类', icon: 'none' })
     return
   }
-  
-  // 这里可以添加提交数据的逻辑
-  console.log('提交记账数据:', {
-    type: transactionType.value,
-    category: selectedCategory.value,
-    amount: displayAmount.value,
-    remark: remark.value,
-    date: selectedDate.value
-  })
-  
-  uni.showToast({ title: '记账成功', icon: 'success' })
-  setTimeout(() => {
-    uni.switchTab({ url: '/pages/detail/index' })
-  }, 1000)
+
+  if (isSubmitting.value) return
+  isSubmitting.value = true
+
+  try {
+    const amount = parseFloat(displayAmount.value)
+    const finalAmount = transactionType.value === 'expense' ? -amount : amount
+
+    const res = await recordApi.createRecord({
+      typeId: selectedCategory.value,
+      type: transactionType.value,
+      amount: finalAmount,
+      remark: remark.value,
+      date: selectedDate.value,
+    })
+
+    if (res.success) {
+      uni.showTabBar()
+      uni.showToast({ title: '记账成功', icon: 'success' })
+      setTimeout(() => {
+        uni.switchTab({ url: '/pages/detail/index' })
+      }, 1000)
+    } else {
+      uni.showToast({ title: res.message || '记账失败', icon: 'none' })
+    }
+  } catch (error) {
+    uni.showToast({ title: '网络错误', icon: 'none' })
+    console.error('记账失败:', error)
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 // 生命周期钩子
 onMounted(() => {
-  // 进入页面时隐藏 tabbar
   uni.hideTabBar()
 })
 
 onUnmounted(() => {
-  // 离开页面时显示 tabbar
   uni.showTabBar()
 })
 </script>
@@ -119,12 +136,12 @@ onUnmounted(() => {
 <style>
 .record-page {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background: linear-gradient(135deg, #FAF9F6 0%, #F5F3EF 100%);
   padding-top: 120rpx;
 }
 
 .header {
-  background-color: #FFD166;
+  background: linear-gradient(135deg, #FFD166 0%, #FFC145 100%);
   padding: 20rpx 30rpx;
   color: #333;
   position: fixed;
@@ -132,7 +149,8 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   z-index: 100;
-  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4rpx 20rpx rgba(255, 209, 102, 0.3);
+  backdrop-filter: blur(10rpx);
 }
 
 .header-bottom {
@@ -160,38 +178,60 @@ onUnmounted(() => {
 
 .type-btn {
   font-size: 32rpx;
-  font-weight: bold;
-  color: rgba(51, 51, 51, 0.7);
-  padding: 10rpx 20rpx;
-  transition: all 0.3s;
+  font-weight: 600;
+  color: rgba(51, 51, 51, 0.5);
+  padding: 10rpx 30rpx;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
 .type-btn.active {
   color: #333;
-  position: relative;
 }
 
 .type-btn.active::after {
   content: '';
   position: absolute;
-  bottom: 0;
-  left: 20rpx;
-  right: 20rpx;
-  height: 4rpx;
-  background-color: #333;
-  border-radius: 2rpx;
+  bottom: -5rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40rpx;
+  height: 6rpx;
+  background: #333;
+  border-radius: 3rpx;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 .type-divider {
   font-size: 32rpx;
-  color: rgba(51, 51, 51, 0.5);
+  color: rgba(51, 51, 51, 0.3);
+  font-weight: 200;
 }
 
 .cancel-btn {
   font-size: 28rpx;
   color: #333;
-  padding: 10rpx 20rpx;
-  border-radius: 8rpx;
-  background-color: rgba(255, 255, 255, 0.2);
+  padding: 10rpx 24rpx;
+  border-radius: 20rpx;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(5rpx);
+  border: 1rpx solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.cancel-btn:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.6);
 }
 </style>

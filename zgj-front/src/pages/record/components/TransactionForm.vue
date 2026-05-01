@@ -176,70 +176,98 @@ const toggleDatePicker = () => {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: #fff;
-  border-radius: 20rpx 20rpx 0 0;
-  padding: 20rpx;
-  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 24rpx 20rpx;
+  box-shadow: 0 -8rpx 30rpx rgba(0, 0, 0, 0.08);
   z-index: 99;
   padding-bottom: 100rpx;
+  backdrop-filter: blur(20rpx);
+  border-top: 1rpx solid rgba(255, 255, 255, 0.5);
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .amount-display {
-  padding: 40rpx 0;
+  padding: 32rpx 0;
   text-align: center;
   display: flex;
   align-items: baseline;
   justify-content: center;
-  gap: 10rpx;
+  gap: 8rpx;
 }
 
 .currency {
   font-size: 36rpx;
-  font-weight: bold;
-  color: #333;
+  font-weight: 600;
+  color: #5C6B7A;
 }
 
 .amount {
-  font-size: 64rpx;
-  font-weight: bold;
-  color: #333;
+  font-size: 72rpx;
+  font-weight: 700;
+  color: #2D3436;
+  letter-spacing: -1rpx;
+  transition: all 0.2s ease;
 }
 
 .remark-input {
-  padding: 20rpx;
-  background-color: #f5f5f5;
-  border-radius: 12rpx;
-  margin-bottom: 30rpx;
+  padding: 20rpx 24rpx;
+  background: rgba(245, 246, 250, 0.8);
+  border-radius: 20rpx;
+  margin-bottom: 28rpx;
   display: flex;
   align-items: center;
+  backdrop-filter: blur(5rpx);
+  border: 1rpx solid rgba(255, 255, 255, 0.6);
+  transition: all 0.3s ease;
+}
+
+.remark-input:active {
+  transform: scale(0.98);
+  background: rgba(245, 246, 250, 1);
 }
 
 .remark-label {
   font-size: 28rpx;
-  color: #666;
-  margin-right: 10rpx;
+  color: #7B8794;
+  margin-right: 12rpx;
+  font-weight: 500;
 }
 
 .remark-placeholder {
   font-size: 28rpx;
-  color: #999;
+  color: #B2BEC3;
+  font-weight: 400;
 }
 
 .remark-text {
   font-size: 28rpx;
-  color: #333;
+  color: #2D3436;
   flex: 1;
+  font-weight: 500;
 }
 
 .keyboard {
-  background-color: #f5f5f5;
-  border-radius: 16rpx;
+  background: linear-gradient(180deg, #F8F9FA 0%, #F1F2F6 100%);
+  border-radius: 24rpx;
   padding: 20rpx;
+  backdrop-filter: blur(10rpx);
 }
 
 .keyboard-row {
   display: flex;
-  margin-bottom: 20rpx;
+  margin-bottom: 16rpx;
 }
 
 .keyboard-row:last-child {
@@ -248,17 +276,26 @@ const toggleDatePicker = () => {
 
 .key-item {
   flex: 1;
-  height: 80rpx;
-  background-color: #fff;
-  border-radius: 12rpx;
+  height: 96rpx;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 10rpx;
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #333;
-  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
+  margin: 0 8rpx;
+  font-size: 40rpx;
+  font-weight: 600;
+  color: #2D3436;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+  border: 1rpx solid rgba(255, 255, 255, 0.8);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(5rpx);
+}
+
+.key-item:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.06);
 }
 
 .key-item:first-child {
@@ -270,14 +307,26 @@ const toggleDatePicker = () => {
 }
 
 .key-item.function {
-  background-color: #f0f0f0;
+  background: linear-gradient(135deg, #E8F4F8 0%, #D4E9F0 100%);
   font-size: 28rpx;
+  color: #5C6B7A;
+}
+
+.key-item.function:active {
+  background: linear-gradient(135deg, #D4E9F0 0%, #C0D8E0 100%);
 }
 
 .key-item.confirm {
-  background-color: #FFD166;
+  background: linear-gradient(135deg, #FFD166 0%, #FFC145 100%);
   color: #fff;
   font-size: 32rpx;
+  font-weight: 600;
+  box-shadow: 0 6rpx 20rpx rgba(255, 209, 102, 0.4);
+}
+
+.key-item.confirm:active {
+  transform: scale(0.95);
+  box-shadow: 0 4rpx 12rpx rgba(255, 209, 102, 0.3);
 }
 
 .date-icon {
@@ -286,8 +335,9 @@ const toggleDatePicker = () => {
 }
 
 .date-text {
-  font-size: 20rpx;
-  color: #666;
+  font-size: 22rpx;
+  color: #5C6B7A;
+  font-weight: 500;
 }
 
 .popup-overlay {
@@ -296,47 +346,88 @@ const toggleDatePicker = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  backdrop-filter: blur(5rpx);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .popup-content {
-  background-color: #fff;
-  border-radius: 16rpx;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24rpx;
   width: 80%;
-  max-width: 500rpx;
-  padding: 30rpx;
+  max-width: 560rpx;
+  padding: 32rpx;
+  box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(20rpx);
+  border: 1rpx solid rgba(255, 255, 255, 0.5);
+  animation: popIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.9) translateY(20rpx);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
 }
 
 .popup-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20rpx;
+  margin-bottom: 24rpx;
 }
 
 .popup-title {
   font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
+  font-weight: 600;
+  color: #2D3436;
 }
 
 .popup-close {
-  font-size: 40rpx;
-  color: #999;
+  font-size: 44rpx;
+  color: #9CA3AF;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+.popup-close:active {
+  color: #6B7280;
+  transform: scale(0.9);
 }
 
 .remark-textarea {
   width: 100%;
-  border: 1rpx solid #e0e0e0;
-  border-radius: 8rpx;
-  padding: 15rpx;
+  border: 2rpx solid rgba(229, 231, 235, 0.8);
+  border-radius: 16rpx;
+  padding: 18rpx;
   font-size: 28rpx;
-  min-height: 200rpx;
-  margin-bottom: 20rpx;
+  min-height: 220rpx;
+  margin-bottom: 24rpx;
+  background: rgba(255, 255, 255, 0.8);
+  color: #2D3436;
+  transition: all 0.3s ease;
+}
+
+.remark-textarea:focus {
+  border-color: #FFD166;
+  background: rgba(255, 255, 255, 1);
 }
 
 .popup-footer {
@@ -345,10 +436,18 @@ const toggleDatePicker = () => {
 }
 
 .popup-button {
-  padding: 15rpx 40rpx;
-  background-color: #FFD166;
+  padding: 16rpx 48rpx;
+  background: linear-gradient(135deg, #FFD166 0%, #FFC145 100%);
   color: #fff;
-  border-radius: 8rpx;
+  border-radius: 20rpx;
   font-size: 28rpx;
+  font-weight: 600;
+  box-shadow: 0 4rpx 12rpx rgba(255, 209, 102, 0.3);
+  transition: all 0.2s ease;
+}
+
+.popup-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2rpx 8rpx rgba(255, 209, 102, 0.2);
 }
 </style>

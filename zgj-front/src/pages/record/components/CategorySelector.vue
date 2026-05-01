@@ -100,34 +100,62 @@ const selectCategory = (category: { name: string; icon: string }) => {
   flex-direction: column;
   align-items: center;
   padding: 10rpx;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.category-item:active {
+  transform: scale(0.95);
 }
 
 .category-icon {
-  width: 80rpx;
-  height: 80rpx;
-  background-color: #f5f5f5;
+  width: 88rpx;
+  height: 88rpx;
+  background: rgba(255, 255, 255, 0.8);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 40rpx;
-  margin-bottom: 10rpx;
+  font-size: 44rpx;
+  margin-bottom: 12rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(5rpx);
+  border: 1rpx solid rgba(255, 255, 255, 0.5);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .category-item.selected .category-icon {
-  background-color: #FFD166;
+  background: linear-gradient(135deg, #FFD166 0%, #FFC145 100%);
   color: #fff;
+  box-shadow: 0 8rpx 20rpx rgba(255, 209, 102, 0.4);
+  transform: scale(1.05);
+  animation: bounceIn 0.4s ease;
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
 }
 
 .category-name {
   font-size: 24rpx;
-  color: #333;
+  color: #5C6B7A;
   text-align: center;
-  line-height: 1.2;
+  line-height: 1.3;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .category-item.selected .category-name {
-  color: #FFD166;
-  font-weight: bold;
+  color: #FFB347;
+  font-weight: 600;
 }
 </style>

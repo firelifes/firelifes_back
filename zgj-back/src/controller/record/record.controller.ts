@@ -18,7 +18,17 @@ export class RecordController {
   @Post('/')
   async createRecord(@Body() options: ICreateRecordOptions) {
     try {
-      const record = await this.recordService.createRecord(options);
+      const userId = (this.ctx.state.user as any)?.userId;
+      if (!userId) {
+        return {
+          success: false,
+          message: '用户未登录',
+        };
+      }
+      const record = await this.recordService.createRecord({
+        ...options,
+        userId,
+      });
       return {
         success: true,
         message: '创建成功',
@@ -96,13 +106,20 @@ export class RecordController {
   }
 
   /**
-   * 获取所有记账记录
+   * 获取所有记账记录（当前用户）
    * GET /record
    */
   @Get('/')
   async getAllRecords() {
     try {
-      const records = await this.recordService.getAllRecords();
+      const userId = (this.ctx.state.user as any)?.userId;
+      if (!userId) {
+        return {
+          success: false,
+          message: '用户未登录',
+        };
+      }
+      const records = await this.recordService.getRecordsByUserId(userId);
       return {
         success: true,
         message: '获取成功',
