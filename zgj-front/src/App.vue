@@ -6,22 +6,27 @@
 <script setup lang="ts">
 import { onLaunch, onShow, onHide } from "@dcloudio/uni-app";
 import { useI18n } from 'vue-i18n';
+import config from './config/index';
+import { storage } from './utils/storage';
 
 const { t } = useI18n();
 
 // 应用启动时触发
 onLaunch(() => {
-  console.log(t('app.launch'));
+  console.log('[app] 应用启动', t('app.launch'));
+  const token = storage.get(config.tokenKey);
+  const user = storage.get(config.userKey);
+  console.log('[app] 初始状态', { token: token ? '有' : '无', user: user ? user.phone : '无' });
 });
 
 // 应用显示时触发
 onShow(() => {
-  console.log(t('app.show'));
+  console.log('[app] 应用显示', t('app.show'));
 });
 
 // 应用隐藏时触发
 onHide(() => {
-  console.log(t('app.hide'));
+  console.log('[app] 应用隐藏', t('app.hide'));
 });
 </script>
 

@@ -1,4 +1,4 @@
-import { Inject, Controller, Post, Body, Put, Param, Get, Del } from '@midwayjs/core';
+import { Inject, Controller, Post, Body, Put, Param, Get, Del, Query } from '@midwayjs/core';
 import type { Context } from '@midwayjs/koa';
 import { RecordService } from '../../service/record.service';
 import type { ICreateRecordOptions, IUpdateRecordOptions } from '../../interface';
@@ -11,10 +11,6 @@ export class RecordController {
   @Inject()
   recordService: RecordService;
 
-  /**
-   * 新增记账记录
-   * POST /record
-   */
   @Post('/')
   async createRecord(@Body() options: ICreateRecordOptions) {
     try {
@@ -43,10 +39,116 @@ export class RecordController {
     }
   }
 
-  /**
-   * 更新记账记录
-   * PUT /record/:id
-   */
+  @Get('/page')
+  async getRecordsByMonth(
+    @Query('yearMonth') yearMonth: string,
+    @Query('page') page: string = '1',
+    @Query('pageSize') pageSize: string = '50'
+  ) {
+    try {
+      const userId = (this.ctx.state.user as any)?.userId;
+      if (!userId) {
+        return {
+          success: false,
+          message: '用户未登录',
+        };
+      }
+      const pageNum = parseInt(page) || 1;
+      const size = parseInt(pageSize) || 50;
+      const result = await this.recordService.getRecordsByMonth(
+        userId,
+        yearMonth,
+        pageNum,
+        size
+      );
+      return {
+        success: true,
+        message: '获取成功',
+        data: result,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: '获取失败',
+        error: error.message,
+      };
+    }
+  }
+
+  @Get('/month-summary')
+  async getMonthSummary(@Query('yearMonth') yearMonth: string) {
+    try {
+      const userId = (this.ctx.state.user as any)?.userId;
+      if (!userId) {
+        return {
+          success: false,
+          message: '用户未登录',
+        };
+      }
+      const summary = await this.recordService.getMonthSummary(userId, yearMonth);
+      return {
+        success: true,
+        message: '获取成功',
+        data: summary,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: '获取失败',
+        error: error.message,
+      };
+    }
+  }
+
+  @Get('/')
+  async getAllRecords() {
+    try {
+      const userId = (this.ctx.state.user as any)?.userId;
+      if (!userId) {
+        return {
+          success: false,
+          message: '用户未登录',
+        };
+      }
+      const records = await this.recordService.getRecordsByUserId(userId);
+      return {
+        success: true,
+        message: '获取成功',
+        data: records,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: '获取失败',
+        error: error.message,
+      };
+    }
+  }
+
+  @Get('/:id')
+  async getRecord(@Param('id') id: string) {
+    try {
+      const record = await this.recordService.getRecordById(parseInt(id));
+      if (!record) {
+        return {
+          success: false,
+          message: '记录不存在',
+        };
+      }
+      return {
+        success: true,
+        message: '获取成功',
+        data: record,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: '获取失败',
+        error: error.message,
+      };
+    }
+  }
+
   @Put('/:id')
   async updateRecord(
     @Param('id') id: string,
@@ -77,67 +179,6 @@ export class RecordController {
     }
   }
 
-  /**
-   * 获取单个记账记录
-   * GET /record/:id
-   */
-  @Get('/:id')
-  async getRecord(@Param('id') id: string) {
-    try {
-      const record = await this.recordService.getRecordById(parseInt(id));
-      if (!record) {
-        return {
-          success: false,
-          message: '记录不存在',
-        };
-      }
-      return {
-        success: true,
-        message: '获取成功',
-        data: record,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: '获取失败',
-        error: error.message,
-      };
-    }
-  }
-
-  /**
-   * 获取所有记账记录（当前用户）
-   * GET /record
-   */
-  @Get('/')
-  async getAllRecords() {
-    try {
-      const userId = (this.ctx.state.user as any)?.userId;
-      if (!userId) {
-        return {
-          success: false,
-          message: '用户未登录',
-        };
-      }
-      const records = await this.recordService.getRecordsByUserId(userId);
-      return {
-        success: true,
-        message: '获取成功',
-        data: records,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: '获取失败',
-        error: error.message,
-      };
-    }
-  }
-
-  /**
-   * 删除记账记录
-   * DELETE /record/:id
-   */
   @Del('/:id')
   async deleteRecord(@Param('id') id: string) {
     try {

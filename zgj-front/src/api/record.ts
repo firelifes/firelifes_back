@@ -13,6 +13,18 @@ export interface RecordData {
   createdAt?: string
 }
 
+export interface MonthSummary {
+  income: number
+  expense: number
+}
+
+export interface PageResult<T> {
+  list: T[]
+  total: number
+  page: number
+  pageSize: number
+}
+
 export const recordApi = {
   /**
    * 创建记账记录
@@ -68,6 +80,32 @@ export const recordApi = {
     return request<RecordData[]>({
       url: '/record',
       method: 'GET',
+    })
+  },
+
+  /**
+   * 按年月分页查询记账记录
+   * @param yearMonth 年月（格式：YYYY-MM）
+   * @param page 页码
+   * @param pageSize 每页条数
+   */
+  getRecordsByMonth: (yearMonth: string, page: number = 1, pageSize: number = 50) => {
+    return request<PageResult<RecordData>>({
+      url: '/record/page',
+      method: 'GET',
+      data: { yearMonth, page, pageSize },
+    })
+  },
+
+  /**
+   * 获取指定月份的收支汇总
+   * @param yearMonth 年月（格式：YYYY-MM）
+   */
+  getMonthSummary: (yearMonth: string) => {
+    return request<MonthSummary>({
+      url: '/record/month-summary',
+      method: 'GET',
+      data: { yearMonth },
     })
   },
 

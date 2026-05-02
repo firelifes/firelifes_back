@@ -137,7 +137,11 @@ const handleLogin = async () => {
     }
     
     const res = await login(data)
+    console.log('[login] 登录响应', res)
+    
     userStore.setAuth(res.data.token, res.data.user)
+    console.log('[login] token已保存', res.data.token.substring(0, 20) + '...')
+    
     uni.showToast({
       title: '登录成功',
       icon: 'success'
@@ -148,7 +152,7 @@ const handleLogin = async () => {
       })
     }, 1000)
   } catch (err) {
-    console.error(err)
+    console.error('[login] 登录失败', err)
   } finally {
     loading.value = false
   }
