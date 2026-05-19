@@ -36,9 +36,9 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "start": "cross-env NODE_ENV=prod node ./bootstrap.js",
-    "start:sit": "cross-env NODE_ENV=sit node ./bootstrap.js",
-    "start:prod": "cross-env NODE_ENV=prod node ./bootstrap.js",
+    "start": "cross-env NODE_ENV=prod DOTENV_CONFIG_PATH=.env.prod node ./bootstrap.js",
+    "start:sit": "cross-env NODE_ENV=sit DOTENV_CONFIG_PATH=.env.sit node ./bootstrap.js",
+    "start:prod": "cross-env NODE_ENV=prod DOTENV_CONFIG_PATH=.env.prod node ./bootstrap.js",
     "dev": "cross-env NODE_ENV=local DOTENV_CONFIG_PATH=.env.local mwtsc --watch --run @midwayjs/mock/app.js",
     "dev:sit": "cross-env NODE_ENV=sit DOTENV_CONFIG_PATH=.env.sit mwtsc --watch --run @midwayjs/mock/app.js",
     "test": "cross-env NODE_ENV=unittest jest",
@@ -46,7 +46,9 @@
     "lint": "mwts check",
     "lint:fix": "mwts fix",
     "ci": "npm run cov",
-    "build": "mwtsc --cleanOutDir"
+    "build": "mwtsc --cleanOutDir",
+    "build:sit": "cross-env NODE_ENV=sit DOTENV_CONFIG_PATH=.env.sit mwtsc --cleanOutDir",
+    "build:prod": "cross-env NODE_ENV=prod DOTENV_CONFIG_PATH=.env.prod mwtsc --cleanOutDir"
   },
   "repository": {
     "type": "git",
