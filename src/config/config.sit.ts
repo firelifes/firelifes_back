@@ -13,6 +13,7 @@ import { SmsCode } from '../entity/sms_code.entity';
 import { Ad } from '../entity/ad.entity';
 import { Account } from '../entity/account.entity';
 import { DepreciatingAsset } from '../entity/depreciating_asset.entity';
+import { Budget } from '../entity/budget.entity';
 
 export default {
   keys: process.env.APP_KEYS || 'firelifes_sit_key_2024',
@@ -46,7 +47,7 @@ export default {
         schema: 'firelifes',
         synchronize: true,
         logging: true,
-        entities: [Record, Category, CategoryGroup, Icon, User, UserCategoryCustomization, UserCategoryGroup, UserIcon, SmsCode, Ad, Account, DepreciatingAsset],
+        entities: [Record, Category, CategoryGroup, Icon, User, UserCategoryCustomization, UserCategoryGroup, UserIcon, SmsCode, Ad, Account, DepreciatingAsset, Budget],
       },
     },
   },

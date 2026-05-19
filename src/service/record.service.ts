@@ -1,9 +1,10 @@
 import { Provide } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, IsNull } from 'typeorm';
 import { Record } from '../entity/record.entity';
 import { Account } from '../entity/account.entity';
 import { DepreciatingAsset } from '../entity/depreciating_asset.entity';
+import { Budget } from '../entity/budget.entity';
 import { ICreateRecordOptions, IUpdateRecordOptions } from '../interface';
 
 export interface PageResult<T> {
@@ -102,6 +103,9 @@ export class RecordService {
   @InjectEntityModel(DepreciatingAsset)
   depreciatingAssetModel: Repository<DepreciatingAsset>;
 
+  @InjectEntityModel(Budget)
+  budgetModel: Repository<Budget>;
+
   async createRecord(options: ICreateRecordOptions): Promise<Record> {
     return this.recordModel.manager.transaction(async (manager) => {
       const record = manager.create(Record, {
@@ -162,6 +166,46 @@ export class RecordService {
           status: 'active',
         });
         await manager.save(depreciatingAsset);
+      }
+
+      // 联动更新预算 spent（仅支出类型）
+      if (options.type === 'expense') {
+        const absAmount = Math.abs(options.amount);
+        const recordDate = new Date(options.date);
+        const budgetYear = recordDate.getFullYear();
+        const budgetMonth = recordDate.getMonth() + 1;
+
+        const budget = await manager.findOne(Budget, {
+          where: {
+            userId: options.userId,
+            typeId: options.typeId,
+            year: budgetYear,
+            month: budgetMonth,
+            budgetType: 'normal',
+            isActive: true,
+          },
+        });
+
+        if (budget) {
+          budget.spent = Number(budget.spent) + absAmount;
+          await manager.save(budget);
+        }
+
+        const totalBudget = await manager.findOne(Budget, {
+          where: {
+            userId: options.userId,
+            year: budgetYear,
+            month: budgetMonth,
+            budgetType: 'normal',
+            isActive: true,
+            typeId: IsNull(),
+          },
+        });
+
+        if (totalBudget) {
+          totalBudget.spent = Number(totalBudget.spent) + absAmount;
+          await manager.save(totalBudget);
+        }
       }
 
       return savedRecord;
