@@ -46,9 +46,9 @@
     "lint": "mwts check",
     "lint:fix": "mwts fix",
     "ci": "npm run cov",
-    "build": "mwtsc --cleanOutDir",
-    "build:sit": "cross-env NODE_ENV=sit DOTENV_CONFIG_PATH=.env.sit mwtsc --cleanOutDir",
-    "build:prod": "cross-env NODE_ENV=prod DOTENV_CONFIG_PATH=.env.prod mwtsc --cleanOutDir"
+    "build": "mwtsc --cleanOutDir && cp bootstrap.js dist/bootstrap.js",
+    "build:sit": "cross-env NODE_ENV=sit DOTENV_CONFIG_PATH=.env.sit mwtsc --cleanOutDir && cp bootstrap.js dist/bootstrap.js",
+    "build:prod": "cross-env NODE_ENV=prod DOTENV_CONFIG_PATH=.env.prod mwtsc --cleanOutDir && cp bootstrap.js dist/bootstrap.js"
   },
   "repository": {
     "type": "git",
