@@ -16,9 +16,20 @@
 **核心原则：转账操作不是收支。** 转账、还债、借贷都是资金在账户间的转移（底层统一为账户间转账），不应计入收支统计。此前转账和还债藏在支出分类里，既不直观又容易混淆统计。
 
 ### 行业依据
+- **鲨鱼记账**：独立债务追踪模块，支持借出/借入、还款进度、逾期提醒
 - MoneyWiz/MoneyThings/YNAB 等专业记账APP均将"非收支操作"独立为第三类
 - 钱迹明确声明："转账、还款、借入、借出都只是单纯的资金转移，并没有产生具体的收支行为"
 - CountAbout 是行业唯一实现全自动本金/利息拆分的APP
+
+### 用户故事
+
+| 序号 | 用户角色 | 场景 | 需求 | 价值 |
+|------|---------|------|------|------|
+| 1 | 普通用户 | 从储蓄卡转钱到微信 | 快速完成账户间资金转移 | 便捷 |
+| 2 | 信用卡用户 | 每月还信用卡账单 | 一键还款，不影响收支统计 | 准确 |
+| 3 | 房贷用户 | 还房贷时自动拆分本金利息 | 利息自动计入支出，本金冲减负债 | 专业 |
+| 4 | 经常借钱给朋友的用户 | 记录借出和收回 | 自动追踪债权，不影响收支 | 清晰 |
+| 5 | 有私人借款的用户 | 记录借入和偿还 | 自动追踪债务，不影响收支 | 清晰 |
 
 ---
 
@@ -333,6 +344,32 @@
 - 借入：生成1条 `type=transfer` 记录，from=应付账款，to=现金账户
 - 偿还：生成1条 `type=transfer` 记录，from=现金账户，to=应付账款
 
+### 隐式账户展示规范
+
+参考鲨鱼记账的债务追踪模块设计：
+
+```
+┌──────────────────────────────────┐
+│         资产总览                 │
+├──────────────────────────────────┤
+│ 💰 现金资产    ¥10,000          │
+│ 💼 投资资产    ¥50,000          │
+│ 📄 债权        ¥2,000          │  ← 独立分组
+│   ├─ 应收-张三   ¥1,500        │
+│   └─ 应收-李四     ¥500        │
+│ 🏠 固定资产    ¥500,000         │
+│ ────────────────────────────────│
+│ 💳 信用卡负债  -¥3,000          │
+│ 📋 债务        ¥5,000          │  ← 独立分组
+│   └─ 应付-王五   ¥5,000        │
+└──────────────────────────────────┘
+```
+
+**展示规则**：
+- 隐式账户**不显示**在账户列表页（避免用户误操作）
+- 在资产总览页的"债权"/"债务"分组下展示
+- 明细页支持按"债权/债务"类型过滤
+
 ---
 
 ## 数据结构变更
@@ -374,11 +411,68 @@ interface RepaymentSplitRequest {
 
 ```typescript
 interface ImplicitAccount {
+  id: string                  // 账户ID
   name: string                // 格式：应收-张三 / 应付-李四
   type: 'receivable' | 'payable'
   counterparty: string        // 对方名称
+  balance: number             // 当前余额
   isImplicit: true            // 标记为隐式账户
   isVisible: false            // 不在账户列表页显示（仅在资产总览债权/债务分组展示）
+  createdAt: Date             // 创建时间
+  updatedAt: Date             // 更新时间
+}
+```
+
+### API 响应结构
+
+#### 还贷款拆分响应
+
+```typescript
+interface RepaymentSplitResponse {
+  success: boolean
+  data: {
+    repaymentRecordId: number    // 本金还款记录ID
+    expenseRecordId: number      // 利息支出记录ID（如有）
+    remainingPrincipal: number   // 剩余本金
+    remainingPeriods: number     // 剩余期数（如可计算）
+  }
+  message?: string
+}
+```
+
+#### 隐式账户创建响应
+
+```typescript
+interface ImplicitAccountResponse {
+  success: boolean
+  data: {
+    accountId: string
+    name: string           // 如：应收-张三
+    type: 'receivable' | 'payable'
+    isNew: boolean         // 是否为新创建
+  }
+}
+```
+
+#### 债权/债务列表响应
+
+```typescript
+interface CounterpartyListResponse {
+  success: boolean
+  data: {
+    receivables: Array<{
+      id: string
+      name: string
+      counterparty: string
+      balance: number
+    }>
+    payables: Array<{
+      id: string
+      name: string
+      counterparty: string
+      balance: number
+    }>
+  }
 }
 ```
 
@@ -427,6 +521,59 @@ interface ImplicitAccount {
 | `POST /api/account/implicit` | 自动创建隐式账户（应收/应付），存在则返回已有 |
 | `GET /api/account/counterparties` | 获取已有借贷对方列表（从隐式账户名称中提取） |
 | LiabilityForm 参数联动 | 前端还贷款时，后端根据贷款参数计算当期本金/利息 |
+
+---
+
+## 验收标准
+
+### 转账操作
+- [ ] 用户选择转出和转入账户后，可输入金额并提交
+- [ ] 转出和转入账户相同时，显示错误提示
+- [ ] 提交后两账户余额正确变更，收支统计不受影响
+
+### 还信用卡
+- [ ] 还款账户仅显示资产类账户
+- [ ] 信用卡账户仅显示信用卡类账户
+- [ ] 无信用卡账户时提示"请先创建信用卡账户"
+
+### 还贷款
+- [ ] 自动拆分模式下，根据贷款参数正确计算本金和利息
+- [ ] 手动拆分模式下，本金+利息=总金额验证
+- [ ] 还款金额<利息时显示"不足以覆盖当期利息"提示
+- [ ] 还款后生成本金repayment记录和利息expense记录
+
+### 借出/收回
+- [ ] 借出时自动创建应收账款隐式账户
+- [ ] 收回时正确减少应收账款余额
+- [ ] 收回金额>应收余额时提示错误
+
+### 借入/偿还
+- [ ] 借入时自动创建应付账款隐式账户
+- [ ] 偿还时正确减少应付账款余额
+- [ ] 偿还金额>应付余额时提示错误
+
+### 隐式账户展示
+- [ ] 隐式账户不在账户列表页显示
+- [ ] 资产总览页正确展示债权/债务分组
+- [ ] 明细页支持按债权/债务类型过滤
+
+---
+
+## 数据迁移方案
+
+### 历史数据处理
+| 原记录类型 | 目标类型 | 处理方式 |
+|---|---|---|
+| 支出分类=转账 | type=transfer | 自动迁移 |
+| 支出分类=还债 | type=repayment | 自动迁移 |
+
+### 迁移时机
+- 在 V1 版本发布前执行一次性迁移
+- 迁移脚本：`scripts/migration-transfer-records.ts`
+
+### 迁移后清理
+- 从支出分类中移除「转账」「还债」分类
+- 标记为系统分类，禁止删除
 
 ---
 
