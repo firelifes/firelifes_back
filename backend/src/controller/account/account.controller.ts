@@ -10,6 +10,18 @@ export interface IApiResponse<T = any> {
   message?: string;
 }
 
+interface CreateImplicitAccountRequest {
+  type: 'receivable' | 'payable';
+  counterparty: string;
+}
+
+interface ImplicitAccountResponse {
+  accountId: string;
+  name: string;
+  type: 'receivable' | 'payable';
+  isNew: boolean;
+}
+
 @Controller('/api/accounts')
 export class AccountController {
   @Inject()
@@ -214,6 +226,94 @@ export class AccountController {
       return {
         success: true,
         message: '删除成功'
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: (error as Error).message
+      };
+    }
+  }
+
+  /**
+   * 获取隐式账户列表（应收账款/应付账款）
+   */
+  @Get('/implicit')
+  async getImplicitAccounts(): Promise<IApiResponse<Account[]>> {
+    try {
+      const userId = this.ctx.state.user?.userId;
+      if (!userId) {
+        return {
+          success: false,
+          message: '请先登录'
+        };
+      }
+
+      const accounts = await this.accountService.getImplicitAccounts(userId);
+      return {
+        success: true,
+        data: accounts
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: (error as Error).message
+      };
+    }
+  }
+
+  /**
+   * 创建/获取隐式账户（应收/应付）
+   */
+  @Post('/implicit')
+  async createImplicitAccount(@Body() data: CreateImplicitAccountRequest): Promise<IApiResponse<ImplicitAccountResponse>> {
+    try {
+      const userId = this.ctx.state.user?.userId;
+      if (!userId) {
+        return {
+          success: false,
+          message: '请先登录'
+        };
+      }
+
+      if (!data.type || !data.counterparty) {
+        return {
+          success: false,
+          message: '请填写完整信息'
+        };
+      }
+
+      const result = await this.accountService.createImplicitAccount(userId, data.type, data.counterparty);
+      return {
+        success: true,
+        data: result
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: (error as Error).message
+      };
+    }
+  }
+
+  /**
+   * 获取借贷对方列表
+   */
+  @Get('/counterparties')
+  async getCounterparties(): Promise<IApiResponse<string[]>> {
+    try {
+      const userId = this.ctx.state.user?.userId;
+      if (!userId) {
+        return {
+          success: false,
+          message: '请先登录'
+        };
+      }
+
+      const counterparties = await this.accountService.getCounterparties(userId);
+      return {
+        success: true,
+        data: counterparties
       };
     } catch (error) {
       return {

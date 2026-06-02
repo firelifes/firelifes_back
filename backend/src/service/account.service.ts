@@ -158,10 +158,13 @@ const isEmojiIcon = (icon: string): boolean => {
 };
 
 /** 需要强制余额为负数的账户类型 */
-const NEGATIVE_BALANCE_TYPES: AccountType[] = ['liability', 'credit_card'];
+const NEGATIVE_BALANCE_TYPES: AccountType[] = ['liability', 'credit_card', 'payable'];
 
 /** 支持设为默认账户的类型 */
 const CAN_BE_DEFAULT_TYPES: AccountType[] = ['cash', 'liability', 'credit_card'];
+
+/** 隐式账户类型 */
+const IMPLICIT_ACCOUNT_TYPES: AccountType[] = ['receivable', 'payable'];
 
 @Provide()
 export class AccountService {
@@ -540,5 +543,104 @@ export class AccountService {
     }
 
     return transformAccounts(accounts) as any;
+  }
+
+  /**
+   * 获取用户的隐式账户列表（应收账款/应付账款）
+   */
+  async getImplicitAccounts(userId: number): Promise<Account[]> {
+    const accounts = await this.accountModel.find({
+      where: {
+        userId,
+        isDeleted: false,
+        isVisible: false
+      },
+      order: {
+        createdAt: 'ASC'
+      }
+    });
+    return transformAccounts(accounts) as any;
+  }
+
+  /**
+   * 创建/获取隐式账户（应收/应付）
+   * 如果已存在同名账户则返回已有账户
+   */
+  async createImplicitAccount(
+    userId: number,
+    type: 'receivable' | 'payable',
+    counterparty: string
+  ): Promise<{ accountId: string; name: string; type: 'receivable' | 'payable'; isNew: boolean }> {
+    const accountName = type === 'receivable' ? `应收-${counterparty}` : `应付-${counterparty}`;
+
+    // 检查是否已存在同名账户
+    const existingAccount = await this.accountModel.findOne({
+      where: {
+        userId,
+        name: accountName,
+        type,
+        isDeleted: false
+      }
+    });
+
+    if (existingAccount) {
+      return {
+        accountId: String(existingAccount.id),
+        name: existingAccount.name,
+        type,
+        isNew: false
+      };
+    }
+
+    // 创建新账户
+    const lastAccount = await this.accountModel.findOne({
+      where: { userId, isDeleted: false },
+      order: { order: 'DESC' }
+    });
+
+    const account = this.accountModel.create({
+      userId,
+      name: accountName,
+      icon: 'account-icon-loan',
+      type,
+      balance: type === 'payable' ? 0 : 0,
+      description: type === 'receivable' ? `${counterparty}欠我的钱` : `我欠${counterparty}的钱`,
+      isDefaultExpense: false,
+      isDefaultIncome: false,
+      order: (lastAccount?.order || 0) + 1,
+      isVisible: false,
+      isDeleted: false
+    });
+
+    const savedAccount = await this.accountModel.save(account);
+    return {
+      accountId: String(savedAccount.id),
+      name: savedAccount.name,
+      type,
+      isNew: true
+    };
+  }
+
+  /**
+   * 获取借贷对方列表（从隐式账户名称中提取）
+   */
+  async getCounterparties(userId: number): Promise<string[]> {
+    const accounts = await this.accountModel.find({
+      where: {
+        userId,
+        type: IMPLICIT_ACCOUNT_TYPES,
+        isDeleted: false
+      }
+    });
+
+    const counterparties = new Set<string>();
+    for (const account of accounts) {
+      const match = account.name.match(/^(应收|应付)-(.+)$/);
+      if (match && match[2]) {
+        counterparties.add(match[2]);
+      }
+    }
+
+    return Array.from(counterparties);
   }
 }

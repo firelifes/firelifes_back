@@ -42,3 +42,33 @@ export const deleteAccount = (id: string) => {
     method: 'DELETE'
   })
 }
+
+// 获取隐式账户列表（应收账款/应付账款）
+export const getImplicitAccounts = () => {
+  return request<Account[]>({
+    url: '/api/accounts/implicit',
+    method: 'GET'
+  })
+}
+
+// 创建/获取隐式账户（应收/应付）
+export const createImplicitAccount = (type: 'receivable' | 'payable', counterparty: string) => {
+  return request<{
+    accountId: string
+    name: string
+    type: 'receivable' | 'payable'
+    isNew: boolean
+  }>({
+    url: '/api/accounts/implicit',
+    method: 'POST',
+    data: { type, counterparty }
+  })
+}
+
+// 获取借贷对方列表
+export const getCounterparties = () => {
+  return request<string[]>({
+    url: '/api/accounts/counterparties',
+    method: 'GET'
+  })
+}

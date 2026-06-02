@@ -58,7 +58,7 @@ import type { Account } from '../../../types/account'
 import { getAccountIconClass } from '../../../types/account'
 
 const props = defineProps<{
-  filterType?: 'expense' | 'income' | 'transfer' | 'repayment'
+  filterType?: 'expense' | 'income' | 'transfer' | 'repayment' | 'repay-credit' | 'repay-loan' | 'lend' | 'borrow'
   filterRole?: 'from' | 'to'
   excludeAccountId?: string
   searchable?: boolean
@@ -120,6 +120,50 @@ const getFilteredAccounts = (
       } else {
         return allAccounts.filter(a =>
           !a.isDeleted && a.isVisible && a.type === 'liability'
+        )
+      }
+
+    case 'repay-credit':
+      if (role === 'from') {
+        return allAccounts.filter(a =>
+          !a.isDeleted && a.isVisible && ['cash', 'investment', 'fixed_asset', 'depreciable_asset'].includes(a.type)
+        )
+      } else {
+        return allAccounts.filter(a =>
+          !a.isDeleted && a.isVisible && a.type === 'credit_card'
+        )
+      }
+
+    case 'repay-loan':
+      if (role === 'from') {
+        return allAccounts.filter(a =>
+          !a.isDeleted && a.isVisible && ['cash', 'investment', 'fixed_asset', 'depreciable_asset'].includes(a.type)
+        )
+      } else {
+        return allAccounts.filter(a =>
+          !a.isDeleted && a.isVisible && a.type === 'liability'
+        )
+      }
+
+    case 'lend':
+      if (role === 'from') {
+        return allAccounts.filter(a =>
+          !a.isDeleted && a.isVisible && ['cash', 'investment', 'fixed_asset', 'depreciable_asset'].includes(a.type)
+        )
+      } else {
+        return allAccounts.filter(a =>
+          !a.isDeleted && a.isVisible && a.type === 'receivable'
+        )
+      }
+
+    case 'borrow':
+      if (role === 'from') {
+        return allAccounts.filter(a =>
+          !a.isDeleted && a.isVisible && a.type === 'payable'
+        )
+      } else {
+        return allAccounts.filter(a =>
+          !a.isDeleted && a.isVisible && ['cash', 'investment', 'fixed_asset', 'depreciable_asset'].includes(a.type)
         )
       }
 

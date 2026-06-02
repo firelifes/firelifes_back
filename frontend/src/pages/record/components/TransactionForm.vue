@@ -14,7 +14,7 @@
       </view>
     </view>
 
-    <view class="account-area" v-if="isTransfer || isRepayment">
+    <view class="account-area" v-if="isTransfer || isRepayment || transferOperation === 'transfer'">
       <view class="account-row" @tap="openFromAccount">
         <text class="account-label">{{ isRepayment ? '还款账户' : '转出账户' }}</text>
         <view class="account-value" v-if="fromAccount">
@@ -34,6 +34,70 @@
         <text class="account-arrow">▼</text>
       </view>
     </view>
+
+    <view class="account-area" v-if="transferOperation === 'repay-credit'">
+      <view class="account-row" @tap="openFromAccount">
+        <text class="account-label">还款账户</text>
+        <view class="account-value" v-if="fromAccount">
+          <text class="account-value-icon">{{ fromAccount.icon }}</text>
+          <text class="account-value-name">{{ fromAccount.name }}</text>
+        </view>
+        <text class="account-value placeholder" v-else>点击选择</text>
+        <text class="account-arrow">▼</text>
+      </view>
+      <view class="account-row" @tap="openToAccount">
+        <text class="account-label">信用卡账户</text>
+        <view class="account-value" v-if="toAccount">
+          <text class="account-value-icon">{{ toAccount.icon }}</text>
+          <text class="account-value-name">{{ toAccount.name }}</text>
+        </view>
+        <text class="account-value placeholder" v-else>点击选择</text>
+        <text class="account-arrow">▼</text>
+      </view>
+    </view>
+
+    <view class="account-area" v-if="transferOperation === 'repay-loan'">
+      <view class="account-row" @tap="openFromAccount">
+        <text class="account-label">还款账户</text>
+        <view class="account-value" v-if="fromAccount">
+          <text class="account-value-icon">{{ fromAccount.icon }}</text>
+          <text class="account-value-name">{{ fromAccount.name }}</text>
+        </view>
+        <text class="account-value placeholder" v-else>点击选择</text>
+        <text class="account-arrow">▼</text>
+      </view>
+      <view class="account-row" @tap="openToAccount">
+        <text class="account-label">贷款账户</text>
+        <view class="account-value" v-if="toAccount">
+          <text class="account-value-icon">{{ toAccount.icon }}</text>
+          <text class="account-value-name">{{ toAccount.name }}</text>
+        </view>
+        <text class="account-value placeholder" v-else>点击选择</text>
+        <text class="account-arrow">▼</text>
+      </view>
+    </view>
+
+    <BorrowLendForm 
+      v-if="transferOperation === 'lend' || transferOperation === 'borrow'"
+      :type="transferOperation === 'lend' ? 'lend' : 'borrow'"
+      :accounts="[]"
+      :implicitAccounts="implicitAccounts"
+      :counterparties="counterparties"
+      @update:direction="(val) => emit('update:direction', val)"
+      @update:counterparty="(val) => emit('update:counterparty', val)"
+      @update:account="(val) => emit('update:fromAccount', val)"
+      @update:implicitAccount="(val) => emit('update:implicitAccount', val)"
+    />
+
+    <RepaymentSplitForm
+      v-if="transferOperation === 'repay-loan'"
+      :totalAmount="parseFloat(displayAmount) || 0"
+      :loanAccount="toAccount"
+      :interestCategories="[]"
+      @update:principal="(val) => emit('update:principal', val)"
+      @update:interest="(val) => emit('update:interest', val)"
+      @update:interestTypeId="(val) => emit('update:interestTypeId', val)"
+    />
 
     <view class="account-area" v-else>
       <view class="account-row single" @tap="openAccount">
@@ -116,10 +180,15 @@ import type { Account } from '../../../types/account'
 import type { DepreciatingAssetData } from '../../../types/asset'
 import AccountSelectorPopup from './AccountSelectorPopup.vue'
 import AssetFields from './AssetFields.vue'
+import RepaymentSplitForm from './RepaymentSplitForm.vue'
+import BorrowLendForm from './BorrowLendForm.vue'
+import { getImplicitAccounts, getCounterparties } from '../../../api/account'
+
+type TransferOperationType = 'transfer' | 'repay-credit' | 'repay-loan' | 'lend' | 'borrow'
 
 const props = defineProps<{
   date: string
-  transactionType: 'income' | 'expense'
+  transactionType: 'income' | 'expense' | 'transfer'
   categoryName?: string
   isTransfer?: boolean
   isRepayment?: boolean
@@ -130,6 +199,7 @@ const props = defineProps<{
   initialAmount?: string
   initialRemark?: string
   initialAssetData?: DepreciatingAssetData | null
+  transferOperation?: TransferOperationType | null
 }>()
 
 const emit = defineEmits<{
@@ -140,6 +210,12 @@ const emit = defineEmits<{
   (e: 'update:toAccount', account: Account | null): void
   (e: 'update:selectedAccount', account: Account | null): void
   (e: 'update:assetData', data: DepreciatingAssetData | null): void
+  (e: 'update:principal', value: number): void
+  (e: 'update:interest', value: number): void
+  (e: 'update:interestTypeId', value: number): void
+  (e: 'update:counterparty', value: string): void
+  (e: 'update:direction', value: 'out' | 'in'): void
+  (e: 'update:implicitAccount', account: Account | null): void
   (e: 'complete'): void
   (e: 'toggleDatePicker'): void
 }>()
@@ -150,10 +226,33 @@ const firstOperand = ref<string>('')
 const operator = ref<string>('')
 const waitingForSecondOperand = ref(false)
 const showAssetFields = ref(false)
+const implicitAccounts = ref<Account[]>([])
+const counterparties = ref<string[]>([])
 
 const accountPopupRef = ref<InstanceType<typeof AccountSelectorPopup> | null>(null)
 const fromAccountPopupRef = ref<InstanceType<typeof AccountSelectorPopup> | null>(null)
 const toAccountPopupRef = ref<InstanceType<typeof AccountSelectorPopup> | null>(null)
+
+const loadImplicitAccounts = async () => {
+  const res = await getImplicitAccounts()
+  if (res.success && res.data) {
+    implicitAccounts.value = res.data
+  }
+}
+
+const loadCounterparties = async () => {
+  const res = await getCounterparties()
+  if (res.success && res.data) {
+    counterparties.value = res.data
+  }
+}
+
+watch(() => props.transferOperation, async (op) => {
+  if (op === 'lend' || op === 'borrow') {
+    await loadImplicitAccounts()
+    await loadCounterparties()
+  }
+})
 
 const openAccount = () => {
   accountPopupRef.value?.open(props.selectedAccount?.id)

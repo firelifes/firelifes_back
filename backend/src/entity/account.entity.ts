@@ -1,6 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn, Index, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-export type AccountType = 'cash' | 'investment' | 'fixed_asset' | 'depreciable_asset' | 'liability' | 'credit_card';
+export type AccountType = 'cash' | 'investment' | 'fixed_asset' | 'depreciable_asset' | 'liability' | 'credit_card' | 'receivable' | 'payable';
+
+export type ImplicitAccountType = 'receivable' | 'payable';
 
 export type RepaymentMethod = 'equal_principal_interest' | 'equal_principal' | 'interest_first' | 'flexible';
 

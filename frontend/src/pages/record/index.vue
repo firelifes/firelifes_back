@@ -6,6 +6,8 @@
           <text class="type-btn" :class="{ active: transactionType === 'expense' }" @tap="switchType('expense')">支出</text>
           <text class="type-divider">|</text>
           <text class="type-btn" :class="{ active: transactionType === 'income' }" @tap="switchType('income')">收入</text>
+          <text class="type-divider">|</text>
+          <text class="type-btn" :class="{ active: transactionType === 'transfer' }" @tap="switchType('transfer')">转账</text>
         </view>
         <text class="cancel-btn" @tap="handleCancel">取消</text>
       </view>
@@ -17,7 +19,7 @@
         <text class="loading-text">加载中...</text>
       </view>
       <template v-else>
-        <view v-if="showDraftBanner" class="draft-banner">
+        <view v-if="showDraftBanner && transactionType !== 'transfer'" class="draft-banner">
           <view class="draft-banner-inner">
             <view class="draft-icon category-icon-svg category-icon-zhangdan"></view>
             <text class="draft-text">有未完成的记账草稿</text>
@@ -31,7 +33,8 @@
             </view>
           </view>
         </view>
-        <CategorySelector ref="categorySelectorRef" :transactionType="transactionType" :selectedCategoryId="selectedCategory?.id || 0" @select="selectCategory" />
+        <CategorySelector v-if="transactionType !== 'transfer'" ref="categorySelectorRef" :transactionType="transactionType === 'expense' ? 'expense' : 'income'" :selectedCategoryId="selectedCategory?.id || 0" @select="selectCategory" />
+        <TransferOperations v-else @select="handleTransferOperation" />
       </template>
     </view>
 
@@ -84,8 +87,9 @@ import { onShow } from '@dcloudio/uni-app'
 import CategorySelector from './components/CategorySelector.vue'
 import TransactionForm from './components/TransactionForm.vue'
 import DatePicker from './components/DatePicker.vue'
+import TransferOperations from './components/TransferOperations.vue'
 import { recordApi } from '../../api/record'
-import { getAccountList } from '../../api/account'
+import { getAccountList, getImplicitAccounts, getCounterparties } from '../../api/account'
 import type { Account } from '../../types/account'
 import type { DepreciatingAssetData } from '../../types/asset'
 import type { RecordType, CreateRecordData } from '../../api/record'
@@ -94,7 +98,11 @@ import { draft, type RecordDraft } from '../../utils/draft'
 import { saveAccountMemory, findAccountByMemory } from '../../utils/record-memory'
 import type { RecordData } from '../../api/record'
 
-const transactionType = ref<'income' | 'expense'>('expense')
+type TransferOperationType = 'transfer' | 'repay-credit' | 'repay-loan' | 'lend' | 'borrow'
+
+const transactionType = ref<'income' | 'expense' | 'transfer'>('expense')
+const currentTransferOperation = ref<TransferOperationType | null>(null)
+const counterparties = ref<string[]>([])
 const selectedCategory = ref<{ id: number; name: string; icon: string } | null>(null)
 const displayAmount = ref('')
 const remark = ref('')
@@ -287,12 +295,66 @@ const resetForm = () => {
   categorySelectorRef.value?.reload?.()
 }
 
-const switchType = (type: 'income' | 'expense') => {
+const switchType = (type: 'income' | 'expense' | 'transfer') => {
   transactionType.value = type
   selectedCategory.value = null
   selectedAccount.value = null
   fromAccount.value = null
   toAccount.value = null
+  currentTransferOperation.value = null
+}
+
+const handleTransferOperation = async (operation: TransferOperationType) => {
+  currentTransferOperation.value = operation
+  
+  const res = await getAccountList()
+  if (res.success && res.data) {
+    const accounts = res.data.filter(a => !a.isDeleted && a.isVisible)
+    
+    switch (operation) {
+      case 'transfer': {
+        const nonLiability = accounts.filter(a => a.type !== 'liability')
+        fromAccount.value = nonLiability.find(a => a.isDefaultExpense) || nonLiability[0] || null
+        toAccount.value = accounts.find(a => a.id !== fromAccount.value?.id) || null
+        break
+      }
+      case 'repay-credit': {
+        const assetAccounts = accounts.filter(a => ['cash', 'investment', 'fixed_asset', 'depreciable_asset'].includes(a.type))
+        const creditAccounts = accounts.filter(a => a.type === 'credit_card')
+        fromAccount.value = assetAccounts.find(a => a.isDefaultExpense) || assetAccounts[0] || null
+        toAccount.value = creditAccounts[0] || null
+        if (!creditAccounts.length) {
+          uni.showToast({ title: '请先创建信用卡账户', icon: 'none' })
+          return
+        }
+        break
+      }
+      case 'repay-loan': {
+        const assetAccounts = accounts.filter(a => ['cash', 'investment', 'fixed_asset', 'depreciable_asset'].includes(a.type))
+        const loanAccounts = accounts.filter(a => a.type === 'liability')
+        fromAccount.value = assetAccounts.find(a => a.isDefaultExpense) || assetAccounts[0] || null
+        toAccount.value = loanAccounts[0] || null
+        if (!loanAccounts.length) {
+          uni.showToast({ title: '请先创建贷款账户', icon: 'none' })
+          return
+        }
+        break
+      }
+      case 'lend':
+      case 'borrow': {
+        const assetAccounts = accounts.filter(a => ['cash', 'investment', 'fixed_asset', 'depreciable_asset'].includes(a.type))
+        fromAccount.value = assetAccounts.find(a => a.isDefaultExpense) || assetAccounts[0] || null
+        
+        const counterRes = await getCounterparties()
+        if (counterRes.success && counterRes.data) {
+          counterparties.value = counterRes.data
+        }
+        break
+      }
+    }
+  }
+  
+  showTransactionForm.value = true
 }
 
 const saveDraft = () => {

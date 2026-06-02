@@ -1,5 +1,8 @@
 // 账户类型枚举
-export type AccountType = 'cash' | 'investment' | 'fixed_asset' | 'depreciable_asset' | 'liability' | 'credit_card';
+export type AccountType = 'cash' | 'investment' | 'fixed_asset' | 'depreciable_asset' | 'liability' | 'credit_card' | 'receivable' | 'payable';
+
+// 隐式账户类型
+export type ImplicitAccountType = 'receivable' | 'payable';
 
 // 还款方式类型
 export type RepaymentMethod = 'equal_principal_interest' | 'equal_principal' | 'interest_first' | 'flexible';
@@ -117,7 +120,7 @@ export const DEFAULT_ACCOUNTS: Omit<Account, 'id' | 'userId' | 'createdAt' | 'up
   }
 ]
 
-// 账户类型选项
+// 账户类型选项（不包含隐式账户）
 export const ACCOUNT_TYPE_OPTIONS = [
   { value: 'cash' as AccountType, label: '现金类' },
   { value: 'investment' as AccountType, label: '投资类' },
@@ -125,6 +128,13 @@ export const ACCOUNT_TYPE_OPTIONS = [
   { value: 'depreciable_asset' as AccountType, label: '折旧资产类' },
   { value: 'liability' as AccountType, label: '负债类' },
   { value: 'credit_card' as AccountType, label: '信用卡类' },
+]
+
+// 包含隐式账户的类型选项
+export const ALL_ACCOUNT_TYPE_OPTIONS = [
+  ...ACCOUNT_TYPE_OPTIONS,
+  { value: 'receivable' as AccountType, label: '应收账款' },
+  { value: 'payable' as AccountType, label: '应付账款' },
 ]
 
 // 预设图标 (SVG 图标类名，与 category-icons.css 中的 .account-icon-* 对应)
@@ -208,6 +218,8 @@ const DEFAULT_ICON_BY_TYPE: Record<AccountType, string> = {
   depreciable_asset: 'account-icon-mobile',
   liability: 'account-icon-loan',
   credit_card: 'account-icon-credit-card',
+  receivable: 'account-icon-loan',
+  payable: 'account-icon-loan',
 }
 
 /**
