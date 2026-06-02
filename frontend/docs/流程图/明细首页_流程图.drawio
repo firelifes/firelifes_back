@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" version="21.0.0">
+  <diagram id="fire-detail-flow" name="FIRE生活家明细首页流程">
+    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="start" value="进入明细/首页" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="400" y="40" width="180" height="44" as="geometry" />
+        </mxCell>
+
+        <mxCell id="step1" value="加载本月收支总览" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E88E5;strokeColor=#1E88E5;fontColor=#FFFFFF;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="400" y="140" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="overview_detail" value="日期、收入小计、支出小计" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#BBDEFB;fontColor=#0D47A1;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="660" y="148" width="170" height="34" as="geometry" />
+        </mxCell>
+
+        <mxCell id="step2" value="加载收支流水列表" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E88E5;strokeColor=#1E88E5;fontColor=#FFFFFF;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="400" y="240" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="list_detail1" value="按日期分组显示" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#BBDEFB;fontColor=#0D47A1;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="660" y="228" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="list_detail2" value="分类图标+备注+金额" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#BBDEFB;fontColor=#0D47A1;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="660" y="264" width="140" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dec1" value="用户操作？" style="rhombus;whiteSpace=wrap;html=1;fillColor=#64B5F6;strokeColor=#64B5F6;fontColor=#0D47A1;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="415" y="350" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        
+        <mxCell id="op_switch" value="切换月份" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E88E5;strokeColor=#1E88E5;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="660" y="350" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="switch_detail" value="月份切换选择器" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#BBDEFB;fontColor=#0D47A1;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="860" y="340" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="switch_reload" value="重新加载该月数据" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E88E5;strokeColor=#1E88E5;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="660" y="430" width="150" height="40" as="geometry" />
+        </mxCell>
+
+        
+        <mxCell id="op_tap" value="点击某条流水记录" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E88E5;strokeColor=#1E88E5;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="150" y="350" width="150" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dec2" value="记录操作？" style="rhombus;whiteSpace=wrap;html=1;fillColor=#64B5F6;strokeColor=#64B5F6;fontColor=#0D47A1;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="140" y="450" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        
+        <mxCell id="op_edit" value="编辑记录" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E88E5;strokeColor=#1E88E5;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="50" y="580" width="110" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="edit_detail" value="修改分类/金额/备注&amp;#xa;修改日期/账户" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#BBDEFB;fontColor=#0D47A1;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="30" y="660" width="150" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="edit_save" value="保存修改" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E88E5;strokeColor=#1E88E5;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="50" y="750" width="110" height="40" as="geometry" />
+        </mxCell>
+
+        
+        <mxCell id="op_delete" value="删除记录" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E88E5;strokeColor=#1E88E5;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="230" y="580" width="110" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="dec3" value="确认删除？" style="rhombus;whiteSpace=wrap;html=1;fillColor=#64B5F6;strokeColor=#64B5F6;fontColor=#0D47A1;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="220" y="680" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="delete_confirm" value="确认删除" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#BBDEFB;fontColor=#0D47A1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="230" y="800" width="110" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="delete_cancel" value="取消" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#BBDEFB;fontColor=#0D47A1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="400" y="690" width="80" height="36" as="geometry" />
+        </mxCell>
+
+        
+        <mxCell id="op_add" value="点击记账(+)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E88E5;strokeColor=#1E88E5;fontColor=#FFFFFF;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="415" y="490" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="go_accounting" value="跳转记账页面" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#BBDEFB;fontColor=#0D47A1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="660" y="495" width="120" height="36" as="geometry" />
+        </mxCell>
+
+        
+        <mxCell id="refresh1" value="刷新列表与总览" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E88E5;strokeColor=#1E88E5;fontColor=#FFFFFF;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="400" y="900" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dec4" value="继续操作？" style="rhombus;whiteSpace=wrap;html=1;fillColor=#64B5F6;strokeColor=#64B5F6;fontColor=#0D47A1;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="415" y="1010" width="150" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="end" value="退出页面" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="420" y="1140" width="140" height="44" as="geometry" />
+        </mxCell>
+
+        <mxCell id="loop_back" value="返回操作" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#BBDEFB;fontColor=#0D47A1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="660" y="1025" width="100" height="36" as="geometry" />
+        </mxCell>
+
+        
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=2;" edge="1" parent="1" source="start" target="step1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#BBDEFB;strokeWidth=1;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="step1" target="overview_detail">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=2;" edge="1" parent="1" source="step1" target="step2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#BBDEFB;strokeWidth=1;dashed=1;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="step2" target="list_detail1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#BBDEFB;strokeWidth=1;dashed=1;exitX=1;exitY=0.7;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="step2" target="list_detail2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=2;" edge="1" parent="1" source="step2" target="dec1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        
+        <mxCell id="e7" value="切换月份" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontColor=#0D47A1;fontSize=11;" edge="1" parent="1" source="dec1" target="op_switch">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#BBDEFB;strokeWidth=1;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="op_switch" target="switch_detail">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="op_switch" target="switch_reload">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e8" value="点击记录" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontColor=#0D47A1;fontSize=11;" edge="1" parent="1" source="dec1" target="op_tap">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="op_tap" target="dec2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e9" value="记账" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontColor=#0D47A1;fontSize=11;" edge="1" parent="1" source="dec1" target="op_add">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#BBDEFB;strokeWidth=1;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="op_add" target="go_accounting">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        
+        <mxCell id="e10" value="编辑" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontColor=#0D47A1;fontSize=11;" edge="1" parent="1" source="dec2" target="op_edit">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="50" y="485" />
+              <mxPoint x="50" y="555" />
+              <mxPoint x="105" y="555" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e10a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#BBDEFB;strokeWidth=1;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="op_edit" target="edit_detail">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="edit_detail" target="edit_save">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e11" value="删除" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontColor=#0D47A1;fontSize=11;" edge="1" parent="1" source="dec2" target="op_delete">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="340" y="485" />
+              <mxPoint x="340" y="555" />
+              <mxPoint x="285" y="555" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e11a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="op_delete" target="dec3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11b" value="确认" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontColor=#0D47A1;fontSize=11;" edge="1" parent="1" source="dec3" target="delete_confirm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11c" value="取消" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontColor=#0D47A1;fontSize=11;" edge="1" parent="1" source="dec3" target="delete_cancel">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11d" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#BBDEFB;strokeWidth=1;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="delete_cancel" target="dec2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="380" y="708" />
+              <mxPoint x="380" y="520" />
+              <mxPoint x="340" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        
+        <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="edit_save" target="refresh1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="105" y="870" />
+              <mxPoint x="105" y="880" />
+              <mxPoint x="490" y="880" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        
+        <mxCell id="e13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="delete_confirm" target="refresh1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="285" y="870" />
+              <mxPoint x="285" y="880" />
+              <mxPoint x="490" y="880" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        
+        <mxCell id="e14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="switch_reload" target="refresh1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="735" y="510" />
+              <mxPoint x="810" y="510" />
+              <mxPoint x="810" y="880" />
+              <mxPoint x="490" y="880" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        
+        <mxCell id="e15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=2;" edge="1" parent="1" source="refresh1" target="dec4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        
+        <mxCell id="e16" value="否" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=2;fontColor=#0D47A1;fontSize=11;" edge="1" parent="1" source="dec4" target="end">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        
+        <mxCell id="e17" value="是" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontColor=#0D47A1;fontSize=11;" edge="1" parent="1" source="dec4" target="loop_back">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        
+        <mxCell id="e18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="loop_back" target="dec1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="710" y="990" />
+              <mxPoint x="810" y="990" />
+              <mxPoint x="810" y="330" />
+              <mxPoint x="565" y="330" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

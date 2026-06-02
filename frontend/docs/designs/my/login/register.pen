@@ -1,0 +1,675 @@
+{
+  "version": "2.11",
+  "children": [
+    {
+      "type": "frame",
+      "id": "H3DTMQ",
+      "x": 0,
+      "y": 0,
+      "name": "注册页面",
+      "clip": true,
+      "width": 375,
+      "height": 812,
+      "fill": "#F5F5F5",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "k9y9uG",
+          "name": "NavBar",
+          "width": "fill_container",
+          "height": 88,
+          "gap": 12,
+          "padding": [
+            44,
+            16,
+            0,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "vWw6x",
+              "name": "返回按钮",
+              "fill": "#333333",
+              "content": "←",
+              "fontFamily": "Inter",
+              "fontSize": 20
+            },
+            {
+              "type": "text",
+              "id": "P0uj0e",
+              "name": "导航标题",
+              "fill": "#333333",
+              "content": "注册账号",
+              "fontFamily": "Inter",
+              "fontSize": 18,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Z0DfM",
+          "name": "卡片容器",
+          "width": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            20,
+            16,
+            0,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "iBQMc",
+              "name": "表单卡片",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 12,
+              "layout": "vertical",
+              "padding": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "YTmDG",
+                  "name": "输入行",
+                  "width": "fill_container",
+                  "height": 48,
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "j7cfIn",
+                      "fill": "#333333",
+                      "content": "手机号",
+                      "fontFamily": "Inter",
+                      "fontSize": 15
+                    },
+                    {
+                      "type": "text",
+                      "id": "Fo2Qc",
+                      "fill": "#999999",
+                      "content": "请输入手机号",
+                      "fontFamily": "Inter",
+                      "fontSize": 15
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "isyJZ",
+                  "name": "分割线",
+                  "width": "fill_container",
+                  "height": 1,
+                  "fill": "#E5E5E5"
+                },
+                {
+                  "type": "frame",
+                  "id": "SF0Nx",
+                  "name": "输入行",
+                  "width": "fill_container",
+                  "height": 48,
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Z2jYbc",
+                      "fill": "#333333",
+                      "content": "验证码",
+                      "fontFamily": "Inter",
+                      "fontSize": 15
+                    },
+                    {
+                      "type": "text",
+                      "id": "V2MGJ",
+                      "fill": "#999999",
+                      "content": "请输入验证码",
+                      "fontFamily": "Inter",
+                      "fontSize": 15
+                    },
+                    {
+                      "type": "frame",
+                      "id": "c4l4kW",
+                      "name": "发送验证码",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "#00BFFF"
+                      },
+                      "padding": [
+                        6,
+                        12
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "AmSQT",
+                          "fill": "#00BFFF",
+                          "content": "获取验证码",
+                          "fontFamily": "Inter",
+                          "fontSize": 13
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ewkai",
+                  "name": "分割线",
+                  "width": "fill_container",
+                  "height": 1,
+                  "fill": "#E5E5E5"
+                },
+                {
+                  "type": "frame",
+                  "id": "hSNwR",
+                  "name": "输入行",
+                  "width": "fill_container",
+                  "height": 48,
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "v8Nyam",
+                      "fill": "#333333",
+                      "content": "设置密码",
+                      "fontFamily": "Inter",
+                      "fontSize": 15
+                    },
+                    {
+                      "type": "text",
+                      "id": "AohCu",
+                      "fill": "#999999",
+                      "content": "(6-20位)",
+                      "fontFamily": "Inter",
+                      "fontSize": 15
+                    },
+                    {
+                      "type": "text",
+                      "id": "ewro2",
+                      "name": "显示按钮",
+                      "fill": "#999999",
+                      "content": "显示",
+                      "fontFamily": "Inter",
+                      "fontSize": 13
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "b6ltp",
+                  "name": "分割线",
+                  "width": "fill_container",
+                  "height": 1,
+                  "fill": "#E5E5E5"
+                },
+                {
+                  "type": "frame",
+                  "id": "w8Na1",
+                  "name": "输入行",
+                  "width": "fill_container",
+                  "height": 48,
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "kqCDX",
+                      "fill": "#333333",
+                      "content": "确认密码",
+                      "fontFamily": "Inter",
+                      "fontSize": 15
+                    },
+                    {
+                      "type": "text",
+                      "id": "WXogG",
+                      "fill": "#999999",
+                      "content": "请再次输入密码",
+                      "fontFamily": "Inter",
+                      "fontSize": 15
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Z53xtx",
+                  "name": "分割线",
+                  "width": "fill_container",
+                  "height": 1,
+                  "fill": "#E5E5E5"
+                },
+                {
+                  "type": "frame",
+                  "id": "E1uJQ",
+                  "name": "输入行",
+                  "width": "fill_container",
+                  "height": 48,
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "UxcaB",
+                      "fill": "#333333",
+                      "content": "昵称",
+                      "fontFamily": "Inter",
+                      "fontSize": 15
+                    },
+                    {
+                      "type": "text",
+                      "id": "VtKGO",
+                      "fill": "#999999",
+                      "content": "选填",
+                      "fontFamily": "Inter",
+                      "fontSize": 15
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "tthjD",
+                  "name": "分割线",
+                  "width": "fill_container",
+                  "height": 1,
+                  "fill": "#E5E5E5"
+                },
+                {
+                  "type": "frame",
+                  "id": "GXOZ0",
+                  "width": "fill_container",
+                  "gap": 6,
+                  "padding": [
+                    16,
+                    0,
+                    0,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "Q0Usw4",
+                      "name": "协议勾选框",
+                      "width": 16,
+                      "height": 16,
+                      "stroke": {
+                        "thickness": 1.5,
+                        "fill": "#999999"
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "vaN7j",
+                      "fill": "#666666",
+                      "content": "我已阅读并同意",
+                      "fontFamily": "Inter",
+                      "fontSize": 12
+                    },
+                    {
+                      "type": "text",
+                      "id": "WGOYm",
+                      "name": "用户协议链接",
+                      "fill": "#00BFFF",
+                      "content": "《用户协议》",
+                      "fontFamily": "Inter",
+                      "fontSize": 12
+                    },
+                    {
+                      "type": "text",
+                      "id": "n4fKE",
+                      "fill": "#666666",
+                      "content": "和",
+                      "fontFamily": "Inter",
+                      "fontSize": 12
+                    },
+                    {
+                      "type": "text",
+                      "id": "h9sMa",
+                      "name": "隐私政策链接",
+                      "fill": "#00BFFF",
+                      "content": "《隐私政策》",
+                      "fontFamily": "Inter",
+                      "fontSize": 12
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "OfjR0",
+                  "name": "注册按钮",
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#CCCCCC",
+                  "cornerRadius": 24,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "p2hUeA",
+                      "fill": "#FFFFFF",
+                      "content": "注  册",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "uY8L4",
+                  "width": "fill_container",
+                  "height": 24
+                },
+                {
+                  "type": "text",
+                  "id": "E3ZSqQ",
+                  "fill": "#00BFFF",
+                  "content": "已有账号？立即登录",
+                  "fontFamily": "Inter",
+                  "fontSize": 13
+                },
+                {
+                  "type": "frame",
+                  "id": "XVfi2",
+                  "width": "fill_container",
+                  "height": 20
+                },
+                {
+                  "type": "frame",
+                  "id": "JnVnv",
+                  "width": "fill_container",
+                  "height": 20,
+                  "gap": 10,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "jB2N5",
+                      "width": 60,
+                      "height": 1,
+                      "fill": "#E5E5E5"
+                    },
+                    {
+                      "type": "text",
+                      "id": "xP8pE",
+                      "fill": "#999999",
+                      "content": "或",
+                      "fontFamily": "Inter",
+                      "fontSize": 13
+                    },
+                    {
+                      "type": "frame",
+                      "id": "uECXD",
+                      "width": 60,
+                      "height": 1,
+                      "fill": "#E5E5E5"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "g9g7L",
+                  "width": "fill_container",
+                  "height": 16
+                },
+                {
+                  "type": "frame",
+                  "id": "MH2Tb",
+                  "name": "微信注册按钮",
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#07C160",
+                  "cornerRadius": 24,
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "t983r",
+                      "name": "微信图标",
+                      "fill": "#FFFFFF",
+                      "width": 20,
+                      "height": 20
+                    },
+                    {
+                      "type": "text",
+                      "id": "iJcXA",
+                      "fill": "#FFFFFF",
+                      "content": "微信一键注册",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "YDT77",
+      "x": 410,
+      "y": 0,
+      "name": "协议弹窗页",
+      "clip": true,
+      "width": 375,
+      "height": 812,
+      "fill": "#F5F5F5",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "RnTWG",
+          "x": 0,
+          "y": 0,
+          "name": "蒙层",
+          "width": 375,
+          "height": 812,
+          "fill": "#00000080"
+        },
+        {
+          "type": "frame",
+          "id": "nXsN1",
+          "x": 0,
+          "y": 265,
+          "name": "协议弹窗Sheet",
+          "width": 375,
+          "fill": "#FFFFFF",
+          "cornerRadius": [
+            16,
+            16,
+            0,
+            0
+          ],
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "FTSj4",
+              "width": "fill_container",
+              "height": 52,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "mr4jZ",
+                  "fill": "#333333",
+                  "content": "用户协议",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "NSbRy",
+              "width": "fill_container",
+              "height": 1,
+              "fill": "#E5E5E5"
+            },
+            {
+              "type": "frame",
+              "id": "flknr",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "padding": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Ates0",
+                  "fill": "#333333",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "欢迎使用本应用！请您仔细阅读以下条款。",
+                  "fontFamily": "Inter",
+                  "fontSize": 14
+                },
+                {
+                  "type": "text",
+                  "id": "BQwmd",
+                  "fill": "#333333",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "一、总则",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "rSY2I",
+                  "fill": "#666666",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "1.1 本协议是您与本应用之间关于使用本应用服务所订立的协议。",
+                  "fontFamily": "Inter",
+                  "fontSize": 14
+                },
+                {
+                  "type": "text",
+                  "id": "hizkc",
+                  "fill": "#666666",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "1.2 您在使用本应用服务时，应当遵守中华人民共和国相关法律法规。",
+                  "fontFamily": "Inter",
+                  "fontSize": 14
+                },
+                {
+                  "type": "text",
+                  "id": "Wzp7K",
+                  "fill": "#333333",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "二、账号注册与使用",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "hhe3h",
+                  "fill": "#666666",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "2.1 您在注册时应提供真实、准确、完整的个人信息。",
+                  "fontFamily": "Inter",
+                  "fontSize": 14
+                },
+                {
+                  "type": "text",
+                  "id": "KvjHy",
+                  "fill": "#666666",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "2.2 您应对您的账号安全负责，妥善保管账号密码。",
+                  "fontFamily": "Inter",
+                  "fontSize": 14
+                },
+                {
+                  "type": "text",
+                  "id": "M87A2D",
+                  "fill": "#333333",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "三、用户行为规范",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "TZl5s",
+                  "fill": "#666666",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "3.1 禁止发布违法信息，禁止侵犯他人合法权益。",
+                  "fontFamily": "Inter",
+                  "fontSize": 14
+                },
+                {
+                  "type": "text",
+                  "id": "tVE2F",
+                  "fill": "#333333",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "四、隐私保护",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "R1DX7",
+                  "fill": "#666666",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "4.1 我们重视您的隐私保护，详情请参阅隐私政策。",
+                  "fontFamily": "Inter",
+                  "fontSize": 14
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ZBklI",
+              "width": "fill_container",
+              "height": 60,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "vGRVX",
+                  "fill": "#00BFFF",
+                  "content": "关闭",
+                  "fontFamily": "Inter",
+                  "fontSize": 15
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

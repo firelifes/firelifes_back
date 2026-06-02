@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxGraphModel dx="1500" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1000" pageHeight="1200" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    
+    
+    <mxCell id="title" value="预算设置流程" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#FF8F00;" vertex="1" parent="1">
+      <mxGeometry x="330" y="50" width="300" height="40" as="geometry" />
+    </mxCell>
+    
+    
+    <mxCell id="start" value="进入发现页" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="710" y="50" width="120" height="40" as="geometry" />
+    </mxCell>
+    
+    
+    <mxCell id="step1" value="进入预算管理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFC107;" vertex="1" parent="1">
+      <mxGeometry x="400" y="160" width="160" height="50" as="geometry" />
+    </mxCell>
+    
+    
+    <mxCell id="dec1" value="已有预算？" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFECB3;strokeColor=#FFD54F;" vertex="1" parent="1">
+      <mxGeometry x="400" y="245" width="160" height="70" as="geometry" />
+    </mxCell>
+    
+    
+    <mxCell id="view_budget" value="查看当前预算" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFC107;" vertex="1" parent="1">
+      <mxGeometry x="240" y="255" width="120" height="50" as="geometry" />
+    </mxCell>
+    
+    
+    <mxCell id="new_budget" value="新建预算" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFC107;" vertex="1" parent="1">
+      <mxGeometry x="615" y="255" width="120" height="50" as="geometry" />
+    </mxCell>
+    
+    
+    <mxCell id="step2" value="设置预算周期" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFC107;" vertex="1" parent="1">
+      <mxGeometry x="400" y="367" width="160" height="50" as="geometry" />
+    </mxCell>
+    
+    
+    <mxCell id="period_opts" value="每周|每月|每年" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#FFECB3;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="625" y="367" width="100" height="50" as="geometry" />
+    </mxCell>
+    
+    
+    <mxCell id="step3" value="设置预算金额" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFC107;" vertex="1" parent="1">
+      <mxGeometry x="400" y="470" width="160" height="50" as="geometry" />
+    </mxCell>
+    
+    
+    <mxCell id="step4" value="设置分类预算（可选）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFC107;" vertex="1" parent="1">
+      <mxGeometry x="400" y="567" width="160" height="50" as="geometry" />
+    </mxCell>
+    
+    
+    <mxCell id="cate_budget" value="餐饮:2000&amp;#xa;交通:500&amp;#xa;购物:1000..." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#FFECB3;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="615" y="552" width="120" height="80" as="geometry" />
+    </mxCell>
+    
+    
+    <mxCell id="step5" value="设置超支提醒" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFC107;" vertex="1" parent="1">
+      <mxGeometry x="400" y="687" width="160" height="50" as="geometry" />
+    </mxCell>
+    
+    
+    <mxCell id="alert_opts" value="提醒阈值&amp;#xa;80%|90%|100%" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#FFECB3;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="625" y="682" width="100" height="60" as="geometry" />
+    </mxCell>
+    
+    
+    <mxCell id="step6" value="保存预算设置" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE082;strokeColor=#FFC107;" vertex="1" parent="1">
+      <mxGeometry x="400" y="790" width="160" height="50" as="geometry" />
+    </mxCell>
+    
+    
+    <mxCell id="end" value="预算设置完成" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="420" y="900" width="120" height="40" as="geometry" />
+    </mxCell>
+    
+    
+    <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" parent="1" source="start" target="step1" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" parent="1" source="step1" target="dec1" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    
+    
+    <mxCell id="e3" value="是" style="edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" parent="1" source="dec1" target="view_budget" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    
+    
+    <mxCell id="e4" value="否" style="edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" parent="1" source="dec1" target="new_budget" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    
+    
+    <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" parent="1" source="view_budget" target="step2" edge="1" exitX="0.5" exitY="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="300" y="370" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    
+    
+    <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" parent="1" source="new_budget" target="step2" edge="1" exitX="0.5" exitY="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="680" y="370" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    
+    <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" parent="1" source="step2" target="period_opts" edge="1" exitX="1" exitY="0.5">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" parent="1" source="step2" target="step3" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" parent="1" source="step3" target="step4" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" parent="1" source="step4" target="cate_budget" edge="1" exitX="1" exitY="0.5">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" parent="1" source="step4" target="step5" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" parent="1" source="step5" target="alert_opts" edge="1" exitX="1" exitY="0.5">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" parent="1" source="step5" target="step6" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;" parent="1" source="step6" target="end" edge="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    
+  </root>
+</mxGraphModel>

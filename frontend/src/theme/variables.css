@@ -1,0 +1,37 @@
+:root {
+  --color-primary: #0D9488;
+  --color-primary-light: #E6F7F5;
+  --color-primary-dark: #0B7A70;
+
+  --color-bg-page: #F5F7FA;
+  --color-bg-card: #FFFFFF;
+  --color-bg-input: #F8FAFC;
+
+  --color-text-primary: #1E293B;
+  --color-text-secondary: #94A3B8;
+  --color-text-tertiary: #CBD5E1;
+  --color-text-inverse: #FFFFFF;
+
+  --color-border: #E2E8F0;
+  --color-border-light: #F1F5F9;
+
+  --color-success: #10B981;
+  --color-danger: #EF4444;
+  --color-warning: #F59E0B;
+  --color-wechat: #07C160;
+  --color-info: #3B82F6;
+
+  --color-mask: rgba(0, 0, 0, 0.5);
+
+  /* ===== 字号 Token 体系 (rpx) ===== */
+  --text-caption: 20rpx;       /* 标签：功能入口文字、徽章、最小辅助 */
+  --text-note: 22rpx;          /* 说明：图表标签、描述行、极弱提示 */
+  --text-small: 24rpx;         /* 小字：提示条、辅助说明、副标题 */
+  --text-body: 28rpx;          /* 正文：列表项、菜单按钮、段落 */
+  --text-title: 32rpx;         /* 标题：卡片标题、分类名、大号名称 */
+  --text-nav: 34rpx;           /* 导航：页面导航栏标题 */
+  --text-number: 40rpx;        /* 数字：账户余额、金额展示 */
+  --text-number-lg: 48rpx;     /* 大数字：重要金额 */
+  --text-number-xl: 56rpx;     /* 特大数字：净资产 */
+  --text-number-hero: 72rpx;   /* 极致数字：主打金额 */
+}

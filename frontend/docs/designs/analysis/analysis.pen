@@ -1,0 +1,696 @@
+{
+  "version": "2.11",
+  "children": [
+    {
+      "type": "frame",
+      "id": "Aymu3",
+      "x": 0,
+      "y": 0,
+      "name": "资产分析页",
+      "width": 375,
+      "height": 812,
+      "fill": "#F5F7FA",
+      "layout": "vertical",
+      "gap": 10,
+      "padding": [
+        10,
+        10,
+        0,
+        10
+      ],
+      "children": [
+        {
+          "type": "frame",
+          "id": "aYpPi",
+          "name": "净资产卡片",
+          "width": "fill_container",
+          "height": 140,
+          "fill": "#0D9488",
+          "cornerRadius": 20,
+          "layout": "vertical",
+          "gap": 5,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "NQg6P",
+              "name": "净资产标签",
+              "fill": "#ffffffb3",
+              "content": "净资产",
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "K1dgSg",
+              "name": "净资产金额",
+              "fill": "#FFFFFF",
+              "content": "¥128,350.00",
+              "fontFamily": "Inter",
+              "fontSize": 28,
+              "fontWeight": "700"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "biV6C",
+          "name": "内容区域",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 10,
+          "children": [
+            {
+              "type": "frame",
+              "id": "d3Izy",
+              "name": "账户余额模块",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 20,
+              "layout": "vertical",
+              "padding": 14,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "lvHOH",
+                  "name": "账户余额标题",
+                  "fill": "#1E293B",
+                  "content": "账户余额",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "W2Q0AE",
+                  "name": "现金行",
+                  "width": "fill_container",
+                  "height": 56,
+                  "fill": "#00000000",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "HqZgk",
+                      "name": "现金图标",
+                      "content": "",
+                      "fontFamily": "Inter",
+                      "fontSize": 22,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "DW1YM",
+                      "name": "现金信息",
+                      "width": "fill_container",
+                      "fill": "#00000000",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "padding": [
+                        8,
+                        0,
+                        0,
+                        10
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "CE9Qx",
+                          "name": "现金名称",
+                          "fill": "#1E293B",
+                          "content": "现金",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "VnPxn",
+                          "name": "现金类型",
+                          "fill": "#94A3B8",
+                          "content": "现金类",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "NBdoO",
+                      "name": "现金余额",
+                      "fill": "#1E293B",
+                      "content": "¥3,210.00",
+                      "textAlign": "right",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "igkvt",
+                      "name": "现金箭头",
+                      "fill": "#CCCCCC",
+                      "content": "›",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "CkNSQ",
+                  "name": "储蓄卡行",
+                  "width": "fill_container",
+                  "height": 56,
+                  "fill": "#00000000",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "KgA46",
+                      "name": "储蓄卡图标",
+                      "content": "",
+                      "fontFamily": "Inter",
+                      "fontSize": 22,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "W68WPX",
+                      "name": "储蓄卡信息",
+                      "width": "fill_container",
+                      "fill": "#00000000",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "padding": [
+                        8,
+                        0,
+                        0,
+                        10
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "MbAcp",
+                          "name": "储蓄卡名称",
+                          "fill": "#1E293B",
+                          "content": "储蓄卡",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "h7FGJX",
+                          "name": "储蓄卡类型",
+                          "fill": "#94A3B8",
+                          "content": "现金类",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "lDXB1",
+                      "name": "储蓄卡余额",
+                      "fill": "#1E293B",
+                      "content": "¥12,345.67",
+                      "textAlign": "right",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "JXVbB",
+                      "name": "储蓄卡箭头",
+                      "fill": "#CCCCCC",
+                      "content": "›",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "kBicW",
+                  "name": "招商信用卡行",
+                  "width": "fill_container",
+                  "height": 56,
+                  "fill": "#00000000",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "P0JTEA",
+                      "name": "招商信用卡图标",
+                      "content": "",
+                      "fontFamily": "Inter",
+                      "fontSize": 22,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qzM4I",
+                      "name": "招商信用卡信息",
+                      "width": "fill_container",
+                      "fill": "#00000000",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "padding": [
+                        8,
+                        0,
+                        0,
+                        10
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "EKwlM",
+                          "name": "招商信用卡名称",
+                          "fill": "#1E293B",
+                          "content": "招商信用卡",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "vMLGK",
+                          "name": "招商信用卡类型",
+                          "fill": "#94A3B8",
+                          "content": "负债类",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "ABrsu",
+                      "name": "招商信用卡余额",
+                      "fill": "#EF4444",
+                      "content": "-¥2,345.00",
+                      "textAlign": "right",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "z9qIJ",
+                      "name": "招商信用卡箭头",
+                      "fill": "#CCCCCC",
+                      "content": "›",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "YFZpy",
+              "name": "底部占位",
+              "width": "fill_container",
+              "height": 40,
+              "fill": "#00000000"
+            },
+            {
+              "type": "frame",
+              "id": "P0AMEa",
+              "name": "资产汇总模块",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 20,
+              "layout": "vertical",
+              "padding": 14,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ogDkg",
+                  "name": "资产汇总标题",
+                  "fill": "#1E293B",
+                  "content": "资产汇总",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "PmwjJ",
+                  "name": "折旧资产汇总行",
+                  "width": "fill_container",
+                  "height": 56,
+                  "fill": "#00000000",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "q8Mtf",
+                      "name": "折旧资产图标背景",
+                      "width": 32,
+                      "height": 32,
+                      "fill": "#E6F7F5",
+                      "cornerRadius": 8,
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "et4ij",
+                          "name": "折旧资产图标",
+                          "content": "",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "UnCfP",
+                      "name": "折旧资产信息",
+                      "width": "fill_container",
+                      "fill": "#00000000",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "padding": [
+                        8,
+                        0,
+                        0,
+                        10
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "BaoAg",
+                          "name": "折旧资产名称",
+                          "fill": "#1E293B",
+                          "content": "折旧资产",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "dyggK",
+                          "name": "折旧资产笔数",
+                          "fill": "#94A3B8",
+                          "content": "5笔",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "ldHzY",
+                      "name": "折旧资产总额",
+                      "fill": "#0D9488",
+                      "content": "¥12,981.25",
+                      "textAlign": "right",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "gHiky",
+                      "name": "折旧资产箭头",
+                      "fill": "#CCCCCC",
+                      "content": "›",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "r6hi2F",
+                  "name": "固定资产汇总行",
+                  "width": "fill_container",
+                  "height": 56,
+                  "fill": "#00000000",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Z8NGid",
+                      "name": "固定资产图标背景",
+                      "width": 32,
+                      "height": 32,
+                      "fill": "#E6F7F5",
+                      "cornerRadius": 8,
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "HUipF",
+                          "name": "固定资产图标",
+                          "content": "",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "t2i2ua",
+                      "name": "固定资产信息",
+                      "width": "fill_container",
+                      "fill": "#00000000",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "padding": [
+                        8,
+                        0,
+                        0,
+                        10
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "xX6iZ",
+                          "name": "固定资产名称",
+                          "fill": "#1E293B",
+                          "content": "固定资产",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Mzlms",
+                          "name": "固定资产笔数",
+                          "fill": "#94A3B8",
+                          "content": "2笔",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "gF42m",
+                      "name": "固定资产总额",
+                      "fill": "#0D9488",
+                      "content": "¥58,000.00",
+                      "textAlign": "right",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "i9nl0",
+                      "name": "固定资产箭头",
+                      "fill": "#CCCCCC",
+                      "content": "›",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "lOF6f",
+          "name": "TabBar",
+          "width": "fill_container",
+          "height": 70,
+          "fill": "#FFFFFF",
+          "padding": [
+            10,
+            0,
+            0,
+            0
+          ],
+          "justifyContent": "space_around",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "tqtdb",
+              "name": "记账Tab",
+              "width": 60,
+              "height": 60,
+              "fill": "#00000000",
+              "layout": "vertical",
+              "gap": 4,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "wA18F",
+                  "name": "记账图标",
+                  "content": "",
+                  "fontFamily": "Inter",
+                  "fontSize": 26,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "bCXRy",
+                  "name": "记账标签",
+                  "fill": "#94A3B8",
+                  "content": "记账",
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "EDPZ8",
+              "name": "明细Tab",
+              "width": 60,
+              "height": 60,
+              "fill": "#00000000",
+              "layout": "vertical",
+              "gap": 4,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "FXN8Y",
+                  "name": "明细图标",
+                  "content": "",
+                  "fontFamily": "Inter",
+                  "fontSize": 26,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "y3CXaO",
+                  "name": "明细标签",
+                  "fill": "#94A3B8",
+                  "content": "明细",
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "W7bHH",
+              "name": "资产Tab",
+              "width": 60,
+              "height": 60,
+              "fill": "#00000000",
+              "layout": "vertical",
+              "gap": 4,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ax81U",
+                  "name": "资产图标",
+                  "content": "",
+                  "fontFamily": "Inter",
+                  "fontSize": 26,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "n0kLkd",
+                  "name": "资产标签",
+                  "fill": "#0D9488",
+                  "content": "资产",
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "TLcoA",
+              "name": "我的Tab",
+              "width": 60,
+              "height": 60,
+              "fill": "#00000000",
+              "layout": "vertical",
+              "gap": 4,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "M5Ybm",
+                  "name": "我的图标",
+                  "content": "",
+                  "fontFamily": "Inter",
+                  "fontSize": 26,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "c1zKG1",
+                  "name": "我的标签",
+                  "fill": "#94A3B8",
+                  "content": "我的",
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

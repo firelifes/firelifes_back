@@ -1,0 +1,138 @@
+<mxfile host="lf-coze-web-cdn.coze.cn" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36" version="@DRAWIO-VERSION@">
+  <diagram id="fire-accounting-flow" name="FIRE生活家记账流程">
+    <mxGraphModel dx="625" dy="634" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="1500" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="FIRE生活家 · 记账流程" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontStyle=1;fontColor=#1565C0;" parent="1" vertex="1">
+          <mxGeometry x="290" y="30" width="340" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="start" value="点击记账按钮（+）" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="360" y="110" width="200" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="step1" value="支出 / 收入切换" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E88E5;strokeColor=#1E88E5;fontColor=#FFFFFF;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="380" y="195" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="dec1" value="选择类型？" style="rhombus;whiteSpace=wrap;html=1;fillColor=#64B5F6;strokeColor=#64B5F6;fontColor=#0D47A1;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="385" y="277" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="expense_branch" value="支出分类网格" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E88E5;strokeColor=#1E88E5;fontColor=#FFFFFF;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="617" y="290" width="130" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="expense_detail" value="餐饮 | 交通 | 购物 | 娱乐&amp;#xa;居家 | 服装 | 通讯 | 医疗&amp;#xa;教育 | 人情 | 宠物 | 运动" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#BBDEFB;fontColor=#0D47A1;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="810" y="268" width="150" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="income_branch" value="收入分类网格" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E88E5;strokeColor=#1E88E5;fontColor=#FFFFFF;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="185" y="290" width="130" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="income_detail" value="工资 | 奖金 | 兼职&amp;#xa;投资收益 | 红包&amp;#xa;退款 | 其他收入" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#BBDEFB;fontColor=#0D47A1;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="20" y="268" width="130" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="step2" value="选择具体分类" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E88E5;strokeColor=#1E88E5;fontColor=#FFFFFF;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="380" y="420" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="step3" value="输入金额（数字键盘）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E88E5;strokeColor=#1E88E5;fontColor=#FFFFFF;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="380" y="520" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="dec2" value="添加备注？" style="rhombus;whiteSpace=wrap;html=1;fillColor=#64B5F6;strokeColor=#64B5F6;fontColor=#0D47A1;fontSize=12;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="385" y="620" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="remark" value="输入备注内容" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#BBDEFB;fontColor=#0D47A1;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="622" y="633" width="120" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="step5" value="选择账户" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E88E5;strokeColor=#1E88E5;fontColor=#FFFFFF;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="380" y="745" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="account_detail" value="现金 | 银行卡 | 支付宝&amp;#xa;微信 | 信用卡 | 其他" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#BBDEFB;fontColor=#0D47A1;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="612" y="738" width="140" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="step6" value="选择日期（默认今天）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E88E5;strokeColor=#1E88E5;fontColor=#FFFFFF;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="380" y="845" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="step7" value="点击保存 / 确认" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E88E5;strokeColor=#1E88E5;fontColor=#FFFFFF;fontSize=13;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="380" y="945" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="step8" value="记账数据写入" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E88E5;strokeColor=#1E88E5;fontColor=#FFFFFF;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="380" y="1170" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="end" value="返回首页明细" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#1565C0;strokeColor=#0D47A1;fontColor=#FFFFFF;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="380" y="1395" width="160" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="e_start_s1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;" parent="1" source="start" target="step1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s1_dec1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;" parent="1" source="step1" target="dec1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_dec1_exp" value="支出" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontColor=#0D47A1;fontSize=11;" parent="1" source="dec1" target="expense_branch" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_exp_detail" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64B5F6;strokeWidth=1;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="expense_branch" target="expense_detail" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_exp_s2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" parent="1" source="expense_branch" target="step2" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="685" y="400" />
+              <mxPoint x="540" y="400" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_dec1_inc" value="收入" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontColor=#0D47A1;fontSize=11;" parent="1" source="dec1" target="income_branch" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_inc_detail" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64B5F6;strokeWidth=1;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="income_branch" target="income_detail" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_inc_s2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" parent="1" source="income_branch" target="step2" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="235" y="400" />
+              <mxPoint x="380" y="400" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_s2_s3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;" parent="1" source="step2" target="step3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s3_dec2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;" parent="1" source="step3" target="dec2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_dec2_no" value="否" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;fontColor=#0D47A1;fontSize=11;" parent="1" source="dec2" target="step5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_dec2_yes" value="是" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontColor=#0D47A1;fontSize=11;" parent="1" source="dec2" target="remark" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_remark_s5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" parent="1" source="remark" target="step5" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="680" y="720" />
+              <mxPoint x="540" y="720" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_s5_detail" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64B5F6;strokeWidth=1;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step5" target="account_detail" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s5_s6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;" parent="1" source="step5" target="step6" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s6_s7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;" parent="1" source="step6" target="step7" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_s7_dec3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="step7" target="step8" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="460" y="1045" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_s8_dec4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E88E5;strokeWidth=1.5;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="step8" target="end" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="460" y="1270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

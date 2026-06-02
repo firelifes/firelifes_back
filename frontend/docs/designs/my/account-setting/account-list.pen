@@ -1,0 +1,548 @@
+{
+  "version": "2.13",
+  "children": [
+    {
+      "type": "frame",
+      "id": "x4FGa",
+      "x": 0,
+      "y": 0,
+      "name": "账户列表页 - 极简风格",
+      "width": 375,
+      "height": 812,
+      "fill": "#F8F9FA",
+      "layout": "vertical",
+      "gap": 0,
+      "padding": 0,
+      "children": [
+        {
+          "type": "frame",
+          "id": "Y4j5z",
+          "name": "Navbar",
+          "width": "fill_container",
+          "height": 44,
+          "fill": "#FFFFFF",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "eFZqV",
+              "fill": "#1E293B",
+              "content": "返回",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "spacer1",
+              "width": 80,
+              "height": 1
+            },
+            {
+              "type": "text",
+              "id": "MHJkB",
+              "fill": "#1E293B",
+              "content": "我的账户",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "500"
+            },
+            {
+              "type": "frame",
+              "id": "spacer2",
+              "width": 80,
+              "height": 1
+            },
+            {
+              "type": "text",
+              "id": "addBtn",
+              "fill": "#0D9488",
+              "content": "+ 新增",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "500"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "contentArea",
+          "name": "Content",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 0,
+          "padding": 16,
+          "children": [
+            {
+              "type": "frame",
+              "id": "LZ6kb",
+              "name": "现金类分组",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "groupTitle1",
+                  "fill": "#94A3B8",
+                  "content": "现金类",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "500",
+                  "marginBottom": 8
+                },
+                {
+                  "type": "frame",
+                  "id": "card1",
+                  "name": "Card-现金",
+                  "width": "fill_container",
+                  "height": 56,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 8,
+                  "gap": 12,
+                  "padding": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "svgIcon1",
+                      "fill": "#0D9488",
+                      "content": "[SVG:account-icon-wallet]",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "info1",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "nameRow1",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "accountName1",
+                              "fill": "#1E293B",
+                              "content": "现金",
+                              "fontFamily": "Inter",
+                              "fontSize": 15,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "text",
+                              "id": "badge1",
+                              "fill": "#0D9488",
+                              "content": "默认",
+                              "fontFamily": "Inter",
+                              "fontSize": 10,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "desc1",
+                          "fill": "#CBD5E1",
+                          "content": "日常现金备用",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "balance1",
+                      "fill": "#1E293B",
+                      "content": "¥3,210.00",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "card2",
+                  "name": "Card-工商",
+                  "width": "fill_container",
+                  "height": 56,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 8,
+                  "gap": 12,
+                  "padding": 12,
+                  "marginTop": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "svgIcon2",
+                      "fill": "#0D9488",
+                      "content": "[SVG:account-icon-bank]",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "info2",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "accountName2",
+                          "fill": "#1E293B",
+                          "content": "工商银行",
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "desc2",
+                          "fill": "#CBD5E1",
+                          "content": "工资卡",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "balance2",
+                      "fill": "#1E293B",
+                      "content": "¥48,520.50",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "KLMXa",
+              "name": "投资类分组",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 0,
+              "marginTop": 24,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "groupTitle2",
+                  "fill": "#94A3B8",
+                  "content": "投资类",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "500",
+                  "marginBottom": 8
+                },
+                {
+                  "type": "frame",
+                  "id": "card3",
+                  "name": "Card-基金",
+                  "width": "fill_container",
+                  "height": 56,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 8,
+                  "gap": 12,
+                  "padding": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "svgIcon3",
+                      "fill": "#0D9488",
+                      "content": "[SVG:account-icon-trending]",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "info3",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "accountName3",
+                          "fill": "#1E293B",
+                          "content": "基金账户",
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "desc3",
+                          "fill": "#CBD5E1",
+                          "content": "定投中",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "balance3",
+                      "fill": "#1E293B",
+                      "content": "¥12,000.00",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "V1LibJ",
+              "name": "固定资产类分组",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 0,
+              "marginTop": 24,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "groupTitle3",
+                  "fill": "#94A3B8",
+                  "content": "固定资产类",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "500",
+                  "marginBottom": 8
+                },
+                {
+                  "type": "frame",
+                  "id": "card4",
+                  "name": "Card-房产",
+                  "width": "fill_container",
+                  "height": 56,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 8,
+                  "gap": 12,
+                  "padding": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "svgIcon4",
+                      "fill": "#0D9488",
+                      "content": "[SVG:account-icon-house]",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "info4",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "accountName4",
+                          "fill": "#1E293B",
+                          "content": "房产",
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "balance4",
+                      "fill": "#1E293B",
+                      "content": "¥800,000.00",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "K2VSV",
+              "name": "折旧资产类分组",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 0,
+              "marginTop": 24,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "groupTitle4",
+                  "fill": "#94A3B8",
+                  "content": "折旧资产类",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "500",
+                  "marginBottom": 8
+                },
+                {
+                  "type": "frame",
+                  "id": "card5",
+                  "name": "Card-MacBook",
+                  "width": "fill_container",
+                  "height": 56,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 8,
+                  "gap": 12,
+                  "padding": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "svgIcon5",
+                      "fill": "#0D9488",
+                      "content": "[SVG:account-icon-laptop]",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "info5",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "accountName5",
+                          "fill": "#1E293B",
+                          "content": "MacBook Pro",
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "desc5",
+                          "fill": "#CBD5E1",
+                          "content": "工作电脑",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "balance5",
+                      "fill": "#1E293B",
+                      "content": "¥12,500.00",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "IMSEq",
+              "name": "负债类分组",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 0,
+              "marginTop": 24,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "groupTitle5",
+                  "fill": "#94A3B8",
+                  "content": "负债类",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "500",
+                  "marginBottom": 8
+                },
+                {
+                  "type": "frame",
+                  "id": "card6",
+                  "name": "Card-信用卡",
+                  "width": "fill_container",
+                  "height": 56,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 8,
+                  "gap": 12,
+                  "padding": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "svgIcon6",
+                      "fill": "#0D9488",
+                      "content": "[SVG:account-icon-credit-card]",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "info6",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "accountName6",
+                          "fill": "#1E293B",
+                          "content": "信用卡",
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "desc6",
+                          "fill": "#CBD5E1",
+                          "content": "招商银行",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "balance6",
+                      "fill": "#EF4444",
+                      "content": "¥-3,200.00",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

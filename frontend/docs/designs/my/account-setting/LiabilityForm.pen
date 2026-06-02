@@ -1,0 +1,699 @@
+{
+  "version": "2.11",
+  "children": [
+    {
+      "type": "frame",
+      "id": "liabilityFormRoot",
+      "x": 0,
+      "y": 0,
+      "name": "LiabilityForm.vue - 负债贷款参数组件",
+      "width": 375,
+      "height": 900,
+      "fill": "#FEF2F2",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "liabilityHeader",
+          "width": "fill_container",
+          "height": 44,
+          "fill": "#FFF5F5",
+          "padding": 16,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "headerTitle",
+              "fill": "#EF4444",
+              "content": "负债类 — 贷款参数 (LiabilityForm.vue)",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "formContent",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 20,
+          "children": [
+            {
+              "type": "frame",
+              "id": "autoRepayRow",
+              "width": "fill_container",
+              "height": 40,
+              "fill": "#FFFFFF",
+              "cornerRadius": 10,
+              "padding": 12,
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "autoRepayInfo",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "autoRepayLabel",
+                      "fill": "#333333",
+                      "content": "启用贷款自动记账",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "autoRepayHint",
+                      "fill": "#999999",
+                      "content": "开启后显示以下贷款参数设置",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "autoRepaySwitch",
+                  "width": 46,
+                  "height": 26,
+                  "fill": "#EF4444",
+                  "cornerRadius": 13,
+                  "padding": 3,
+                  "justifyContent": "end",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "autoRepayDot",
+                      "width": 20,
+                      "height": 20,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 10
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "cardFormArea",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 12,
+              "layout": "vertical",
+              "gap": 20,
+              "padding": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "cardFormTitle",
+                  "fill": "#333333",
+                  "content": "贷款参数设置",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "originalPrincipalLabel",
+                  "fill": "#666666",
+                  "content": "原始贷款总本金",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "frame",
+                  "id": "originalPrincipalInput",
+                  "width": "fill_container",
+                  "height": 44,
+                  "fill": "#F5F6FA",
+                  "cornerRadius": 10,
+                  "padding": 12,
+                  "alignItems": "center",
+                  "justifyContent": "space_between",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "originalPrincipalPh",
+                      "fill": "#CCCCCC",
+                      "content": "请输入原始贷款总额",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "originalPrincipalUnit",
+                      "fill": "#999999",
+                      "content": "元",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "annualRateLabel",
+                  "fill": "#666666",
+                  "content": "贷款年利率",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "frame",
+                  "id": "annualRateInput",
+                  "width": "fill_container",
+                  "height": 44,
+                  "fill": "#F5F6FA",
+                  "cornerRadius": 10,
+                  "padding": 12,
+                  "alignItems": "center",
+                  "justifyContent": "space_between",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "annualRatePh",
+                      "fill": "#CCCCCC",
+                      "content": "4.9",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "annualRateUnit",
+                      "fill": "#999999",
+                      "content": "%",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "rateHint",
+                  "fill": "#999999",
+                  "content": "灵活还款可选填0表示无息",
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "repayMethodLabel2",
+                  "fill": "#666666",
+                  "content": "还款方式",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "frame",
+                  "id": "repayMethodGrid2",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "repayRow1_2",
+                      "width": "fill_container",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "methodEPI",
+                          "width": "fill_container",
+                          "height": 44,
+                          "fill": "#FEF2F2",
+                          "cornerRadius": 10,
+                          "stroke": "#EF4444",
+                          "strokeWidth": 1.5,
+                          "layout": "vertical",
+                          "gap": 2,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "methodEPITitle",
+                              "fill": "#EF4444",
+                              "content": "等额本息",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "methodEPIDesc",
+                              "fill": "#EF444480",
+                              "content": "月供固定",
+                              "fontFamily": "Inter",
+                              "fontSize": 10,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "methodEP",
+                          "width": "fill_container",
+                          "height": 44,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 10,
+                          "stroke": "#E8E8E8",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "gap": 2,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "methodEPTitle",
+                              "fill": "#666666",
+                              "content": "等额本金",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "methodEPDesc",
+                              "fill": "#999999",
+                              "content": "月供递减",
+                              "fontFamily": "Inter",
+                              "fontSize": 10,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "repayRow2_2",
+                      "width": "fill_container",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "methodIF",
+                          "width": "fill_container",
+                          "height": 44,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 10,
+                          "stroke": "#E8E8E8",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "gap": 2,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "methodIFTitle",
+                              "fill": "#666666",
+                              "content": "先息后本",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "methodIFDesc",
+                              "fill": "#999999",
+                              "content": "先还息后还本",
+                              "fontFamily": "Inter",
+                              "fontSize": 10,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "methodFlex",
+                          "width": "fill_container",
+                          "height": 44,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 10,
+                          "stroke": "#E8E8E8",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "gap": 2,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "methodFlexTitle",
+                              "fill": "#666666",
+                              "content": "灵活还款 NEW",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "methodFlexDesc",
+                              "fill": "#999999",
+                              "content": "任意金额随时还",
+                              "fontFamily": "Inter",
+                              "fontSize": 10,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "termsRow",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "totalMonthsGroup",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "totalMonthsLabel2",
+                          "fill": "#666666",
+                          "content": "总还款期数",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "totalMonthsInput2",
+                          "width": "fill_container",
+                          "height": 44,
+                          "fill": "#F5F6FA",
+                          "cornerRadius": 10,
+                          "padding": 12,
+                          "alignItems": "center",
+                          "justifyContent": "space_between",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "totalMonthsPh",
+                              "fill": "#CCCCCC",
+                              "content": "360",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "totalMonthsUnit",
+                              "fill": "#999999",
+                              "content": "月",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "remainingMonthsGroup",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "remainingMonthsLabel2",
+                          "fill": "#666666",
+                          "content": "剩余还款期数",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "remainingMonthsInput2",
+                          "width": "fill_container",
+                          "height": 44,
+                          "fill": "#F5F6FA",
+                          "cornerRadius": 10,
+                          "padding": 12,
+                          "alignItems": "center",
+                          "justifyContent": "space_between",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "remainingMonthsPh",
+                              "fill": "#CCCCCC",
+                              "content": "300",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "remainingMonthsUnit",
+                              "fill": "#999999",
+                              "content": "月",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "flexModeHint",
+                  "fill": "#EF4444",
+                  "content": "⚠ 选择「灵活还款」后，期数和还款日字段将隐藏",
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "repayDayLabel2",
+                  "fill": "#666666",
+                  "content": "每月还款日",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "frame",
+                  "id": "dayGridWrapper",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "dg1",
+                      "width": 40,
+                      "height": 40,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 8,
+                      "stroke": "#E8E8E8",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "dg1T",
+                          "fill": "#666666",
+                          "content": "1",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "dg5",
+                      "width": 40,
+                      "height": 40,
+                      "fill": "#FEF2F2",
+                      "cornerRadius": 8,
+                      "stroke": "#EF4444",
+                      "strokeWidth": 1.5,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "dg5T",
+                          "fill": "#EF4444",
+                          "content": "5",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "dg10",
+                      "width": 40,
+                      "height": 40,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 8,
+                      "stroke": "#E8E8E8",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "dg10T",
+                          "fill": "#666666",
+                          "content": "10",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "dg15",
+                      "width": 40,
+                      "height": 40,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 8,
+                      "stroke": "#E8E8E8",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "dg15T",
+                          "fill": "#666666",
+                          "content": "15",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "dg20",
+                      "width": 40,
+                      "height": 40,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 8,
+                      "stroke": "#E8E8E8",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "dg20T",
+                          "fill": "#666666",
+                          "content": "20",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "dg28",
+                      "width": 40,
+                      "height": 40,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 8,
+                      "stroke": "#E8E8E8",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "dg28T",
+                          "fill": "#666666",
+                          "content": "28",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "linkedAssetLabel2",
+                  "fill": "#666666",
+                  "content": "关联资产账户（可选）",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "frame",
+                  "id": "linkedAssetRow",
+                  "width": "fill_container",
+                  "height": 44,
+                  "fill": "#F5F6FA",
+                  "cornerRadius": 10,
+                  "padding": 12,
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "linkedAssetPh",
+                      "fill": "#CCCCCC",
+                      "content": "选择关联的固定资产账户",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "linkedAssetArrow2",
+                      "fill": "#CCCCCC",
+                      "content": "›",
+                      "fontFamily": "Inter",
+                      "fontSize": 20,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

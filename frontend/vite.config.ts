@@ -1,0 +1,19 @@
+import { defineConfig } from "vite";
+import uni from "@dcloudio/vite-plugin-uni";
+
+import Components from '@uni-helper/vite-plugin-uni-components'
+import { WotResolver } from './wot-ui-resolver'
+
+export default defineConfig({
+  plugins: [Components({
+    resolvers: [WotResolver()]
+  }), uni()],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:7001',
+        changeOrigin: true,
+      },
+    },
+  },
+});

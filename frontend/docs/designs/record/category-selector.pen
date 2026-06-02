@@ -1,0 +1,792 @@
+{
+  "version": "2.11",
+  "children": [
+    {
+      "type": "frame",
+      "id": "catSelectorRoot",
+      "x": 0,
+      "y": 0,
+      "name": "分类选择器 - 支出Tab（含常用）",
+      "clip": true,
+      "width": 375,
+      "height": 460,
+      "fill": "#F5F7FA",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "pageBg",
+          "name": "PageContent",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": 10,
+          "children": [
+            {
+              "type": "frame",
+              "id": "frequentSection",
+              "name": "常用组",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "frequentBorder",
+                  "fill": "#0D9488",
+                  "width": "fill_container",
+                  "height": 2
+                },
+                {
+                  "type": "text",
+                  "id": "frequentTitle",
+                  "fill": "#0D9488",
+                  "content": "常用",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "frequentGrid",
+                  "name": "常用分类网格",
+                  "width": "fill_container",
+                  "layout": "flow",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "freqItem1",
+                      "name": "餐饮",
+                      "width": 78,
+                      "height": 64,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "freqIcon1",
+                          "width": 44,
+                          "height": 44,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 22,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "freqEmoji1",
+                              "fill": "#0D9488",
+                              "content": "",
+                              "fontFamily": "Inter",
+                              "fontSize": 20
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "freqName1",
+                          "fill": "#1E293B",
+                          "content": "餐饮",
+                          "fontFamily": "Inter",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "freqItem2",
+                      "name": "交通",
+                      "width": 78,
+                      "height": 64,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "freqIcon2",
+                          "width": 44,
+                          "height": 44,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 22,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "freqEmoji2",
+                              "fill": "#0D9488",
+                              "content": "",
+                              "fontFamily": "Inter",
+                              "fontSize": 20
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "freqName2",
+                          "fill": "#1E293B",
+                          "content": "交通",
+                          "fontFamily": "Inter",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "freqItem3",
+                      "name": "购物",
+                      "width": 78,
+                      "height": 64,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "freqIcon3",
+                          "width": 44,
+                          "height": 44,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 22,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "freqEmoji3",
+                              "fill": "#0D9488",
+                              "content": "",
+                              "fontFamily": "Inter",
+                              "fontSize": 20
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "freqName3",
+                          "fill": "#1E293B",
+                          "content": "购物",
+                          "fontFamily": "Inter",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "freqItem4",
+                      "name": "咖啡",
+                      "width": 78,
+                      "height": 64,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "freqIcon4",
+                          "width": 44,
+                          "height": 44,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 22,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "freqEmoji4",
+                              "fill": "#0D9488",
+                              "content": "",
+                              "fontFamily": "Inter",
+                              "fontSize": 20
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "freqName4",
+                          "fill": "#1E293B",
+                          "content": "咖啡",
+                          "fontFamily": "Inter",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "freqItem5",
+                      "name": "外卖",
+                      "width": 78,
+                      "height": 64,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "freqIcon5",
+                          "width": 44,
+                          "height": 44,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 22,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "freqEmoji5",
+                              "fill": "#0D9488",
+                              "content": "",
+                              "fontFamily": "Inter",
+                              "fontSize": 20
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "freqName5",
+                          "fill": "#1E293B",
+                          "content": "外卖",
+                          "fontFamily": "Inter",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "freqItem6",
+                      "name": "零食",
+                      "width": 78,
+                      "height": 64,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "freqIcon6",
+                          "width": 44,
+                          "height": 44,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 22,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "freqEmoji6",
+                              "fill": "#0D9488",
+                              "content": "",
+                              "fontFamily": "Inter",
+                              "fontSize": 20
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "freqName6",
+                          "fill": "#1E293B",
+                          "content": "零食",
+                          "fontFamily": "Inter",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "freqItem7",
+                      "name": "加油",
+                      "width": 78,
+                      "height": 64,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "freqIcon7",
+                          "width": 44,
+                          "height": 44,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 22,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "freqEmoji7",
+                              "fill": "#0D9488",
+                              "content": "",
+                              "fontFamily": "Inter",
+                              "fontSize": 20
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "freqName7",
+                          "fill": "#1E293B",
+                          "content": "加油",
+                          "fontFamily": "Inter",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "freqItem8",
+                      "name": "药品",
+                      "width": 78,
+                      "height": 64,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "freqIcon8",
+                          "width": 44,
+                          "height": 44,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 22,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "freqEmoji8",
+                              "fill": "#0D9488",
+                              "content": "",
+                              "fontFamily": "Inter",
+                              "fontSize": 20
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "freqName8",
+                          "fill": "#1E293B",
+                          "content": "药品",
+                          "fontFamily": "Inter",
+                          "fontSize": 12
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "divider1",
+              "name": "分隔",
+              "width": "fill_container",
+              "height": 12
+            },
+            {
+              "type": "frame",
+              "id": "group1Section",
+              "name": "饮食消费组",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "group1Border",
+                  "fill": "#0D9488",
+                  "width": "fill_container",
+                  "height": 2
+                },
+                {
+                  "type": "text",
+                  "id": "group1Title",
+                  "fill": "#1E293B",
+                  "content": "饮食消费",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "group1Grid",
+                  "name": "饮食消费网格",
+                  "width": "fill_container",
+                  "layout": "flow",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "g1Item1",
+                      "name": "餐饮",
+                      "width": 78,
+                      "height": 64,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "g1Icon1",
+                          "width": 44,
+                          "height": 44,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 22,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "g1Emoji1",
+                              "fill": "#0D9488",
+                              "content": "",
+                              "fontFamily": "Inter",
+                              "fontSize": 20
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "g1Name1",
+                          "fill": "#1E293B",
+                          "content": "餐饮",
+                          "fontFamily": "Inter",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "g1Item2",
+                      "name": "外卖",
+                      "width": 78,
+                      "height": 64,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "g1Icon2",
+                          "width": 44,
+                          "height": 44,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 22,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "g1Emoji2",
+                              "fill": "#0D9488",
+                              "content": "",
+                              "fontFamily": "Inter",
+                              "fontSize": 20
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "g1Name2",
+                          "fill": "#1E293B",
+                          "content": "外卖",
+                          "fontFamily": "Inter",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "g1Item3",
+                      "name": "酒水",
+                      "width": 78,
+                      "height": 64,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "g1Icon3",
+                          "width": 44,
+                          "height": 44,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 22,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "g1Emoji3",
+                              "fill": "#0D9488",
+                              "content": "",
+                              "fontFamily": "Inter",
+                              "fontSize": 20
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "g1Name3",
+                          "fill": "#1E293B",
+                          "content": "酒水",
+                          "fontFamily": "Inter",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "g1Item4",
+                      "name": "零食",
+                      "width": 78,
+                      "height": 64,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "g1Icon4",
+                          "width": 44,
+                          "height": 44,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 22,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "g1Emoji4",
+                              "fill": "#0D9488",
+                              "content": "",
+                              "fontFamily": "Inter",
+                              "fontSize": 20
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "g1Name4",
+                          "fill": "#1E293B",
+                          "content": "零食",
+                          "fontFamily": "Inter",
+                          "fontSize": 12
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "divider2",
+              "name": "分隔",
+              "width": "fill_container",
+              "height": 12
+            },
+            {
+              "type": "frame",
+              "id": "group2Section",
+              "name": "交通出行组",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "group2Border",
+                  "fill": "#0D9488",
+                  "width": "fill_container",
+                  "height": 2
+                },
+                {
+                  "type": "text",
+                  "id": "group2Title",
+                  "fill": "#1E293B",
+                  "content": "交通出行",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "group2Grid",
+                  "name": "交通出行网格",
+                  "width": "fill_container",
+                  "layout": "flow",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "g2Item1",
+                      "name": "地铁",
+                      "width": 78,
+                      "height": 64,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "g2Icon1",
+                          "width": 44,
+                          "height": 44,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 22,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "g2Emoji1",
+                              "fill": "#0D9488",
+                              "content": "",
+                              "fontFamily": "Inter",
+                              "fontSize": 20
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "g2Name1",
+                          "fill": "#1E293B",
+                          "content": "地铁",
+                          "fontFamily": "Inter",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "g2Item2",
+                      "name": "公交",
+                      "width": 78,
+                      "height": 64,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "g2Icon2",
+                          "width": 44,
+                          "height": 44,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 22,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "g2Emoji2",
+                              "fill": "#0D9488",
+                              "content": "",
+                              "fontFamily": "Inter",
+                              "fontSize": 20
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "g2Name2",
+                          "fill": "#1E293B",
+                          "content": "公交",
+                          "fontFamily": "Inter",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "g2Item3",
+                      "name": "打车",
+                      "width": 78,
+                      "height": 64,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "g2Icon3",
+                          "width": 44,
+                          "height": 44,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 22,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "g2Emoji3",
+                              "fill": "#0D9488",
+                              "content": "",
+                              "fontFamily": "Inter",
+                              "fontSize": 20
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "g2Name3",
+                          "fill": "#1E293B",
+                          "content": "打车",
+                          "fontFamily": "Inter",
+                          "fontSize": 12
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "g2Item4",
+                      "name": "汽车",
+                      "width": 78,
+                      "height": 64,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "g2Icon4",
+                          "width": 44,
+                          "height": 44,
+                          "fill": "#FFFFFF",
+                          "cornerRadius": 22,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "g2Emoji4",
+                              "fill": "#0D9488",
+                              "content": "",
+                              "fontFamily": "Inter",
+                              "fontSize": 20
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "g2Name4",
+                          "fill": "#1E293B",
+                          "content": "汽车",
+                          "fontFamily": "Inter",
+                          "fontSize": 12
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
