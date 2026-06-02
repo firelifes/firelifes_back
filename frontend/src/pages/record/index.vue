@@ -57,6 +57,7 @@
         :toAccount="toAccount"
         :selectedAccount="selectedAccount"
         :submitting="submitStatus !== 'idle'"
+        :transferOperation="currentTransferOperation"
         @update:date="selectedDate = $event"
         @update:amount="displayAmount = $event"
         @update:remark="remark = $event"
@@ -64,6 +65,12 @@
         @update:toAccount="toAccount = $event"
         @update:selectedAccount="selectedAccount = $event"
         @update:assetData="assetData = $event"
+        @update:principal="principalAmount = $event"
+        @update:interest="interestAmount = $event"
+        @update:interestTypeId="interestTypeId = $event"
+        @update:counterparty="counterparty = $event"
+        @update:direction="transferDirection = $event"
+        @update:implicitAccount="implicitAccount = $event"
         @complete="handleComplete"
         @toggleDatePicker="showDatePicker = true"
       />
@@ -120,6 +127,12 @@ const fromAccount = ref<Account | null>(null)
 const toAccount = ref<Account | null>(null)
 const assetData = ref<DepreciatingAssetData | null>(null)
 const showDraftBanner = ref(false)
+const principalAmount = ref(0)
+const interestAmount = ref(0)
+const interestTypeId = ref(0)
+const counterparty = ref('')
+const transferDirection = ref<'out' | 'in'>('out')
+const implicitAccount = ref<Account | null>(null)
 let draftData: RecordDraft | null = null
 /** 标记是否刚完成记账（用于区分 onShow 是记账成功回跳还是用户主动进入） */
 const justCompletedKey = 'record_just_completed'
