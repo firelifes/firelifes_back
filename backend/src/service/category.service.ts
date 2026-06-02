@@ -76,6 +76,11 @@ export class CategoryService {
     { name: '宠物', url: 'category-icon-chongwu', iconType: 'svg', sortOrder: 45 },
     { name: '打车', url: 'category-icon-dache', iconType: 'svg', sortOrder: 46 },
     { name: '保险', url: 'category-icon-baoxian', iconType: 'svg', sortOrder: 47 },
+    { name: '转账', url: 'category-icon-transfer', iconType: 'svg', sortOrder: 48 },
+    { name: '还信用卡', url: 'category-icon-repay-credit', iconType: 'svg', sortOrder: 49 },
+    { name: '还贷款', url: 'category-icon-repay-loan', iconType: 'svg', sortOrder: 50 },
+    { name: '借出', url: 'category-icon-lend', iconType: 'svg', sortOrder: 51 },
+    { name: '借入', url: 'category-icon-borrow', iconType: 'svg', sortOrder: 52 },
   ];
 
   private defaultGroups: (Omit<CategoryGroup, 'id' | 'createdAt' | 'updatedAt'> & { type: 'expense' | 'income' })[] = [
@@ -126,6 +131,9 @@ export class CategoryService {
     { id: 'expense_8_3', name: '健身', groupId: 8, iconId: 40, sortOrder: 3, isDefault: true, type: 'expense' },
     { id: 'expense_9_1', name: '投资', groupId: 9, iconId: 31, sortOrder: 1, isDefault: true, type: 'expense' },
     { id: 'expense_9_2', name: '彩票', groupId: 9, iconId: 26, sortOrder: 2, isDefault: true, type: 'expense' },
+    { id: 'expense_9_3', name: '还信用卡', groupId: 9, iconId: 49, sortOrder: 3, isDefault: true, type: 'expense' },
+    { id: 'expense_9_4', name: '还贷款', groupId: 9, iconId: 50, sortOrder: 4, isDefault: true, type: 'expense' },
+    { id: 'expense_9_5', name: '借出', groupId: 9, iconId: 51, sortOrder: 5, isDefault: true, type: 'expense' },
     { id: 'expense_10_1', name: '其他', groupId: 10, iconId: 35, sortOrder: 1, isDefault: true, type: 'expense' },
     { id: 'expense_10_2', name: '日用', groupId: 10, iconId: 3, sortOrder: 2, isDefault: true, type: 'expense' },
     { id: 'expense_10_3', name: '捐赠', groupId: 10, iconId: 25, sortOrder: 3, isDefault: true, type: 'expense' },
@@ -142,6 +150,7 @@ export class CategoryService {
     { id: 'income_13_1', name: '礼金收入', groupId: 13, iconId: 21, sortOrder: 1, isDefault: true, type: 'income' },
     { id: 'income_13_2', name: '其他收入', groupId: 13, iconId: 35, sortOrder: 2, isDefault: true, type: 'income' },
     { id: 'income_13_3', name: '报销', groupId: 13, iconId: 34, sortOrder: 3, isDefault: true, type: 'income' },
+    { id: 'income_13_4', name: '借入', groupId: 13, iconId: 52, sortOrder: 4, isDefault: true, type: 'income' },
   ];
 
   async seedGlobalData() {

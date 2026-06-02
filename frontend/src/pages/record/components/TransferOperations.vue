@@ -1,47 +1,43 @@
 <template>
   <view class="transfer-operations">
-    <view class="operation-grid">
-      <view class="operation-card" @tap="handleOperation('transfer')">
-        <view class="operation-icon transfer-icon">🔄</view>
-        <text class="operation-name">转账</text>
-        <text class="operation-desc">账户间资金转移</text>
-      </view>
-      
-      <view class="operation-card" @tap="handleOperation('repay-credit')">
-        <view class="operation-icon credit-icon">💳</view>
-        <text class="operation-name">还信用卡</text>
-        <text class="operation-desc">信用卡账单还款</text>
-      </view>
-      
-      <view class="operation-card" @tap="handleOperation('repay-loan')">
-        <view class="operation-icon loan-icon">🏠</view>
-        <text class="operation-name">还贷款</text>
-        <text class="operation-desc">房贷/车贷还款</text>
-      </view>
-      
-      <view class="operation-card" @tap="handleOperation('lend')">
-        <view class="operation-icon lend-icon">🤝</view>
-        <text class="operation-name">借出/收回</text>
-        <text class="operation-desc">借钱给别人</text>
-      </view>
-      
-      <view class="operation-card" @tap="handleOperation('borrow')">
-        <view class="operation-icon borrow-icon">📋</view>
-        <text class="operation-name">借入/偿还</text>
-        <text class="operation-desc">向别人借钱</text>
+    <view class="category-grid">
+      <view
+        v-for="operation in operations"
+        :key="operation.type"
+        class="category-item"
+        :class="{ selected: selectedOperation === operation.type }"
+        @tap="handleOperation(operation.type)"
+      >
+        <view class="category-icon">
+          <view class="category-icon-svg" :class="operation.iconClass"></view>
+        </view>
+        <text class="category-name">{{ operation.name }}</text>
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+
 const emit = defineEmits<{
   (e: 'select', operation: TransferOperationType): void
 }>()
 
 type TransferOperationType = 'transfer' | 'repay-credit' | 'repay-loan' | 'lend' | 'borrow'
 
+const selectedOperation = ref<TransferOperationType | null>(null)
+
+const operations = [
+  { type: 'transfer' as TransferOperationType, name: '转账', iconClass: 'category-icon-transfer' },
+  { type: 'repay-credit' as TransferOperationType, name: '还信用卡', iconClass: 'category-icon-repay-credit' },
+  { type: 'repay-loan' as TransferOperationType, name: '还贷款', iconClass: 'category-icon-repay-loan' },
+  { type: 'lend' as TransferOperationType, name: '借出', iconClass: 'category-icon-lend' },
+  { type: 'borrow' as TransferOperationType, name: '借入', iconClass: 'category-icon-borrow' },
+]
+
 const handleOperation = (operation: TransferOperationType) => {
+  selectedOperation.value = operation
   emit('select', operation)
 }
 </script>
@@ -51,67 +47,61 @@ const handleOperation = (operation: TransferOperationType) => {
   padding: 24rpx;
 }
 
-.operation-grid {
+.category-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20rpx;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16rpx;
+  padding: 16rpx 0;
 }
 
-.operation-card {
-  background: #FFFFFF;
-  border-radius: 20rpx;
-  padding: 32rpx 24rpx;
+.category-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+  padding: 16rpx 8rpx;
+  border-radius: 16rpx;
   transition: all 0.2s ease;
-  
+
   &:active {
-    transform: scale(0.98);
-    background: #F8FAFC;
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  &.selected {
+    .category-icon {
+      background: #6366F1;
+    }
+    .category-icon-svg {
+      color: #FFFFFF;
+    }
+    .category-name {
+      color: #6366F1;
+      font-weight: 600;
+    }
   }
 }
 
-.operation-icon {
-  width: 88rpx;
-  height: 88rpx;
-  border-radius: 24rpx;
+.category-icon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: #F1F5F9;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 40rpx;
+  transition: all 0.2s ease;
 }
 
-.transfer-icon {
-  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+.category-icon-svg {
+  width: 36rpx;
+  height: 36rpx;
+  color: #64748B;
+  transition: all 0.2s ease;
 }
 
-.credit-icon {
-  background: linear-gradient(135deg, #EC4899 0%, #F43F5E 100%);
-}
-
-.loan-icon {
-  background: linear-gradient(135deg, #0D9488 0%, #10B981 100%);
-}
-
-.lend-icon {
-  background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
-}
-
-.borrow-icon {
-  background: linear-gradient(135deg, #8B5CF6 0%, #A855F7 100%);
-}
-
-.operation-name {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: #1E293B;
-}
-
-.operation-desc {
+.category-name {
   font-size: 22rpx;
-  color: #94A3B8;
+  color: #475569;
+  transition: all 0.2s ease;
 }
 </style>

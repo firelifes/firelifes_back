@@ -643,3 +643,32 @@
 .category-icon-zhaoshangyinhang {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2' y='5' width='20' height='14' rx='2'/%3E%3Cline x1='2' y1='10' x2='22' y2='10'/%3E%3Cpath d='M8 16V12h8v4'/%3E%3Cpath d='M6 12l6-5 6 5'/%3E%3C/svg%3E");
 }
+
+/* ============================================================
+ * 转账操作图标 (5)
+ * ============================================================ */
+
+/* 转账 - 双向箭头 */
+.category-icon-transfer {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 8v8M8 12h8M5 12H3m18 0h-2'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E");
+}
+
+/* 还信用卡 - 信用卡+箭头 */
+.category-icon-repay-credit {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2' y='6' width='20' height='12' rx='2'/%3E%3Cline x1='2' y1='12' x2='22' y2='12'/%3E%3Ccircle cx='12' cy='9' r='1.5'/%3E%3Cpath d='M18 18v2M12 20l6-2-6-2'/%3E%3C/svg%3E");
+}
+
+/* 还贷款 - 房屋+箭头 */
+.category-icon-repay-loan {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 10l9-8 9 8'/%3E%3Cpath d='M5 9v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9'/%3E%3Cpath d='M9 21V13h6v8'/%3E%3Cpath d='M18 18v2M12 20l6-2-6-2'/%3E%3C/svg%3E");
+}
+
+/* 借出 - 箭头向外 */
+.category-icon-lend {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Cpath d='M12 4v-2M12 22v2M4 12H2M22 12h2'/%3E%3Cpath d='M12 8l4-4M8 4l4 4M12 16l4 4M8 20l4-4'/%3E%3Cpath d='M18 18V6'/%3E%3Cpath d='M18 10l4-4'/%3E%3C/svg%3E");
+}
+
+/* 借入 - 箭头向内 */
+.category-icon-borrow {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Cpath d='M12 4v-2M12 22v2M4 12H2M22 12h2'/%3E%3Cpath d='M12 8l4-4M8 4l4 4M12 16l4 4M8 20l4-4'/%3E%3Cpath d='M6 6v12'/%3E%3Cpath d='M10 6l4 4'/%3E%3C/svg%3E");
+}
