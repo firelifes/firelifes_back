@@ -176,6 +176,8 @@ const loadCategories = async () => {
 }
 
 const openCategoryPicker = () => {
+  // 先隐藏键盘
+  uni.hideKeyboard()
   categoryPopupRef.value?.open(selectedCategory.value?.id)
 }
 
