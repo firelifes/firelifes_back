@@ -144,7 +144,7 @@
                       placeholder="年度金额"
                     />
                   </view>
-                  <text class="delete-btn" @tap="removeCategoryBudget(item.typeId)">🗑</text>
+                  <view class="delete-btn category-icon-svg category-icon-shanchu" @tap="removeCategoryBudget(item.typeId)"></view>
                 </view>
               </view>
               <view class="category-progress-row" v-if="item.spent > 0">
@@ -160,7 +160,7 @@
 
           <!-- 当月微调 -->
           <view v-if="monthlyCategoryItems.length > 0" class="section-label">
-            <text class="section-icon">🔧</text>
+            <view class="section-icon category-icon-svg category-icon-weixiu"></view>
             <text>当月微调（{{ currentMonth }}月）</text>
           </view>
 
@@ -196,7 +196,7 @@
       <view class="picker-panel" @tap.stop>
         <view class="picker-header">
           <text class="picker-title">选择支出分类</text>
-          <text class="picker-close" @tap="showCategoryPicker = false">✕</text>
+          <view class="picker-close category-icon-svg category-icon-guanbi" @tap="showCategoryPicker = false"></view>
         </view>
         <scroll-view class="picker-list" scroll-y>
           <view
@@ -956,8 +956,8 @@ onMounted(async () => {
   height: 44rpx;
 }
 .delete-btn {
-  font-size: var(--text-body);
-  padding: 8rpx;
+  width: 32rpx;
+  height: 32rpx;
   opacity: 0.5;
 }
 .delete-btn:active {
@@ -1048,9 +1048,9 @@ onMounted(async () => {
   color: var(--color-text-primary, #1E293B);
 }
 .picker-close {
-  font-size: var(--text-title);
+  width: 32rpx;
+  height: 32rpx;
   color: var(--color-text-secondary, #94A3B8);
-  padding: 8rpx;
 }
 .picker-list {
   flex: 1;

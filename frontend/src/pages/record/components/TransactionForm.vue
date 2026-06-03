@@ -7,7 +7,8 @@
     </view>
 
     <view v-if="showAssetFields" class="date-row" @tap="toggleDatePicker">
-      <text class="date-label">📅 日期</text>
+      <view class="date-icon category-icon-svg category-icon-riqi"></view>
+      <text class="date-label">日期</text>
       <view class="date-value-row">
         <text class="date-value">{{ formattedDateFull }}</text>
         <text class="date-arrow">▼</text>
@@ -545,6 +546,13 @@ const toggleDatePicker = () => {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.date-icon {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 12rpx;
+  flex-shrink: 0;
 }
 
 .date-label {

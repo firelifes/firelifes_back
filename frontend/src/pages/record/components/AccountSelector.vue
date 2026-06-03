@@ -21,7 +21,7 @@
           <text class="account-balance" :class="account.type === 'liability' ? 'negative' : 'positive'">
             {{ formatBalance(account.balance) }}
           </text>
-          <text class="check-mark" v-if="selectedId === account.id">✓</text>
+          <view class="check-mark category-icon-svg category-icon-duigou" v-if="selectedId === account.id"></view>
         </view>
       </view>
 
@@ -41,7 +41,7 @@
           <text class="account-balance negative">
             {{ formatBalance(account.balance) }}
           </text>
-          <text class="check-mark" v-if="selectedId === account.id">✓</text>
+          <view class="check-mark category-icon-svg category-icon-duigou" v-if="selectedId === account.id"></view>
         </view>
       </view>
 
@@ -342,9 +342,9 @@ defineExpose({
 }
 
 .check-mark {
-  font-size: var(--text-body);
+  width: 28rpx;
+  height: 28rpx;
   color: var(--color-primary, #0D9488);
-  font-weight: 700;
 }
 
 .empty-state {

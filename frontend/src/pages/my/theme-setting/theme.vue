@@ -26,11 +26,11 @@
             class="preset-label"
             :style="{ color: preset.colors['--color-primary'] }"
           >{{ preset.label }}</text>
-          <text
+          <view
             v-if="activePreset === preset.name"
-            class="preset-check"
+            class="preset-check category-icon-svg category-icon-duigou"
             :style="{ color: preset.colors['--color-primary'] }"
-          >✓</text>
+          ></view>
         </view>
       </view>
     </view>
@@ -287,7 +287,8 @@ onMounted(() => {
 }
 
 .preset-check {
-  font-size: var(--text-body);
+  width: 32rpx;
+  height: 32rpx;
   position: absolute;
   top: 12rpx;
   right: 16rpx;

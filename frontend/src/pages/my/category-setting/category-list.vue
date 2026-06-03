@@ -12,7 +12,7 @@
 
     <view class="content-scroll">
       <view v-if="loading" class="loading-state">
-        <text class="loading-icon">⏳</text>
+        <view class="loading-icon category-icon-svg category-icon-loading"></view>
         <text class="loading-text">加载中...</text>
       </view>
 
@@ -34,7 +34,7 @@
             @touchmove="onDragMove($event)"
             @touchend="onDragEnd"
           >
-            <text class="drag-icon">☰</text>
+            <view class="drag-icon category-icon-svg category-icon-shuxian"></view>
           </view>
           <view class="swipe-wrapper">
             <wd-swipe-action
@@ -395,9 +395,9 @@ onShow(() => {
 }
 
 .drag-icon {
-  font-size: var(--text-title);
+  width: 32rpx;
+  height: 32rpx;
   color: var(--color-text-tertiary, #CBD5E1);
-  line-height: 1;
 }
 
 .group-row:active .drag-icon,

@@ -1,7 +1,7 @@
 <template>
   <view class="confirm-overlay" @tap.stop>
     <view class="confirm-card">
-      <view class="check-icon">✓</view>
+      <view class="check-icon category-icon-svg category-icon-duigou"></view>
       <text class="confirm-title">记账成功</text>
 
       <text class="confirm-amount" :class="type">
@@ -16,7 +16,8 @@
       </view>
 
       <view v-if="hasAsset" class="confirm-asset-hint">
-        📱 已记入折旧资产
+        <view class="confirm-asset-icon category-icon-svg category-icon-mobile"></view>
+        <text>已记入折旧资产</text>
       </view>
 
       <view v-if="netWorth !== null" class="net-worth-section">
@@ -146,12 +147,12 @@ onMounted(() => {
   border-radius: 50%;
   background: var(--color-success, #10B981);
   color: var(--color-text-inverse, #FFFFFF);
-  font-size: var(--text-number);
-  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   animation: checkBounce 0.4s ease;
+  padding: 20rpx;
+  box-sizing: border-box;
 }
 
 @keyframes checkBounce {
@@ -206,6 +207,15 @@ onMounted(() => {
   margin-top: 16rpx;
   font-size: var(--text-small);
   color: var(--color-primary, #0D9488);
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.confirm-asset-icon {
+  width: 32rpx;
+  height: 32rpx;
+  flex-shrink: 0;
 }
 
 .section-divider {

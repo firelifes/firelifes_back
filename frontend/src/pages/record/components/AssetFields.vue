@@ -88,7 +88,7 @@
       <view class="picker-panel" @tap.stop>
         <view class="picker-header">
           <text class="picker-title">选择品类</text>
-          <text class="picker-close" @tap="showCategoryPicker = false">✕</text>
+          <view class="picker-close category-icon-svg category-icon-guanbi" @tap="showCategoryPicker = false"></view>
         </view>
         <scroll-view scroll-y class="picker-body">
           <view
@@ -99,7 +99,7 @@
             @tap="selectCategory(cat.key)"
           >
             <text class="picker-option-text">{{ cat.label }}</text>
-            <text v-if="localCategory === cat.key" class="picker-option-check">✓</text>
+            <view v-if="localCategory === cat.key" class="picker-option-check category-icon-svg category-icon-duigou"></view>
           </view>
         </scroll-view>
       </view>
@@ -434,7 +434,8 @@ watch(() => props.initialData, (data) => {
 }
 
 .picker-close {
-  font-size: var(--text-title);
+  width: 32rpx;
+  height: 32rpx;
   color: var(--color-text-secondary, #94A3B8);
   padding: 8rpx;
 }
@@ -461,8 +462,8 @@ watch(() => props.initialData, (data) => {
 }
 
 .picker-option-check {
-  font-size: var(--text-body);
+  width: 28rpx;
+  height: 28rpx;
   color: var(--color-primary, #0D9488);
-  font-weight: 700;
 }
 </style>

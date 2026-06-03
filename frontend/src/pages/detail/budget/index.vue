@@ -6,7 +6,7 @@
       </view>
       <text class="header-title">预算</text>
       <view class="header-right" @click="goToSetting">
-        <text class="setting-icon">⚙️</text>
+        <view class="setting-icon category-icon-svg category-icon-shezhi"></view>
       </view>
     </view>
 
@@ -126,9 +126,9 @@ onMounted(() => {
 }
 
 .setting-icon {
-  font-size: 40rpx;
+  width: 40rpx;
+  height: 40rpx;
   color: #fff;
-  line-height: 1;
 }
 
 .content {

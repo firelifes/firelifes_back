@@ -45,8 +45,8 @@
     <view v-if="submitStatus !== 'idle'" class="loading-overlay" @tap.stop>
       <view class="loading-box">
         <view v-if="submitStatus === 'submitting'" class="loading-spinner"></view>
-        <view v-else-if="submitStatus === 'success'" class="loading-check">✓</view>
-        <view v-else class="loading-check" style="background: var(--color-danger, #EF4444)">✕</view>
+        <view v-else-if="submitStatus === 'success'" class="loading-check category-icon-svg category-icon-duigou"></view>
+        <view v-else class="loading-check category-icon-svg category-icon-guanbi" style="background: var(--color-danger, #EF4444)"></view>
         <text class="loading-text">
           {{ submitStatus === 'submitting' ? '保存中...' : submitStatus === 'success' ? '保存成功' : '保存失败' }}
         </text>
@@ -353,11 +353,11 @@ onMounted(() => {
   height: 56rpx;
   border-radius: 50%;
   color: var(--color-text-inverse, #FFFFFF);
-  font-size: var(--text-title);
-  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 16rpx;
+  box-sizing: border-box;
 }
 
 .loading-check {

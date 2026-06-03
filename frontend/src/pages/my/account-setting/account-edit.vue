@@ -197,7 +197,7 @@
         >
           <view class="picker-icon category-icon-svg" :class="getAccountIconClass(account.icon, account.type)"></view>
           <text class="picker-name">{{ account.name }}</text>
-          <text v-if="liabilityFields.linkedAssetAccountId === account.id" class="check-icon">✓</text>
+          <view v-if="liabilityFields.linkedAssetAccountId === account.id" class="check-icon category-icon-svg category-icon-duigou"></view>
         </view>
         <view
           v-if="liabilityFields.linkedAssetAccountId"
@@ -1011,9 +1011,9 @@ onLoad((options: any) => {
 }
 
 .check-icon {
-  font-size: var(--text-body);
+  width: 28rpx;
+  height: 28rpx;
   color: var(--color-primary, #0D9488);
-  font-weight: 600;
 }
 
 .picker-clear .picker-name {

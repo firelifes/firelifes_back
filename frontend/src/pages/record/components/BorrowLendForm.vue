@@ -6,7 +6,7 @@
         :class="{ active: direction === 'out' }"
         @tap="direction = 'out'"
       >
-        <text class="direction-icon">🤝</text>
+        <view class="direction-icon category-icon-svg category-icon-tongxunlu"></view>
         <text class="direction-label">{{ isLend ? '借出' : '收回' }}</text>
       </view>
       <view 
@@ -14,7 +14,7 @@
         :class="{ active: direction === 'in' }"
         @tap="direction = 'in'"
       >
-        <text class="direction-icon">📋</text>
+        <view class="direction-icon category-icon-svg category-icon-wenjian"></view>
         <text class="direction-label">{{ isLend ? '收回' : '借入' }}</text>
       </view>
     </view>
@@ -156,7 +156,8 @@ watch(selectedImplicitAccount, (val) => {
 }
 
 .direction-icon {
-  font-size: 48rpx;
+  width: 48rpx;
+  height: 48rpx;
 }
 
 .direction-label {

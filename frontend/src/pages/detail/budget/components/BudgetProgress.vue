@@ -6,7 +6,7 @@
 
     <view v-else-if="!overview && !hasAnnualData" class="empty-state">
       <text class="empty-title">还没有设置预算</text>
-      <text class="empty-hint">点击右上角 ⚙️ 设置年度预算，开始管理支出</text>
+      <text class="empty-hint">点击右上角 <text class="inline-icon">设置</text> 年度预算，开始管理支出</text>
     </view>
 
     <template v-else>
@@ -77,10 +77,13 @@
 
       <!-- 预警区域 -->
       <view v-if="warningBudgets.length > 0" class="alert-section">
-        <text class="section-title">⚠️ 预算预警</text>
+        <view class="section-title-row">
+          <view class="section-title-icon category-icon-svg category-icon-jinggao"></view>
+          <text class="section-title">预算预警</text>
+        </view>
         <view v-for="item in displayWarnings" :key="item.id" class="alert-card" :class="'alert-' + item.alertStatus">
           <view class="alert-left">
-            <text class="alert-icon">{{ item.alertStatus === 'danger' ? '🔴' : '🟡' }}</text>
+            <view class="alert-icon category-icon-svg" :class="item.alertStatus === 'danger' ? 'category-icon-hongse' : 'category-icon-huangse'"></view>
             <view class="alert-info">
               <text class="alert-name">{{ item.name }}</text>
               <text class="alert-detail">
@@ -279,13 +282,22 @@ const toggleExpand = (id: number) => {
   margin-bottom: 20rpx;
 }
 
+.section-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  margin-bottom: 12rpx;
+  padding-left: 8rpx;
+}
+.section-title-icon {
+  width: 28rpx;
+  height: 28rpx;
+  flex-shrink: 0;
+}
 .section-title {
   font-size: var(--text-body);
   font-weight: 600;
   color: var(--color-text-primary, #1E293B);
-  display: block;
-  margin-bottom: 12rpx;
-  padding-left: 8rpx;
 }
 
 .alert-card {
@@ -311,7 +323,9 @@ const toggleExpand = (id: number) => {
 }
 
 .alert-icon {
-  font-size: var(--text-title);
+  width: 28rpx;
+  height: 28rpx;
+  flex-shrink: 0;
 }
 
 .alert-info {
