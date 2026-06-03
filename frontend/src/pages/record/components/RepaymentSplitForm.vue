@@ -94,32 +94,36 @@ const formattedInterest = computed(() => {
 
 const calculateAutoPrincipal = (): number => {
   const { loanAccount, totalAmount } = props
-  if (!loanAccount || !loanAccount.annualInterestRate) {
-    return Math.round(totalAmount * 0.7 * 100) / 100
+  // 如果有贷款账户且有利率信息，计算利息
+  if (loanAccount && loanAccount.annualInterestRate) {
+    const monthlyRate = loanAccount.annualInterestRate / 100 / 12
+    let calculatedInterest = totalAmount * monthlyRate
+    
+    // 确保利息是正数且不超过总金额
+    calculatedInterest = Math.max(0, Math.min(totalAmount, calculatedInterest))
+    
+    return Math.round((totalAmount - calculatedInterest) * 100) / 100
   }
   
-  const monthlyRate = loanAccount.annualInterestRate / 100 / 12
-  let calculatedInterest = totalAmount * monthlyRate
-  
-  // 确保利息是正数且不超过总金额
-  calculatedInterest = Math.max(0, Math.min(totalAmount, calculatedInterest))
-  
-  return Math.round((totalAmount - calculatedInterest) * 100) / 100
+  // 如果没有贷款信息，默认全部是本金
+  return Math.round(totalAmount * 100) / 100
 }
 
 const calculateAutoInterest = (): number => {
   const { loanAccount, totalAmount } = props
-  if (!loanAccount || !loanAccount.annualInterestRate) {
-    return Math.round(totalAmount * 0.3 * 100) / 100
+  // 如果有贷款账户且有利率信息，计算利息
+  if (loanAccount && loanAccount.annualInterestRate) {
+    const monthlyRate = loanAccount.annualInterestRate / 100 / 12
+    let calculatedInterest = totalAmount * monthlyRate
+    
+    // 确保利息是正数且不超过总金额
+    calculatedInterest = Math.max(0, Math.min(totalAmount, calculatedInterest))
+    
+    return Math.round(calculatedInterest * 100) / 100
   }
   
-  const monthlyRate = loanAccount.annualInterestRate / 100 / 12
-  let calculatedInterest = totalAmount * monthlyRate
-  
-  // 确保利息是正数且不超过总金额
-  calculatedInterest = Math.max(0, Math.min(totalAmount, calculatedInterest))
-  
-  return Math.round(calculatedInterest * 100) / 100
+  // 如果没有贷款信息，默认利息为0
+  return 0
 }
 
 const onPrincipalInput = (e: any) => {
