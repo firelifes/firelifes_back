@@ -62,7 +62,7 @@
       </view>
 
       <view class="wechat-btn" :class="{ disabled: wxLoading }" @click="handleWechatRegister">
-        <text class="wechat-icon">💬</text>
+        <view class="wechat-icon category-icon-svg category-icon-weixin"></view>
         <text>{{ wxLoading ? '登录中...' : '微信一键注册' }}</text>
       </view>
     </view>

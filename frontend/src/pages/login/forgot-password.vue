@@ -9,13 +9,13 @@
 
     <view class="form-card">
       <view class="input-row">
-        <text class="input-icon">📱</text>
+        <view class="input-icon category-icon-svg login-icon-phone"></view>
         <input class="input" v-model="phone" type="number" placeholder="请输入手机号" maxlength="11" />
       </view>
 
       <view class="input-row code-row">
         <view class="input-left">
-          <text class="input-icon">✉️</text>
+          <view class="input-icon category-icon-svg login-icon-mail"></view>
           <input class="input" v-model="code" type="number" placeholder="请输入验证码" maxlength="6" />
         </view>
         <view class="send-code-btn" :class="{ disabled: isCounting }" @click="sendCode">
@@ -25,16 +25,16 @@
 
       <view class="input-row pw-row">
         <view class="input-left">
-          <text class="input-icon">🔒</text>
+          <view class="input-icon category-icon-svg login-icon-lock"></view>
           <input class="input" v-model="password" :type="showPassword ? 'text' : 'password'" placeholder="设置新密码（6-20位）" />
         </view>
         <view class="toggle-pwd" @click="showPassword = !showPassword">
-          <text>{{ showPassword ? '🙈' : '👁' }}</text>
+          <view class="toggle-pwd-icon category-icon-svg" :class="showPassword ? 'login-icon-eye' : 'login-icon-eye-off'"></view>
         </view>
       </view>
 
       <view class="input-row">
-        <text class="input-icon">🔒</text>
+        <view class="input-icon category-icon-svg login-icon-lock"></view>
         <input class="input" v-model="confirmPassword" type="password" placeholder="再次输入新密码" />
       </view>
 
@@ -183,8 +183,10 @@ const goToLogin = () => {
 }
 
 .input-icon {
-  font-size: var(--text-title);
+  width: 36rpx;
+  height: 36rpx;
   margin-right: 16rpx;
+  color: var(--color-text-secondary, #94A3B8);
 }
 
 .input {
@@ -226,8 +228,13 @@ const goToLogin = () => {
 }
 
 .toggle-pwd {
-  font-size: var(--text-nav);
   padding: 8rpx;
+}
+
+.toggle-pwd-icon {
+  width: 34rpx;
+  height: 34rpx;
+  color: var(--color-text-secondary, #94A3B8);
 }
 
 .reset-btn {
