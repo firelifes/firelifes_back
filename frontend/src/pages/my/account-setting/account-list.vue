@@ -243,7 +243,8 @@ onShow(() => {
 .header-back {
   position: absolute;
   left: 20rpx;
-  bottom: 14rpx;
+  top: 50%;
+  transform: translateY(-50%);
   width: 72rpx;
   height: 72rpx;
   display: flex;
@@ -266,7 +267,8 @@ onShow(() => {
 .header-right {
   position: absolute;
   right: 20rpx;
-  bottom: 14rpx;
+  top: 50%;
+  transform: translateY(-50%);
   width: 72rpx;
   height: 72rpx;
   display: flex;
