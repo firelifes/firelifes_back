@@ -24,7 +24,7 @@
                 <text class="bill-item-name">{{ item.displayName }}</text>
               </view>
             </view>
-            <text class="bill-item-amount" :class="{ 'adjustment': isAdjustment(item) }">
+            <text class="bill-item-amount" :class="{ 'adjustment': isNeutral(item) }">
               {{ amountPrefix(item) }}{{ formatAmount(item.amount) }}
             </text>
           </view>
@@ -79,14 +79,15 @@ const formatAmount = (amount: number) => {
   return Math.abs(amount).toFixed(2)
 }
 
-const isAdjustment = (item: BillCardRecord) => {
-  return item.type === 'adjustment_increase' || item.type === 'adjustment_decrease'
+const isNeutral = (item: BillCardRecord) => {
+  return item.type === 'adjustment_increase' || item.type === 'adjustment_decrease' || item.type === 'transfer' || item.type === 'repayment'
 }
 
 const amountPrefix = (item: BillCardRecord) => {
   if (item.type === 'adjustment_increase') return '+'
   if (item.type === 'adjustment_decrease') return '-'
-  if (item.type === 'expense' || item.type === 'transfer' || item.type === 'repayment') return '-'
+  if (item.type === 'expense') return '-'
+  if (item.type === 'transfer' || item.type === 'repayment') return '→'
   return '+'
 }
 </script>

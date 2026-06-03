@@ -228,12 +228,19 @@ const getDateRecords = (date: string): RecordItem[] => {
 const getEnrichedRecords = (date: string): BillCardRecord[] => {
   return getDateRecords(date).map((record) => {
     const info = getCategoryInfo(record.typeId)
+    // Transfer/repayment records: show type-based display name
+    let displayName = record.remark
+    if (!displayName) {
+      if (record.type === 'transfer') displayName = '转账'
+      else if (record.type === 'repayment') displayName = '还款'
+      else displayName = info.name
+    }
     return {
       id: record.id,
       typeId: record.typeId ?? 0,
       type: record.type,
       amount: record.amount,
-      displayName: record.remark || info.name,
+      displayName,
       categoryIcon: info.icon,
       categoryColor: info.color,
     }

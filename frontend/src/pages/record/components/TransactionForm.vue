@@ -99,7 +99,7 @@
       @update:interestTypeId="(val) => emit('update:interestTypeId', val)"
     />
 
-    <view class="account-area" v-else>
+    <view class="account-area" v-if="!isTransfer && !isRepayment && !transferOperation">
       <view class="account-row single" @tap="openAccount">
         <text class="account-label">{{ transactionType === 'income' ? '收入账户' : '支出账户' }}</text>
         <view class="account-value" v-if="selectedAccount">
