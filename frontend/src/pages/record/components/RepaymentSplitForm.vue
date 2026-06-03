@@ -67,20 +67,33 @@
       
       <view class="interest-category">
         <text class="category-label">利息分类</text>
-        <picker :value="selectedInterestCategoryIndex" :range="interestCategories" range-key="name" @change="onCategoryChange">
-          <view class="picker-value">
-            <text>{{ selectedInterestCategory?.name || '请选择' }}</text>
-            <text class="picker-arrow">▼</text>
+        <view 
+          class="picker-value" 
+          @tap="openCategoryPicker"
+        >
+          <view class="selected-category">
+            <view v-if="selectedCategory" class="selected-category-info">
+              <view class="category-icon-svg" :class="getIconClass(selectedCategory.name)"></view>
+              <text class="category-name">{{ selectedCategory.name }}</text>
+            </view>
+            <text v-else class="placeholder-text">请选择</text>
           </view>
-        </picker>
+          <text class="picker-arrow">▼</text>
+        </view>
       </view>
     </view>
+    <InterestCategorySelectorPopup
+      ref="categoryPopupRef"
+      @select="onCategorySelect"
+    />
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import type { Category } from '../../types/category'
+import { ref, computed, watch, onMounted } from 'vue'
+import { categoryApi, type CategoryItem } from '../../../api/category'
+import { getCategoryIconClass } from '../../../utils/category-icon-map'
+import InterestCategorySelectorPopup from './InterestCategorySelectorPopup.vue'
 
 const props = defineProps<{
   totalAmount: number
@@ -90,7 +103,6 @@ const props = defineProps<{
     repaymentMethod?: string
     remainingMonths?: number
   }
-  interestCategories: Category[]
 }>()
 
 const emit = defineEmits<{
@@ -102,11 +114,9 @@ const emit = defineEmits<{
 const splitMode = ref<'auto' | 'manual'>('auto')
 const manualPrincipal = ref('')
 const manualInterest = ref('')
-const selectedInterestCategoryIndex = ref(0)
-
-const selectedInterestCategory = computed(() => {
-  return props.interestCategories[selectedInterestCategoryIndex.value]
-})
+const selectedCategory = ref<CategoryItem | null>(null)
+const categoryPopupRef = ref<InstanceType<typeof InterestCategorySelectorPopup> | null>(null)
+const categories = ref<CategoryItem[]>([])
 
 const principalAmount = computed(() => {
   if (splitMode.value === 'auto') {
@@ -170,9 +180,39 @@ const onManualInput = () => {
   emit('update:interest', parseFloat(manualInterest.value) || 0)
 }
 
-const onCategoryChange = (e: { detail: { value: number } }) => {
-  selectedInterestCategoryIndex.value = e.detail.value
-  emit('update:interestTypeId', props.interestCategories[e.detail.value]?.id || 0)
+const loadCategories = async () => {
+  try {
+    const res = await categoryApi.getUserCategories('expense')
+    if (res.success && res.data) {
+      const allCategories: CategoryItem[] = []
+      for (const group of res.data) {
+        allCategories.push(...group.children)
+      }
+      categories.value = allCategories
+      
+      // 默认选择「利息支出」分类
+      const interestCategory = allCategories.find(cat => cat.name === '利息支出')
+      if (interestCategory) {
+        selectedCategory.value = interestCategory
+        emit('update:interestTypeId', interestCategory.id)
+      }
+    }
+  } catch (error) {
+    console.error('加载分类失败:', error)
+  }
+}
+
+const openCategoryPicker = () => {
+  categoryPopupRef.value?.open(selectedCategory.value?.id)
+}
+
+const onCategorySelect = (category: CategoryItem) => {
+  selectedCategory.value = category
+  emit('update:interestTypeId', category.id)
+}
+
+const getIconClass = (name: string): string => {
+  return getCategoryIconClass(name)
 }
 
 watch(splitMode, (newMode) => {
@@ -191,6 +231,10 @@ watch(() => props.totalAmount, () => {
 
 watch(principalAmount, (val) => emit('update:principal', val))
 watch(interestAmount, (val) => emit('update:interest', val))
+
+onMounted(() => {
+  loadCategories()
+})
 </script>
 
 <style lang="scss" scoped>
@@ -371,6 +415,33 @@ watch(interestAmount, (val) => emit('update:interest', val))
   border-radius: 8rpx;
   font-size: 28rpx;
   color: #1E293B;
+}
+
+.selected-category {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.selected-category-info {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.category-icon-svg {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.category-name {
+  font-size: 28rpx;
+  color: #1E293B;
+}
+
+.placeholder-text {
+  font-size: 28rpx;
+  color: #94A3B8;
 }
 
 .picker-arrow {

@@ -81,6 +81,7 @@ export class CategoryService {
     { name: '还贷款', url: 'category-icon-repay-loan', iconType: 'svg', sortOrder: 50 },
     { name: '借出', url: 'category-icon-lend', iconType: 'svg', sortOrder: 51 },
     { name: '借入', url: 'category-icon-borrow', iconType: 'svg', sortOrder: 52 },
+    { name: '利息', url: 'category-icon-lixi', iconType: 'svg', sortOrder: 53 },
   ];
 
   private defaultGroups: (Omit<CategoryGroup, 'id' | 'createdAt' | 'updatedAt'> & { type: 'expense' | 'income' })[] = [
@@ -134,6 +135,7 @@ export class CategoryService {
     { id: 'expense_9_3', name: '还信用卡', groupId: 9, iconId: 49, sortOrder: 3, isDefault: true, type: 'expense' },
     { id: 'expense_9_4', name: '还贷款', groupId: 9, iconId: 50, sortOrder: 4, isDefault: true, type: 'expense' },
     { id: 'expense_9_5', name: '借出', groupId: 9, iconId: 51, sortOrder: 5, isDefault: true, type: 'expense' },
+    { id: 'expense_9_6', name: '利息支出', groupId: 9, iconId: 53, sortOrder: 6, isDefault: true, type: 'expense' },
     { id: 'expense_10_1', name: '其他', groupId: 10, iconId: 35, sortOrder: 1, isDefault: true, type: 'expense' },
     { id: 'expense_10_2', name: '日用', groupId: 10, iconId: 3, sortOrder: 2, isDefault: true, type: 'expense' },
     { id: 'expense_10_3', name: '捐赠', groupId: 10, iconId: 25, sortOrder: 3, isDefault: true, type: 'expense' },
@@ -384,7 +386,7 @@ export class CategoryService {
 
   private defaultGroupNames = ['饮食消费', '居家居住', '交通出行', '服饰美容', '学习成长', '休闲娱乐', '社交关系', '健康医疗', '金融理财', '其他支出', '薪资报酬', '投资理财', '其他收入'];
 
-  private defaultCategoryNames = ['餐饮', '饮料', '水果', '零食', '咖啡', '住房', '居家', '维修', '快递', '交通', '打车', '汽车', '服饰', '美发', '美容', '书籍', '学习', '电影', '音乐', '游戏', '旅行', '聚会聚餐', '礼物', '礼金', '亲友', '宠物', '医疗', '运动', '健身', '投资', '彩票', '其他', '日用', '捐赠', '办公', '通讯', '购物', '数码', '保险', '工资', '奖金', '兼职', '投资收入', '理财', '礼金收入', '其他收入', '报销'];
+  private defaultCategoryNames = ['餐饮', '饮料', '水果', '零食', '咖啡', '住房', '居家', '维修', '快递', '交通', '打车', '汽车', '服饰', '美发', '美容', '书籍', '学习', '电影', '音乐', '游戏', '旅行', '聚会聚餐', '礼物', '礼金', '亲友', '宠物', '医疗', '运动', '健身', '投资', '彩票', '其他', '日用', '捐赠', '办公', '通讯', '购物', '数码', '保险', '还信用卡', '还贷款', '借出', '利息支出', '工资', '奖金', '兼职', '投资收入', '理财', '礼金收入', '其他收入', '报销'];
 
   private markGroupIsUserCreated(groups: UserCategoryGroup[]) {
     for (const group of groups) {
