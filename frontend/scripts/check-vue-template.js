@@ -176,20 +176,86 @@ function checkTemplate(file, templateBody) {
 }
 
 function extractTemplate(content) {
-  // 找第一对匹配的 <template>...</template>
-  const openRe = /<template\b[^>]*>/g
-  const closeRe = /<\/template\s*>/g
-  const opens = []
-  const closes = []
-  let m
-  while ((m = openRe.exec(content))) opens.push(m.index + m[0].length)
-  while ((m = closeRe.exec(content))) closes.push(m.index)
-  if (opens.length === 0 || closes.length === 0) return null
-  // 简单取第一个 open 和最后一个 close（单文件通常就一对）
-  const start = opens[0]
-  const end = closes[closes.length - 1]
-  if (end <= start) return null
-  return { body: content.slice(start, end), start, end }
+  /**
+   * 找到 SFC 顶层 <template>...</template> 的范围。
+   *
+   * 难点：
+   * 1. <script>/<style> 块里可能有 "<template>" 字符串（如 JSDoc 注释、TS 类型），
+   *    需要先跳过这些块。
+   * 2. 模板内部可能有嵌套的 <template v-for> / <template #header>，
+   *    需要深度追踪，不能简单取「第一个 open + 第一个 close」。
+   *
+   * 算法：手写状态机扫描所有顶层标签，遇到 <script>/<style> 跳过整个块，
+   * 遇到第一个 <template> 后开始深度追踪，匹配的 </template> 即为顶层结束。
+   */
+  const len = content.length
+  let i = 0
+  while (i < len) {
+    const lt = content.indexOf('<', i)
+    if (lt === -1) return null
+    const gt = content.indexOf('>', lt)
+    if (gt === -1) return null
+    const tag = content.slice(lt, gt + 1)
+
+    // 跳过 <script>...</script>
+    if (/^<script\b/.test(tag)) {
+      const close = content.indexOf('</script>', gt + 1)
+      if (close === -1) return null
+      i = close + '</script>'.length
+      continue
+    }
+    // 跳过 <style>...</style>
+    if (/^<style\b/.test(tag)) {
+      const close = content.indexOf('</style>', gt + 1)
+      if (close === -1) return null
+      i = close + '</style>'.length
+      continue
+    }
+    // 跳过 <!-- ... --> 注释（顶层和 script/style 之外的）
+    if (tag.startsWith('<!--')) {
+      const close = content.indexOf('-->', gt + 1)
+      if (close === -1) return null
+      i = close + 3
+      continue
+    }
+
+    // 找到顶层 <template>，开始深度追踪
+    if (/^<template\b/.test(tag)) {
+      const openEnd = gt + 1
+      let depth = 1
+      let j = openEnd
+      while (j < len && depth > 0) {
+        const nextOpen = content.indexOf('<template', j)
+        const nextClose = content.indexOf('</template', j)
+        if (nextClose === -1) return null
+        if (nextOpen !== -1 && nextOpen < nextClose) {
+          // 确认是真正的 <template> 开标签（后面是空格/> /换行 等分隔符），
+          // 避免误匹配 <template-literal> 这类带连字符的
+          const after = content[nextOpen + '<template'.length]
+          if (after === ' ' || after === '>' || after === '\t' || after === '\n' || after === '\r') {
+            depth++
+          }
+          j = nextOpen + '<template'.length
+        } else {
+          depth--
+          if (depth === 0) {
+            const closeGt = content.indexOf('>', nextClose)
+            return {
+              body: content.slice(openEnd, nextClose),
+              start: openEnd,
+              end: nextClose,
+            }
+          }
+          j = nextClose + '</template'.length
+        }
+      }
+      return null
+    }
+
+    // 其他顶层标签（不太可能有），跳过
+    i = gt + 1
+  }
+  return null
 }
 
 function checkFile(file) {

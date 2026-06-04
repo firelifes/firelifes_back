@@ -1,17 +1,12 @@
 <template>
-  <WdPopup
-    position="bottom"
+  <BottomScrollPopup
+    ref="popupRef"
     v-model="visible"
     :z-index="3000"
-    :modal="true"
-    :close-on-click-modal="true"
-    custom-style="border-radius: 32rpx 32rpx 0 0; background: var(--color-bg-card, #FFFFFF); max-height: 70vh; display: flex; flex-direction: column; overflow: hidden;"
+    :height="70"
+    title="选择利息分类"
     @close="handleClose"
   >
-    <view class="popup-header">
-      <text class="popup-title">选择利息分类</text>
-      <text class="popup-close" @tap="handleClose">×</text>
-    </view>
     <scroll-view scroll-y class="category-list" :show-scrollbar="false">
       <view
         v-for="group in categoryGroups"
@@ -37,13 +32,14 @@
         </view>
       </view>
     </scroll-view>
-  </WdPopup>
+  </BottomScrollPopup>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { categoryApi, type CategoryGroup, type CategoryItem } from '../../../api/category'
 import { getCategoryIconClass } from '../../../utils/category-icon-map'
+import BottomScrollPopup from '../../../components/BottomScrollPopup.vue'
 
 const emit = defineEmits<{
   (e: 'select', category: CategoryItem): void
@@ -51,6 +47,7 @@ const emit = defineEmits<{
   (e: 'close'): void
 }>()
 
+const popupRef = ref<InstanceType<typeof BottomScrollPopup> | null>(null)
 const categoryGroups = ref<CategoryGroup[]>([])
 const visible = ref(false)
 const selectedCategoryId = ref<number>(0)
@@ -99,34 +96,13 @@ defineExpose({ open, close })
 </script>
 
 <style lang="scss" scoped>
-.popup-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 28rpx 32rpx 20rpx;
-  border-bottom: 1rpx solid var(--color-border, #E2E8F0);
-  background: var(--color-bg-card, #FFFFFF);
-  flex-shrink: 0;
-}
-
-.popup-title {
-  font-size: var(--text-title, 32rpx);
-  font-weight: 600;
-  color: var(--color-text-primary, #1E293B);
-  letter-spacing: -0.3rpx;
-}
-
-.popup-close {
-  font-size: 48rpx;
-  font-weight: 300;
-  color: var(--color-text-secondary, #94A3B8);
-  padding: 4rpx 12rpx;
-  line-height: 1;
-}
+/* popup-header / popup-title / popup-close 由 BottomScrollPopup 内部提供 */
 
 .category-list {
+  /* 关键：flex:1 + min-height:0 让 <scroll-view> 在 BottomScrollPopup 的定高 body 里正确滚动
+     （BottomScrollPopup 的 body 已经是 display:flex column + flex:1 + min-height:0） */
   flex: 1;
-  min-height: 0; /* 关键：覆盖 flex item 默认的 min-height:auto，让 flex:1 能在固定高度父容器里正确收缩并启用内部滚动 */
+  min-height: 0;
   padding: 20rpx 24rpx 40rpx;
   overflow-y: auto;
 }
