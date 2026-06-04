@@ -42,8 +42,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { categoryApi, type CategoryGroup, type CategoryItem } from '../../api/category'
-import { getCategoryIconClass } from '../../utils/category-icon-map'
+import { categoryApi, type CategoryGroup, type CategoryItem } from '../../../api/category'
+import { getCategoryIconClass } from '../../../utils/category-icon-map'
 
 const emit = defineEmits<{
   (e: 'select', category: CategoryItem): void

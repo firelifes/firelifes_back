@@ -197,6 +197,52 @@ function checkFile(file) {
   const tpl = extractTemplate(content)
   if (!tpl) return
   checkTemplate(file, tpl.body)
+  checkImports(file, content)
+}
+
+/**
+ * 检查相对 import 路径能否解析到真实文件。
+ * 这是为了拦截 "import path 写错导致 vite 构建失败" 这类错误
+ * （参考 InterestCategorySelectorPopup 的 ../../api 写错事件）。
+ */
+function checkImports(file, content) {
+  // 匹配 import / export 的 from 路径
+  // 跳过 import type { ... }（TypeScript 编译时擦除，无需真实解析）
+  const importRe = /^\s*(?:import|export)\s+(?!type\s)(?:[^'"]*?\s+from\s+)?['"](\.\.?\/[^'"]+)['"]/gm
+  let m
+  const fileDir = path.dirname(file)
+  while ((m = importRe.exec(content))) {
+    const rel = m[1]
+    // 跳过 import type 这种以 "type" 开头的（已经通过 (?!type\s) 排除，但兜底再判断一次）
+    // 通过检查 m.index 之前的源码片段判断是否是 import type
+    const lineStart = content.lastIndexOf('\n', m.index) + 1
+    const linePrefix = content.slice(lineStart, m.index)
+    if (/\bimport\s+type\b/.test(linePrefix) || /\bexport\s+type\b/.test(linePrefix)) {
+      continue
+    }
+    const candidates = [
+      rel,
+      rel + '.ts',
+      rel + '.js',
+      rel + '.vue',
+      rel + '/index.ts',
+      rel + '/index.js',
+    ]
+    const resolved = candidates.find(c => {
+      try {
+        return fs.existsSync(path.resolve(fileDir, c))
+      } catch (_) {
+        return false
+      }
+    })
+    if (!resolved) {
+      errors.push({
+        file,
+        line: content.slice(0, m.index).split('\n').length,
+        msg: `无法解析相对路径 "${rel}"（尝试了 ${rel}, ${rel}.ts, ${rel}/index.ts 等）`,
+      })
+    }
+  }
 }
 
 walk(SRC)
