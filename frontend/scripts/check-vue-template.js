@@ -195,9 +195,9 @@ function extractTemplate(content) {
 function checkFile(file) {
   const content = fs.readFileSync(file, 'utf8')
   const tpl = extractTemplate(content)
-  if (!tpl) return
-  checkTemplate(file, tpl.body)
+  if (tpl) checkTemplate(file, tpl.body)
   checkImports(file, content)
+  checkScriptApiImports(file, content)
 }
 
 /**
@@ -243,6 +243,139 @@ function checkImports(file, content) {
       })
     }
   }
+}
+
+/**
+ * 检查 <script setup> 中是否用了 Vue/UniApp 顶层 API 但忘了 import。
+ * 这是 v3 新增项，参考 watch() 漏 import 致整个页面 setup 阶段崩溃的事件。
+ *
+ * 思路：
+ * 1. 抽出 <script setup> ... </script> 块
+ * 2. 解析 import { ... } from 'vue' / from '@dcloudio/uni-app' 的具名导入
+ * 3. 状态机剥掉字符串/注释后，扫描 `\b<apiName>\s*\(` 形式的使用
+ * 4. 用了但没导入 → 报错
+ *
+ * 注意：编译器宏（defineProps/defineEmits/defineExpose/defineModel/defineOptions/defineSlots）
+ * 不需要 import，列入白名单跳过。
+ */
+const VUE_RUNTIME_APIS = new Set([
+  'ref', 'reactive', 'computed', 'watch', 'watchEffect',
+  'onMounted', 'onUnmounted', 'onBeforeMount', 'onBeforeUnmount',
+  'onUpdated', 'onBeforeUpdate', 'onActivated', 'onDeactivated',
+  'onErrorCaptured', 'nextTick',
+  'toRef', 'toRefs', 'unref', 'isRef',
+  'provide', 'inject',
+  'shallowRef', 'shallowReactive', 'triggerRef', 'customRef',
+  'readonly', 'shallowReadonly', 'markRaw', 'toRaw',
+  'createApp', 'defineAsyncComponent', 'h', 'render',
+  'useAttrs', 'useSlots',
+])
+const UNIAPP_RUNTIME_APIS = new Set([
+  'onShow', 'onHide',
+  'onPullDownRefresh', 'onReachBottom',
+  'onShareAppMessage', 'onShareTimeline', 'onAddToFavorites',
+  'onPageScroll', 'onTabItemTap',
+  'onResize', 'onLaunch', 'onError', 'onThemeChange',
+  'onPageNotFound', 'onUnhandledRejection',
+])
+// 编译器宏，<script setup> 自带，不需要 import
+const COMPILER_MACROS = new Set([
+  'defineProps', 'defineEmits', 'defineExpose',
+  'defineModel', 'defineOptions', 'defineSlots',
+])
+
+function extractScriptSetup(content) {
+  const re = /<script\s+setup[^>]*>([\s\S]*?)<\/script>/
+  const m = re.exec(content)
+  if (!m) return null
+  return { body: m[1], start: m.index + m[0].indexOf('>') + 1 }
+}
+
+/**
+ * 状态机：把字符串字面量（"..." '...' `...`）和注释（// ... /* ... *\/）
+ * 替换成等长的空白字符，保留行号信息。
+ */
+function maskStringsAndComments(code) {
+  let out = ''
+  let i = 0
+  const len = code.length
+  while (i < len) {
+    const c = code[i]
+    const n = code[i + 1]
+    // 单行注释
+    if (c === '/' && n === '/') {
+      while (i < len && code[i] !== '\n') { out += ' '; i++ }
+      continue
+    }
+    // 多行注释
+    if (c === '/' && n === '*') {
+      out += '  '
+      i += 2
+      while (i < len && !(code[i] === '*' && code[i + 1] === '/')) {
+        out += code[i] === '\n' ? '\n' : ' '
+        i++
+      }
+      if (i < len) { out += '  '; i += 2 }
+      continue
+    }
+    // 字符串
+    if (c === '"' || c === "'" || c === '`') {
+      const q = c
+      out += ' '
+      i++
+      while (i < len && code[i] !== q) {
+        if (code[i] === '\\') { out += '  '; i += 2; continue }
+        out += code[i] === '\n' ? '\n' : ' '
+        i++
+      }
+      if (i < len) { out += ' '; i++ }
+      continue
+    }
+    out += c
+    i++
+  }
+  return out
+}
+
+function checkScriptApiImports(file, content) {
+  const sc = extractScriptSetup(content)
+  if (!sc) return
+
+  // 1) 解析 import { ... } from 'vue' / '@dcloudio/uni-app'
+  const vueImported = new Set()
+  const uniImported = new Set()
+  const importRe = /import\s*(?:type\s*)?\{([^}]+)\}\s*from\s*['"]([^'"]+)['"]/g
+  let m
+  while ((m = importRe.exec(sc.body))) {
+    const names = m[1].split(',').map(s => s.trim().split(/\s+as\s+/).pop().trim()).filter(Boolean)
+    if (m[2] === 'vue') names.forEach(n => vueImported.add(n))
+    else if (m[2] === '@dcloudio/uni-app') names.forEach(n => uniImported.add(n))
+  }
+
+  // 2) 状态机屏蔽字符串/注释，避免 "ref" 出现在字符串里时被误报
+  const masked = maskStringsAndComments(sc.body)
+
+  // 3) 对每个已知 API，检查是否在源码里以 `\bapiName\s*\(` 形式被调用，且没导入
+  //    行号算法：先算 <script setup> 起始位置的行号，再加上脚本体内的相对行号
+  const scriptStartLine = content.slice(0, sc.start).split('\n').length
+  const check = (apiName, imported, sourceModule) => {
+    if (imported.has(apiName)) return
+    if (COMPILER_MACROS.has(apiName)) return
+    const re = new RegExp('\\b' + apiName + '\\s*\\(', 'g')
+    let hit
+    while ((hit = re.exec(masked))) {
+      const hitLineInScript = sc.body.slice(0, hit.index).split('\n').length
+      const absoluteLine = scriptStartLine + hitLineInScript - 1
+      errors.push({
+        file,
+        line: absoluteLine,
+        msg: `<script setup> 中使用了 ${sourceModule} API "${apiName}()" 但未从 '${sourceModule === 'Vue' ? 'vue' : '@dcloudio/uni-app'}' 导入`,
+      })
+      break // 同一 API 只报一次
+    }
+  }
+  for (const api of VUE_RUNTIME_APIS) check(api, vueImported, 'Vue')
+  for (const api of UNIAPP_RUNTIME_APIS) check(api, uniImported, 'UniApp')
 }
 
 walk(SRC)
