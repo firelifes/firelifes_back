@@ -86,6 +86,8 @@ const props = withDefaults(
     modal?: boolean
     /** 点击遮罩是否关闭 */
     closeOnClickModal?: boolean
+    /** 使用方自定义外层样式（字符串或字符串数组），会拼接到默认 popup 样式之后 */
+    customStyle?: string | string[]
   }>(),
   {
     zIndex: 2000,
@@ -93,6 +95,7 @@ const props = withDefaults(
     title: '',
     modal: true,
     closeOnClickModal: true,
+    customStyle: '',
   },
 )
 
@@ -108,7 +111,7 @@ const visible = computed({
 
 const popupStyle = computed(() => {
   // 关键：height + display:flex column + min-height 链条，让内层 scroll-view 拿到非 0 高度
-  return [
+  const baseStyle = [
     'border-radius: 32rpx 32rpx 0 0',
     'background: var(--color-bg-card, #FFFFFF)',
     `height: ${props.height}vh`,
@@ -116,7 +119,10 @@ const popupStyle = computed(() => {
     'display: flex',
     'flex-direction: column',
     'overflow: hidden',
-  ].join('; ')
+  ]
+  const extra = props.customStyle
+  const userStyle = Array.isArray(extra) ? extra : extra ? [extra] : []
+  return [...baseStyle, ...userStyle].join('; ')
 })
 
 const handleClose = () => {

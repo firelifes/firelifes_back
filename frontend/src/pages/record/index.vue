@@ -38,19 +38,11 @@
       </template>
     </view>
 
-    <WdPopup
-    position="bottom"
-    v-model="showTransactionForm"
-    :z-index="1000"
-    :modal="true"
-    :close-on-click-modal="true"
-    :safe-area-inset-bottom="true"
-    custom-style="border-radius: 32rpx 32rpx 0 0; background: transparent; max-height: 85vh; overflow: hidden;"
-    @close="handleCloseTransactionForm"
-  >
-    <!-- 收支表单 -->
+    <!-- 一级弹框：收支 / 转账表单。每个表单内部用 BottomScrollPopup 渲染（z-index 1000），
+         保持一致的弹框外观与滚动行为；外层不再包 WdPopup，由各表单自行管理显示/关闭 -->
     <IncomeExpenseForm
       v-if="transactionType !== 'transfer' && !currentTransferOperation"
+      v-model:visible="showTransactionForm"
       :date="selectedDate"
       :transactionType="transactionType"
       :categoryName="selectedCategory?.name"
@@ -66,10 +58,11 @@
       @update:assetData="assetData = $event"
       @complete="handleComplete"
       @toggleDatePicker="showDatePicker = true"
+      @close="handleCloseTransactionForm"
     />
-    <!-- 转账表单 -->
     <TransferForm
       v-else
+      v-model:visible="showTransactionForm"
       :date="selectedDate"
       :isTransfer="isTransfer"
       :isRepayment="isRepayment"
@@ -94,8 +87,8 @@
       @complete="handleComplete"
       @toggleDatePicker="showDatePicker = true"
       @openInterestCategoryPicker="handleOpenInterestCategoryPicker"
+      @close="handleCloseTransactionForm"
     />
-  </WdPopup>
 
     <!-- 二级弹框：利息分类选择。放在页面级别（与一级 WdPopup 平级），
          z-index: 3000 > 一级的 1000，避免嵌套导致的显示问题 -->

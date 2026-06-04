@@ -15,9 +15,10 @@
     </view>
 
     <view v-else class="edit-body">
-      <!-- 收支表单 -->
+      <!-- 收支表单（编辑页固定显示） -->
       <IncomeExpenseForm
         v-if="recordType !== 'transfer' && recordType !== 'repayment'"
+        :visible="true"
         :date="recordDate"
         :transactionType="recordType === 'income' ? 'income' : 'expense'"
         :categoryName="categoryName"
@@ -34,9 +35,10 @@
         @complete="handleUpdate"
         @toggleDatePicker="showDatePicker = true"
       />
-      <!-- 转账表单 -->
+      <!-- 转账表单（编辑页固定显示） -->
       <TransferForm
         v-else
+        :visible="true"
         :date="recordDate"
         :isTransfer="recordType === 'transfer'"
         :isRepayment="recordType === 'repayment'"

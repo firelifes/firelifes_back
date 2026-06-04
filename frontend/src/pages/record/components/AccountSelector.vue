@@ -270,8 +270,11 @@ defineExpose({
   padding: 0;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  min-height: 0; /* flex 链上：让 .account-list scroll-view 能拿到非 0 高度 */
+  /* flex:1 + min-height:0（不是 height:100%）：
+     父容器 .popup-body 是 flex:1，本身无定高，height:100% 无法解析出非 0 值。
+     用 flex:1 让 account-selector 撑满 popup-body，再让 .account-list scroll-view 拿到非 0 高度 */
+  flex: 1;
+  min-height: 0;
 }
 
 .account-search {

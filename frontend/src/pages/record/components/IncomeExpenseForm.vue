@@ -1,90 +1,103 @@
 <template>
-  <view class="income-expense-form">
-    <view class="amount-display">
-      <text class="currency">¥</text>
-      <text class="amount">{{ displayAmount || '0.00' }}</text>
-    </view>
-
-    <view v-if="showAssetFields" class="date-row" @tap="toggleDatePicker">
-      <view class="date-icon category-icon-svg category-icon-riqi"></view>
-      <text class="date-label">日期</text>
-      <view class="date-value-row">
-        <text class="date-value">{{ formattedDateFull }}</text>
-        <text class="date-arrow">▼</text>
+  <BottomScrollPopup
+    v-model:visible="visible"
+    :z-index="1000"
+    :height="80"
+    :custom-style="popupCustomStyle"
+    @close="handlePopupClose"
+  >
+    <scroll-view scroll-y class="form-content" :show-scrollbar="false">
+      <view class="amount-display">
+        <text class="currency">¥</text>
+        <text class="amount">{{ displayAmount || '0.00' }}</text>
       </view>
-    </view>
 
-    <view class="account-area">
-      <view class="account-row single" @tap="openAccount">
-        <text class="account-label">{{ transactionType === 'income' ? '收入账户' : '支出账户' }}</text>
-        <view class="account-value" v-if="selectedAccount">
-          <view class="account-value-icon category-icon-svg" :class="getAccountIconClass(selectedAccount.icon, selectedAccount.type)"></view>
-          <text class="account-value-name">{{ selectedAccount.name }}</text>
+      <view v-if="showAssetFields" class="date-row" @tap="toggleDatePicker">
+        <view class="date-icon category-icon-svg category-icon-riqi"></view>
+        <text class="date-label">日期</text>
+        <view class="date-value-row">
+          <text class="date-value">{{ formattedDateFull }}</text>
+          <text class="date-arrow">▼</text>
         </view>
-        <text class="account-value placeholder" v-else>点击选择</text>
-        <text class="account-arrow">▼</text>
       </view>
-    </view>
 
-    <view class="remark-area">
-      <WdTextarea
-        v-model="remark"
-        placeholder="点击填写备注"
-        :maxlength="200"
-        autoHeight
-        customStyle="background: rgba(245, 246, 250, 0.8); border-radius: 20rpx; padding: 20rpx 24rpx; font-size: 28rpx;"
+      <view class="account-area">
+        <view class="account-row single" @tap="openAccount">
+          <text class="account-label">{{ transactionType === 'income' ? '收入账户' : '支出账户' }}</text>
+          <view class="account-value" v-if="selectedAccount">
+            <view class="account-value-icon category-icon-svg" :class="getAccountIconClass(selectedAccount.icon, selectedAccount.type)"></view>
+            <text class="account-value-name">{{ selectedAccount.name }}</text>
+          </view>
+          <text class="account-value placeholder" v-else>点击选择</text>
+          <text class="account-arrow">▼</text>
+        </view>
+      </view>
+
+      <view class="remark-area">
+        <WdTextarea
+          v-model="remark"
+          placeholder="点击填写备注"
+          :maxlength="200"
+          autoHeight
+          customStyle="background: rgba(245, 246, 250, 0.8); border-radius: 20rpx; padding: 20rpx 24rpx; font-size: 28rpx;"
+        />
+      </view>
+
+      <AssetFields
+        v-if="transactionType === 'expense'"
+        v-model="showAssetFields"
+        :purchasePrice="parseFloat(displayAmount) || 0"
+        :purchaseDate="date"
+        :defaultName="categoryName"
+        :initialData="initialAssetData"
+        @update:assetData="handleAssetDataChange"
       />
-    </view>
+    </scroll-view>
 
-    <AssetFields
-      v-if="transactionType === 'expense'"
-      v-model="showAssetFields"
-      :purchasePrice="parseFloat(displayAmount) || 0"
-      :purchaseDate="date"
-      :defaultName="categoryName"
-      :initialData="initialAssetData"
-      @update:assetData="handleAssetDataChange"
-    />
-
-    <view v-if="!showAssetFields" class="keyboard">
-      <view class="keyboard-row">
-        <view class="key-item" @tap="inputAmount('7')"><text>7</text></view>
-        <view class="key-item" @tap="inputAmount('8')"><text>8</text></view>
-        <view class="key-item" @tap="inputAmount('9')"><text>9</text></view>
-        <view class="key-item function" @tap="toggleDatePicker">
-          <text class="date-text">{{ formattedDate }}</text>
+    <template v-if="!showAssetFields" #footer>
+      <view class="keyboard">
+        <view class="keyboard-row">
+          <view class="key-item" @tap="inputAmount('7')"><text>7</text></view>
+          <view class="key-item" @tap="inputAmount('8')"><text>8</text></view>
+          <view class="key-item" @tap="inputAmount('9')"><text>9</text></view>
+          <view class="key-item function" @tap="toggleDatePicker">
+            <text class="date-text">{{ formattedDate }}</text>
+          </view>
+        </view>
+        <view class="keyboard-row">
+          <view class="key-item" @tap="inputAmount('4')"><text>4</text></view>
+          <view class="key-item" @tap="inputAmount('5')"><text>5</text></view>
+          <view class="key-item" @tap="inputAmount('6')"><text>6</text></view>
+          <view class="key-item function" @tap="inputAmount('+')"><text>+</text></view>
+        </view>
+        <view class="keyboard-row">
+          <view class="key-item" @tap="inputAmount('1')"><text>1</text></view>
+          <view class="key-item" @tap="inputAmount('2')"><text>2</text></view>
+          <view class="key-item" @tap="inputAmount('3')"><text>3</text></view>
+          <view class="key-item function" @tap="inputAmount('-')"><text>-</text></view>
+        </view>
+        <view class="keyboard-row">
+          <view class="key-item" @tap="inputAmount('.')"><text>.</text></view>
+          <view class="key-item" @tap="inputAmount('0')"><text>0</text></view>
+          <view class="key-item function" @tap="deleteDigit"><text>⌫</text></view>
+          <view class="key-item confirm" :class="{ disabled: submitting }" @tap="!submitting && handleComplete()">
+            <text>{{ submitting ? '提交中...' : '完成' }}</text>
+          </view>
         </view>
       </view>
-      <view class="keyboard-row">
-        <view class="key-item" @tap="inputAmount('4')"><text>4</text></view>
-        <view class="key-item" @tap="inputAmount('5')"><text>5</text></view>
-        <view class="key-item" @tap="inputAmount('6')"><text>6</text></view>
-        <view class="key-item function" @tap="inputAmount('+')"><text>+</text></view>
-      </view>
-      <view class="keyboard-row">
-        <view class="key-item" @tap="inputAmount('1')"><text>1</text></view>
-        <view class="key-item" @tap="inputAmount('2')"><text>2</text></view>
-        <view class="key-item" @tap="inputAmount('3')"><text>3</text></view>
-        <view class="key-item function" @tap="inputAmount('-')"><text>-</text></view>
-      </view>
-      <view class="keyboard-row">
-        <view class="key-item" @tap="inputAmount('.')"><text>.</text></view>
-        <view class="key-item" @tap="inputAmount('0')"><text>0</text></view>
-        <view class="key-item function" @tap="deleteDigit"><text>⌫</text></view>
-        <view class="key-item confirm" :class="{ disabled: submitting }" @tap="!submitting && handleComplete()">
-          <text>{{ submitting ? '提交中...' : '完成' }}</text>
+    </template>
+
+    <template v-else #footer>
+      <view class="complete-btn-wrapper">
+        <view class="complete-btn" :class="{ disabled: submitting }" @tap="!submitting && handleComplete()">
+          <text>{{ submitting ? '提交中...' : '完  成' }}</text>
         </view>
       </view>
-    </view>
+    </template>
+  </BottomScrollPopup>
 
-    <view v-if="showAssetFields" class="complete-btn-wrapper">
-      <view class="complete-btn" :class="{ disabled: submitting }" @tap="!submitting && handleComplete()">
-        <text>{{ submitting ? '提交中...' : '完  成' }}</text>
-      </view>
-    </view>
-
-    <AccountSelectorPopup ref="accountPopupRef" :title="'选择账户'" :filterType="transactionType" @select="handleAccountSelect" />
-  </view>
+  <!-- 二级弹框：选择账户 -->
+  <AccountSelectorPopup ref="accountPopupRef" :title="'选择账户'" :filterType="transactionType" @select="handleAccountSelect" />
 </template>
 
 <script setup lang="ts">
@@ -94,8 +107,11 @@ import { getAccountIconClass } from '../../../types/account'
 import type { DepreciatingAssetData } from '../../../types/asset'
 import AccountSelectorPopup from './AccountSelectorPopup.vue'
 import AssetFields from './AssetFields.vue'
+import BottomScrollPopup from '../../../components/BottomScrollPopup.vue'
 
 const props = defineProps<{
+  /** 弹框显示控制（v-model:visible），由父组件控制 */
+  visible: boolean
   date: string
   transactionType: 'income' | 'expense'
   categoryName?: string
@@ -107,6 +123,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
+  (e: 'update:visible', val: boolean): void
   (e: 'update:date', date: string): void
   (e: 'update:amount', amount: string): void
   (e: 'update:remark', remark: string): void
@@ -114,7 +131,19 @@ const emit = defineEmits<{
   (e: 'update:assetData', data: DepreciatingAssetData | null): void
   (e: 'complete'): void
   (e: 'toggleDatePicker'): void
+  (e: 'close'): void
 }>()
+
+/**
+ * 一级弹框自定义样式：玻璃拟态（半透明白 + 模糊 + 顶部细线）
+ * 与 TransferForm 保持一致
+ */
+const popupCustomStyle = [
+  'background: rgba(255, 255, 255, 0.95)',
+  'backdrop-filter: blur(20rpx)',
+  '-webkit-backdrop-filter: blur(20rpx)',
+  'border-top: 1rpx solid rgba(255, 255, 255, 0.5)',
+].join('; ')
 
 const displayAmount = ref('')
 const remark = ref('')
@@ -131,6 +160,10 @@ const openAccount = () => {
 
 const handleAccountSelect = (account: Account) => {
   emit('update:selectedAccount', account)
+}
+
+const handlePopupClose = () => {
+  emit('close')
 }
 
 const parseDate = (dateStr?: string): Date => {
@@ -187,7 +220,7 @@ watch(() => props.initialAssetData, (val) => {
 const inputAmount = (digit: string) => {
   if (digit === '+' || digit === '-') {
     if (displayAmount.value === '') return
-    
+
     if (firstOperand.value && operator.value && !waitingForSecondOperand.value) {
       const result = calculate(parseFloat(firstOperand.value), parseFloat(displayAmount.value), operator.value)
       displayAmount.value = formatNumber(result)
@@ -195,7 +228,7 @@ const inputAmount = (digit: string) => {
     } else {
       firstOperand.value = displayAmount.value
     }
-    
+
     operator.value = digit
     waitingForSecondOperand.value = true
     return
@@ -253,7 +286,7 @@ const handleComplete = () => {
     const result = calculate(parseFloat(firstOperand.value), parseFloat(displayAmount.value), operator.value)
     displayAmount.value = formatNumber(result)
   }
-  
+
   const finalAmount = Math.abs(parseFloat(displayAmount.value || '0')).toString()
   emit('update:amount', finalAmount)
   emit('update:remark', remark.value)
@@ -266,27 +299,15 @@ const toggleDatePicker = () => {
 </script>
 
 <style scoped>
-.income-expense-form {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 32rpx 32rpx 0 0;
+/* 注意：弹框外壳（背景/圆角/高度/弹性列布局）由 BottomScrollPopup 通过 customStyle 提供，
+   这里只关心弹框内部的内容区滚动和键盘样式。 */
+
+.form-content {
+  /* body 已经是 display:flex column + flex:1 + min-height:0，scroll-view 加 flex:1 + min-height:0 即可正确滚动 */
+  flex: 1;
+  min-height: 0;
   padding: 24rpx 20rpx;
   padding-bottom: 100rpx;
-  backdrop-filter: blur(20rpx);
-  border-top: 1rpx solid rgba(255, 255, 255, 0.5);
-  max-height: 80vh;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
 }
 
 .amount-display {
@@ -403,23 +424,22 @@ const toggleDatePicker = () => {
 }
 
 .date-label {
-  font-size: var(--text-small);
-  color: var(--color-text-secondary, #94A3B8);
+  font-size: var(--text-body);
+  color: var(--color-text-primary, #1E293B);
   margin-right: 16rpx;
-  min-width: 100rpx;
 }
 
 .date-value-row {
   flex: 1;
   display: flex;
+  justify-content: flex-end;
   align-items: center;
-  justify-content: space-between;
+  gap: 8rpx;
 }
 
 .date-value {
   font-size: var(--text-body);
   color: var(--color-text-primary, #1E293B);
-  font-weight: 500;
 }
 
 .date-arrow {
@@ -427,125 +447,114 @@ const toggleDatePicker = () => {
   color: var(--color-text-secondary, #94A3B8);
 }
 
-.complete-btn-wrapper {
-  padding: 28rpx 20rpx 40rpx;
-  animation: completeBtnIn 0.2s ease;
-}
-
-@keyframes completeBtnIn {
-  from {
-    opacity: 0;
-    transform: translateY(10rpx);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.complete-btn {
-  width: 100%;
-  height: 96rpx;
-  background: linear-gradient(135deg, var(--color-primary, #0D9488) 0%, var(--color-primary-dark, #0B7A70) 100%);
-  border-radius: 20rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--text-title);
-  font-weight: 600;
-  color: var(--color-text-inverse, #FFFFFF);
-  box-shadow: 0 4rpx 16rpx rgba(13, 148, 136, 0.3);
-  transition: all 0.15s ease;
-}
-
-.complete-btn:active {
-  transform: scale(0.97);
-  opacity: 0.9;
-}
-
-.complete-btn.disabled {
-  opacity: 0.6;
-}
-
+/* 键盘：放在 BottomScrollPopup 的 footer 槽里 */
 .keyboard {
   background: linear-gradient(180deg, var(--color-border-light, #F1F5F9) 0%, var(--color-border, #E2E8F0) 100%);
-  border-radius: 24rpx;
-  padding: 20rpx;
+  border-top: 1rpx solid var(--color-border, #E2E8F0);
+  padding: 16rpx 20rpx calc(16rpx + env(safe-area-inset-bottom, 0px));
   backdrop-filter: blur(10rpx);
 }
 
-.keyboard-row {
+.keyboard .keyboard-row {
   display: flex;
-  margin-bottom: 16rpx;
+  margin-bottom: 12rpx;
 }
 
-.keyboard-row:last-child {
+.keyboard .keyboard-row:last-child {
   margin-bottom: 0;
 }
 
-.key-item {
+.keyboard .key-item {
   flex: 1;
-  height: 96rpx;
+  height: 88rpx;
   background: var(--color-bg-card, #FFFFFF);
-  border-radius: 20rpx;
+  border-radius: 18rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 8rpx;
-  font-size: var(--text-number);
+  margin: 0 6rpx;
+  font-size: var(--text-number, 36rpx);
   font-weight: 600;
   color: var(--color-text-primary, #1E293B);
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.04);
   border: 1rpx solid rgba(255, 255, 255, 0.8);
   transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(5rpx);
 }
 
-.key-item:active {
-  transform: scale(0.95);
-  background: var(--color-bg-card, #FFFFFF);
-  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.06);
+.keyboard .key-item:active {
+  transform: scale(0.94);
+  box-shadow: 0 1rpx 3rpx rgba(0, 0, 0, 0.06);
 }
 
-.key-item:first-child {
+.keyboard .key-item:first-child {
   margin-left: 0;
 }
 
-.key-item:last-child {
+.keyboard .key-item:last-child {
   margin-right: 0;
 }
 
-.key-item.function {
+.keyboard .key-item.function {
   background: var(--color-border-light, #F1F5F9);
-  font-size: var(--text-body);
+  font-size: var(--text-body, 28rpx);
   color: var(--color-text-primary, #1E293B);
 }
 
-.key-item.function:active {
+.keyboard .key-item.function:active {
   background: var(--color-border, #E2E8F0);
 }
 
-.key-item.confirm {
+.keyboard .key-item.confirm {
   background: linear-gradient(135deg, var(--color-primary, #0D9488) 0%, var(--color-primary-dark, #0B7A70) 100%);
   color: var(--color-text-inverse, #FFFFFF);
-  font-size: var(--text-title);
+  font-size: var(--text-title, 32rpx);
   font-weight: 600;
-  box-shadow: 0 6rpx 20rpx rgba(13, 148, 136, 0.4);
+  box-shadow: 0 4rpx 12rpx rgba(13, 148, 136, 0.35);
 }
 
-.key-item.confirm:active {
-  transform: scale(0.95);
-  box-shadow: 0 4rpx 12rpx rgba(13, 148, 136, 0.3);
+.keyboard .key-item.confirm:active {
+  transform: scale(0.94);
+  box-shadow: 0 2rpx 6rpx rgba(13, 148, 136, 0.25);
 }
 
-.key-item.confirm.disabled {
+.keyboard .key-item.confirm.disabled {
   opacity: 0.6;
   pointer-events: none;
 }
 
-.date-text {
-  font-size: var(--text-note);
+.keyboard .date-text {
+  font-size: var(--text-note, 22rpx);
   color: var(--color-text-primary, #1E293B);
   font-weight: 500;
+}
+
+.complete-btn-wrapper {
+  padding: 24rpx 32rpx calc(24rpx + env(safe-area-inset-bottom, 0px));
+  background: var(--color-bg-card, #FFFFFF);
+  border-top: 1rpx solid var(--color-border, #E2E8F0);
+}
+
+.complete-btn {
+  height: 88rpx;
+  background: linear-gradient(135deg, var(--color-primary, #0D9488) 0%, var(--color-primary-dark, #0B7A70) 100%);
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-inverse, #FFFFFF);
+  font-size: var(--text-title, 32rpx);
+  font-weight: 600;
+  box-shadow: 0 4rpx 12rpx rgba(13, 148, 136, 0.35);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.complete-btn:active {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 6rpx rgba(13, 148, 136, 0.25);
+}
+
+.complete-btn.disabled {
+  opacity: 0.6;
+  pointer-events: none;
 }
 </style>

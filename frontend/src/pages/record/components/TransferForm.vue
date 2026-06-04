@@ -1,66 +1,73 @@
 <template>
-  <view class="transfer-form">
-      <scroll-view scroll-y class="transfer-content" :show-scrollbar="false">
-        <view class="amount-display">
-          <text class="currency">¥</text>
-          <text class="amount">{{ displayAmount || '0.00' }}</text>
-        </view>
+  <BottomScrollPopup
+    v-model:visible="visible"
+    :z-index="1000"
+    :height="85"
+    :custom-style="popupCustomStyle"
+    @close="handlePopupClose"
+  >
+    <scroll-view scroll-y class="transfer-content" :show-scrollbar="false">
+      <view class="amount-display">
+        <text class="currency">¥</text>
+        <text class="amount">{{ displayAmount || '0.00' }}</text>
+      </view>
 
-        <view class="account-area">
-          <view class="account-row" @tap="openFromAccount">
-            <text class="account-label">{{ getFromAccountLabel() }}</text>
-            <view class="account-value" v-if="fromAccount">
-              <view class="account-value-icon category-icon-svg" :class="getAccountIconClass(fromAccount.icon, fromAccount.type)"></view>
-              <text class="account-value-name">{{ fromAccount.name }}</text>
-            </view>
-            <text class="account-value placeholder" v-else>点击选择</text>
-            <text class="account-arrow">▼</text>
+      <view class="account-area">
+        <view class="account-row" @tap="openFromAccount">
+          <text class="account-label">{{ getFromAccountLabel() }}</text>
+          <view class="account-value" v-if="fromAccount">
+            <view class="account-value-icon category-icon-svg" :class="getAccountIconClass(fromAccount.icon, fromAccount.type)"></view>
+            <text class="account-value-name">{{ fromAccount.name }}</text>
           </view>
-          <view class="account-row" @tap="openToAccount">
-            <text class="account-label">{{ getToAccountLabel() }}</text>
-            <view class="account-value" v-if="toAccount">
-              <view class="account-value-icon category-icon-svg" :class="getAccountIconClass(toAccount.icon, toAccount.type)"></view>
-              <text class="account-value-name">{{ toAccount.name }}</text>
-            </view>
-            <text class="account-value placeholder" v-else>点击选择</text>
-            <text class="account-arrow">▼</text>
+          <text class="account-value placeholder" v-else>点击选择</text>
+          <text class="account-arrow">▼</text>
+        </view>
+        <view class="account-row" @tap="openToAccount">
+          <text class="account-label">{{ getToAccountLabel() }}</text>
+          <view class="account-value" v-if="toAccount">
+            <view class="account-value-icon category-icon-svg" :class="getAccountIconClass(toAccount.icon, toAccount.type)"></view>
+            <text class="account-value-name">{{ toAccount.name }}</text>
           </view>
+          <text class="account-value placeholder" v-else>点击选择</text>
+          <text class="account-arrow">▼</text>
         </view>
+      </view>
 
-        <BorrowLendForm
-          v-if="transferOperation === 'lend' || transferOperation === 'borrow'"
-          :type="transferOperation === 'lend' ? 'lend' : 'borrow'"
-          :accounts="[]"
-          :implicitAccounts="implicitAccounts"
-          :counterparties="counterparties"
-          @update:direction="(val) => emit('update:direction', val)"
-          @update:counterparty="(val) => emit('update:counterparty', val)"
-          @update:account="(val) => emit('update:fromAccount', val)"
-          @update:implicitAccount="(val) => emit('update:implicitAccount', val)"
+      <BorrowLendForm
+        v-if="transferOperation === 'lend' || transferOperation === 'borrow'"
+        :type="transferOperation === 'lend' ? 'lend' : 'borrow'"
+        :accounts="[]"
+        :implicitAccounts="implicitAccounts"
+        :counterparties="counterparties"
+        @update:direction="(val) => emit('update:direction', val)"
+        @update:counterparty="(val) => emit('update:counterparty', val)"
+        @update:account="(val) => emit('update:fromAccount', val)"
+        @update:implicitAccount="(val) => emit('update:implicitAccount', val)"
+      />
+
+      <RepaymentSplitForm
+        v-if="transferOperation === 'repay-loan'"
+        :totalAmount="parseFloat(displayAmount) || 0"
+        :loanAccount="toAccount"
+        :selectedCategory="interestCategory"
+        @update:principal="(val) => emit('update:principal', val)"
+        @update:interest="(val) => emit('update:interest', val)"
+        @update:interestTypeId="(val) => emit('update:interestTypeId', val)"
+        @openInterestCategoryPicker="emit('openInterestCategoryPicker')"
+      />
+
+      <view class="remark-area">
+        <WdTextarea
+          v-model="remark"
+          placeholder="点击填写备注"
+          :maxlength="200"
+          autoHeight
+          customStyle="background: rgba(245, 246, 250, 0.8); border-radius: 20rpx; padding: 20rpx 24rpx; font-size: 28rpx;"
         />
+      </view>
+    </scroll-view>
 
-        <RepaymentSplitForm
-          v-if="transferOperation === 'repay-loan'"
-          :totalAmount="parseFloat(displayAmount) || 0"
-          :loanAccount="toAccount"
-          :selectedCategory="interestCategory"
-          @update:principal="(val) => emit('update:principal', val)"
-          @update:interest="(val) => emit('update:interest', val)"
-          @update:interestTypeId="(val) => emit('update:interestTypeId', val)"
-          @openInterestCategoryPicker="emit('openInterestCategoryPicker')"
-        />
-
-        <view class="remark-area">
-          <WdTextarea
-            v-model="remark"
-            placeholder="点击填写备注"
-            :maxlength="200"
-            autoHeight
-            customStyle="background: rgba(245, 246, 250, 0.8); border-radius: 20rpx; padding: 20rpx 24rpx; font-size: 28rpx;"
-          />
-        </view>
-      </scroll-view>
-
+    <template #footer>
       <view class="transfer-keyboard">
         <view class="keyboard-row">
           <view class="key-item" @tap="inputAmount('7')"><text>7</text></view>
@@ -91,10 +98,13 @@
           </view>
         </view>
       </view>
-    </view>
+    </template>
+  </BottomScrollPopup>
 
-    <AccountSelectorPopup ref="fromAccountPopupRef" :title="isRepayment ? '选择还款账户' : '选择转出账户'" :filterType="isRepayment ? 'repayment' : 'transfer'" :filterRole="'from'" @select="handleFromAccountSelect" />
-    <AccountSelectorPopup ref="toAccountPopupRef" :title="isRepayment ? '选择债权账户' : '选择转入账户'" :filterType="isRepayment ? 'repayment' : 'transfer'" :filterRole="'to'" :excludeAccountId="fromAccount?.id" @select="handleToAccountSelect" />
+  <!-- 二级弹框：选择账户。在 BottomScrollPopup 之外（同级）渲染，
+       z-index 2000 > 一级 1000，避免嵌套弹框的显示问题 -->
+  <AccountSelectorPopup ref="fromAccountPopupRef" :title="isRepayment ? '选择还款账户' : '选择转出账户'" :filterType="isRepayment ? 'repayment' : 'transfer'" :filterRole="'from'" @select="handleFromAccountSelect" />
+  <AccountSelectorPopup ref="toAccountPopupRef" :title="isRepayment ? '选择债权账户' : '选择转入账户'" :filterType="isRepayment ? 'repayment' : 'transfer'" :filterRole="'to'" :excludeAccountId="fromAccount?.id" @select="handleToAccountSelect" />
 </template>
 
 <script setup lang="ts">
@@ -104,11 +114,14 @@ import { getAccountIconClass } from '../../../types/account'
 import AccountSelectorPopup from './AccountSelectorPopup.vue'
 import RepaymentSplitForm from './RepaymentSplitForm.vue'
 import BorrowLendForm from './BorrowLendForm.vue'
+import BottomScrollPopup from '../../../components/BottomScrollPopup.vue'
 import { getImplicitAccounts, getCounterparties } from '../../../api/account'
 
 type TransferOperationType = 'transfer' | 'repay-credit' | 'repay-loan' | 'lend' | 'borrow'
 
 const props = defineProps<{
+  /** 弹框显示控制（v-model:visible），由父组件控制 */
+  visible: boolean
   date: string
   isTransfer?: boolean
   isRepayment?: boolean
@@ -122,6 +135,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
+  (e: 'update:visible', val: boolean): void
   (e: 'update:date', date: string): void
   (e: 'update:amount', amount: string): void
   (e: 'update:remark', remark: string): void
@@ -136,7 +150,19 @@ const emit = defineEmits<{
   (e: 'complete'): void
   (e: 'toggleDatePicker'): void
   (e: 'openInterestCategoryPicker'): void  // 转发到页面，由页面展示二级弹框
+  (e: 'close'): void  // 弹框关闭时通知父组件
 }>()
+
+/**
+ * 一级弹框自定义样式：玻璃拟态（半透明白 + 模糊 + 顶部细线）
+ * 通过 BottomScrollPopup 的 customStyle 拼接到默认 popup 样式之后
+ */
+const popupCustomStyle = [
+  'background: rgba(255, 255, 255, 0.95)',
+  'backdrop-filter: blur(20rpx)',
+  '-webkit-backdrop-filter: blur(20rpx)',
+  'border-top: 1rpx solid rgba(255, 255, 255, 0.5)',
+].join('; ')
 
 const displayAmount = ref('')
 const remark = ref('')
@@ -186,6 +212,10 @@ const handleToAccountSelect = (account: Account) => {
   emit('update:toAccount', account)
 }
 
+const handlePopupClose = () => {
+  emit('close')
+}
+
 const parseDate = (dateStr?: string): Date => {
   if (!dateStr) return new Date()
   return new Date(dateStr)
@@ -222,7 +252,7 @@ watch(() => props.initialRemark, (val) => {
 const inputAmount = (digit: string) => {
   if (digit === '+' || digit === '-') {
     if (displayAmount.value === '') return
-    
+
     if (firstOperand.value && operator.value && !waitingForSecondOperand.value) {
       const result = calculate(parseFloat(firstOperand.value), parseFloat(displayAmount.value), operator.value)
       displayAmount.value = formatNumber(result)
@@ -230,7 +260,7 @@ const inputAmount = (digit: string) => {
     } else {
       firstOperand.value = displayAmount.value
     }
-    
+
     operator.value = digit
     waitingForSecondOperand.value = true
     return
@@ -288,7 +318,7 @@ const handleComplete = () => {
     const result = calculate(parseFloat(firstOperand.value), parseFloat(displayAmount.value), operator.value)
     displayAmount.value = formatNumber(result)
   }
-  
+
   const finalAmount = Math.abs(parseFloat(displayAmount.value || '0')).toString()
   emit('update:amount', finalAmount)
   emit('update:remark', remark.value)
@@ -334,40 +364,15 @@ const getConfirmText = () => {
 </script>
 
 <style scoped>
-.transfer-form {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 32rpx 32rpx 0 0;
-  backdrop-filter: blur(20rpx);
-  border-top: 1rpx solid rgba(255, 255, 255, 0.5);
-  /* 关键：flex column + 固定高度 + overflow hidden，让内容区 scroll-view 独立滚动，
-     键盘底部固定，从根本上消除与内嵌分类面板的双滚动条 */
-  display: flex;
-  flex-direction: column;
-  /* 必须用 height 而不是 max-height：flex 布局下 max-height 不会让容器"撑到"那个值，
-     容器高度仍由内容决定，导致 flex:1 的 scroll-view 可分配空间为 0、高度被压成 0。
-     用 height:85vh 强制容器有确定高度，scroll-view 才能正确伸展到剩余空间 */
-  height: 85vh;
-  max-height: 85vh;
-  overflow: hidden;
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
+/* 注意：弹框外壳（背景/圆角/高度/弹性列布局）由 BottomScrollPopup 通过 customStyle 提供，
+   这里只关心弹框内部的内容区滚动和键盘样式。 */
 
 .transfer-content {
-  /* 内容区是唯一的滚动容器，flex:1 自动撑满剩余空间，键盘高度 + padding 留给键盘 */
+  /* 弹框 body 已经是 display:flex column + flex:1 + min-height:0，
+     scroll-view 直接作为 body 的唯一子元素，加 flex:1 + min-height:0 即可正确滚动 */
   flex: 1;
   min-height: 0;
   padding: 24rpx 20rpx 20rpx;
-  /* 隐藏滚动条但保留滚动能力，避免与分类面板的滚动条冲突 */
 }
 
 .amount-display {
@@ -454,9 +459,8 @@ const getConfirmText = () => {
   margin-left: 12rpx;
 }
 
+/* 键盘：放在 BottomScrollPopup 的 footer 槽里（flex-shrink:0），不随内容滚动 */
 .transfer-keyboard {
-  /* 键盘固定在底部，不随内容滚动 */
-  flex-shrink: 0;
   background: linear-gradient(180deg, var(--color-border-light, #F1F5F9) 0%, var(--color-border, #E2E8F0) 100%);
   border-top: 1rpx solid var(--color-border, #E2E8F0);
   padding: 16rpx 20rpx calc(16rpx + env(safe-area-inset-bottom, 0px));
