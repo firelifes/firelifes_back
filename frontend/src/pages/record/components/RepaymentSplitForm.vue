@@ -43,51 +43,23 @@
         </view>
       </view>
 
-      <view class="category-picker" :class="{ open: showCategoryGrid }" @tap="toggleCategoryGrid">
+      <view
+        class="category-picker"
+        @tap="emit('openInterestCategoryPicker')"
+      >
         <view class="picker-left">
           <view class="picker-icon-wrap">
-            <view v-if="isLoading" class="picker-loading"></view>
-            <view v-else-if="selectedCategory" class="category-icon-svg picker-icon" :class="getIconClass(selectedCategory.name)"></view>
+            <view v-if="selectedCategory" class="category-icon-svg picker-icon" :class="getIconClass(selectedCategory.name)"></view>
             <view v-else class="category-icon-svg picker-icon picker-icon-empty"></view>
           </view>
           <view class="picker-text">
             <text class="picker-label">利息分类</text>
-            <text v-if="isLoading" class="picker-value-text muted">加载中...</text>
-            <text v-else-if="selectedCategory" class="picker-value-text">{{ selectedCategory.name }}</text>
+            <text v-if="selectedCategory" class="picker-value-text">{{ selectedCategory.name }}</text>
             <text v-else class="picker-value-text muted">请选择分类</text>
           </view>
         </view>
-        <view class="picker-chevron" :class="{ rotated: showCategoryGrid }">
-          <text>⌄</text>
-        </view>
-      </view>
-
-      <view class="category-panel" :class="{ expanded: showCategoryGrid }">
-        <view v-if="categoryGroups.length === 0 && !isLoading" class="empty-state">
-          <text class="empty-text">暂无分类</text>
-        </view>
-        <view v-for="group in categoryGroups" :key="group.id" class="grid-group">
-          <view class="grid-group-header">
-            <text class="grid-group-name">{{ group.name }}</text>
-            <view class="grid-group-line"></view>
-          </view>
-          <view class="grid-items">
-            <view
-              v-for="cat in group.children"
-              :key="cat.id"
-              class="grid-item"
-              :class="{ active: selectedCategory?.id === cat.id }"
-              @tap.stop="selectCategory(cat)"
-            >
-              <view class="grid-item-icon-wrap">
-                <view class="category-icon-svg grid-item-icon" :class="getIconClass(cat.name)"></view>
-                <view v-if="selectedCategory?.id === cat.id" class="grid-item-check">
-                  <text>✓</text>
-                </view>
-              </view>
-              <text class="grid-item-name" :class="{ active: selectedCategory?.id === cat.id }">{{ cat.name }}</text>
-            </view>
-          </view>
+        <view class="picker-chevron">
+          <text>›</text>
         </view>
       </view>
     </view>
@@ -96,11 +68,12 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
-import { categoryApi, type CategoryGroup, type CategoryItem } from '../../../api/category'
 import { getCategoryIconClass } from '../../../utils/category-icon-map'
+import type { CategoryItem } from '../../../api/category'
 
 const props = defineProps<{
   totalAmount: number
+  selectedCategory?: CategoryItem | null
   loanAccount?: {
     originalPrincipal?: number
     annualInterestRate?: number
@@ -113,14 +86,11 @@ const emit = defineEmits<{
   (e: 'update:principal', value: number): void
   (e: 'update:interest', value: number): void
   (e: 'update:interestTypeId', value: number): void
+  (e: 'openInterestCategoryPicker'): void
 }>()
 
 const principal = ref(0)
 const interest = ref(0)
-const selectedCategory = ref<CategoryItem | null>(null)
-const categoryGroups = ref<CategoryGroup[]>([])
-const isLoading = ref(true)
-const showCategoryGrid = ref(false)
 
 const formattedPrincipal = computed(() => {
   return principal.value > 0 ? principal.value.toFixed(2) : ''
@@ -178,55 +148,11 @@ const emitValues = () => {
   emit('update:interest', interest.value)
 }
 
-const loadCategories = async () => {
-  isLoading.value = true
-  try {
-    const res = await categoryApi.getUserCategories('expense')
-    if (res.success && res.data) {
-      categoryGroups.value = res.data
-
-      const allCategories: CategoryItem[] = []
-      for (const group of res.data) {
-        allCategories.push(...group.children)
-      }
-
-      // 默认选择「利息支出」分类（系统默认不可删除的支出分类）
-      let interestCategory = allCategories.find(cat => cat.name === '利息支出')
-      if (!interestCategory && allCategories.length > 0) {
-        interestCategory = allCategories[0]
-      }
-
-      if (interestCategory) {
-        selectedCategory.value = interestCategory
-        emit('update:interestTypeId', interestCategory.id)
-      }
-    }
-  } catch (error) {
-    console.error('[RepaymentSplitForm] 加载分类失败:', error)
-  } finally {
-    isLoading.value = false
-  }
-}
-
-const toggleCategoryGrid = () => {
-  if (isLoading.value) return
-  showCategoryGrid.value = !showCategoryGrid.value
-}
-
-const selectCategory = (category: CategoryItem) => {
-  selectedCategory.value = category
-  emit('update:interestTypeId', category.id)
-  // 选中后自动折叠，给用户明确的"已选择"反馈
-  showCategoryGrid.value = false
-}
-
 const getIconClass = (name: string): string => {
   return getCategoryIconClass(name)
 }
 
 onMounted(() => {
-  loadCategories()
-  // 初始本金/利息根据 totalAmount 自动计算
   principal.value = calculateAutoPrincipal()
   interest.value = calculateAutoInterest()
   emitValues()
@@ -362,12 +288,7 @@ watch(() => props.totalAmount, (newTotal) => {
   border: 2rpx solid transparent;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
-  &.open {
-    background: var(--color-primary-light, #E6F7F5);
-    border-color: var(--color-primary, #0D9488);
-  }
-
-  &:active:not(.open) {
+  &:active {
     transform: scale(0.985);
     background: #E8EEF3;
   }
@@ -404,19 +325,6 @@ watch(() => props.totalAmount, (newTotal) => {
   border-radius: 50%;
 }
 
-.picker-loading {
-  width: 24rpx;
-  height: 24rpx;
-  border: 3rpx solid var(--color-border, #E2E8F0);
-  border-top-color: var(--color-primary, #0D9488);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
 .picker-text {
   display: flex;
   flex-direction: column;
@@ -451,166 +359,9 @@ watch(() => props.totalAmount, (newTotal) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28rpx;
+  font-size: 32rpx;
+  font-weight: 300;
   color: var(--color-text-secondary, #94A3B8);
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
-
-  &.rotated {
-    transform: rotate(180deg);
-    color: var(--color-primary, #0D9488);
-  }
-}
-
-.category-panel {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  margin: 0 20rpx;
-
-  &.expanded {
-    max-height: 540rpx;
-  }
-}
-
-.category-scroll {
-  height: 480rpx;
-  padding: 0 8rpx 16rpx;
-}
-
-.grid-group {
-  margin-bottom: 20rpx;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-.grid-group-header {
-  display: flex;
-  align-items: center;
-  gap: 12rpx;
-  padding: 4rpx 4rpx 12rpx;
-}
-
-.grid-group-name {
-  font-size: var(--text-note, 22rpx);
-  color: var(--color-text-secondary, #64748B);
-  font-weight: 600;
-  letter-spacing: 0.5rpx;
-  flex-shrink: 0;
-}
-
-.grid-group-line {
-  flex: 1;
-  height: 1rpx;
-  background: linear-gradient(90deg, var(--color-border, #E2E8F0) 0%, transparent 100%);
-}
-
-.grid-items {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12rpx 8rpx;
-}
-
-.grid-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8rpx;
-  padding: 8rpx 4rpx 12rpx;
-  border-radius: 16rpx;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-
-  &:active {
-    transform: scale(0.92);
-  }
-
-  &.active {
-    background: var(--color-primary-light, #E6F7F5);
-  }
-}
-
-.grid-item-icon-wrap {
-  position: relative;
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 50%;
-  background: #FFFFFF;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2rpx 8rpx rgba(15, 23, 42, 0.06);
-  border: 2rpx solid transparent;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.grid-item.active .grid-item-icon-wrap {
-  border-color: var(--color-primary, #0D9488);
-  box-shadow: 0 4rpx 12rpx rgba(13, 148, 136, 0.2);
-}
-
-.grid-item-icon {
-  width: 44rpx;
-  height: 44rpx;
-}
-
-.grid-item-check {
-  position: absolute;
-  right: -4rpx;
-  bottom: -4rpx;
-  width: 28rpx;
-  height: 28rpx;
-  border-radius: 50%;
-  background: var(--color-primary, #0D9488);
-  color: #FFFFFF;
-  font-size: 18rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2rpx 6rpx rgba(13, 148, 136, 0.3);
-  animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes popIn {
-  from {
-    opacity: 0;
-    transform: scale(0.4);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.grid-item-name {
-  font-size: var(--text-caption, 20rpx);
-  color: var(--color-text-primary, #1E293B);
-  text-align: center;
-  line-height: 1.3;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  padding: 0 2rpx;
-  transition: color 0.2s ease;
-
-  &.active {
-    color: var(--color-primary, #0D9488);
-    font-weight: 600;
-  }
-}
-
-.empty-state {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 80rpx 0;
-}
-
-.empty-text {
-  font-size: var(--text-small, 24rpx);
-  color: var(--color-text-tertiary, #94A3B8);
 }
 </style>

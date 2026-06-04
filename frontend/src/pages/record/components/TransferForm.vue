@@ -43,9 +43,11 @@
           v-if="transferOperation === 'repay-loan'"
           :totalAmount="parseFloat(displayAmount) || 0"
           :loanAccount="toAccount"
+          :selectedCategory="interestCategory"
           @update:principal="(val) => emit('update:principal', val)"
           @update:interest="(val) => emit('update:interest', val)"
           @update:interestTypeId="(val) => emit('update:interestTypeId', val)"
+          @openInterestCategoryPicker="emit('openInterestCategoryPicker')"
         />
 
         <view class="remark-area">
@@ -117,6 +119,7 @@ const props = defineProps<{
   initialAmount?: string
   initialRemark?: string
   transferOperation?: TransferOperationType | null
+  interestCategory?: any  // 利息分类对象 {id, name, ...}，从父组件传入
 }>()
 
 const emit = defineEmits<{
@@ -133,6 +136,7 @@ const emit = defineEmits<{
   (e: 'update:implicitAccount', account: Account | null): void
   (e: 'complete'): void
   (e: 'toggleDatePicker'): void
+  (e: 'openInterestCategoryPicker'): void  // 转发到页面，由页面展示二级弹框
 }>()
 
 const displayAmount = ref('')

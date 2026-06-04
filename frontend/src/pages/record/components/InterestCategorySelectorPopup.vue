@@ -2,17 +2,17 @@
   <WdPopup
     position="bottom"
     v-model="visible"
-    :z-index="2000"
+    :z-index="3000"
     :modal="true"
     :close-on-click-modal="true"
-    custom-style="border-radius: 32rpx 32rpx 0 0; background: var(--color-bg-card, #FFFFFF); max-height: 70vh; display: flex; flex-direction: column;"
+    custom-style="border-radius: 32rpx 32rpx 0 0; background: var(--color-bg-card, #FFFFFF); max-height: 70vh; display: flex; flex-direction: column; overflow: hidden;"
     @close="handleClose"
   >
     <view class="popup-header">
       <text class="popup-title">选择利息分类</text>
       <text class="popup-close" @tap="handleClose">×</text>
     </view>
-    <scroll-view class="category-list" scroll-y>
+    <scroll-view scroll-y class="category-list" :show-scrollbar="false">
       <view
         v-for="group in categoryGroups"
         :key="group.id"
@@ -41,9 +41,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { categoryApi, type CategoryGroup, type CategoryItem } from '../../../api/category'
-import { getCategoryIconClass } from '../../../utils/category-icon-map'
+import { ref } from 'vue'
+import { categoryApi, type CategoryGroup, type CategoryItem } from '../../api/category'
+import { getCategoryIconClass } from '../../utils/category-icon-map'
 
 const emit = defineEmits<{
   (e: 'select', category: CategoryItem): void
@@ -87,21 +87,18 @@ const handleSelectCategory = (category: CategoryItem) => {
   selectedCategoryId.value = category.id
   emit('select', category)
   visible.value = false
-  // 选中后也要通知父组件关闭弹框，以便恢复键盘
   emit('close')
 }
 
 const handleClose = () => {
   visible.value = false
-  // 关键修复：必须 emit close，否则父组件的 interestCategoryPopupVisible 不会复位
-  // 导致 TransferForm 中 v-if="!interestCategoryPopupVisible" 的键盘永远不显示
   emit('close')
 }
 
 defineExpose({ open, close })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .popup-header {
   display: flex;
   justify-content: space-between;
@@ -113,28 +110,32 @@ defineExpose({ open, close })
 }
 
 .popup-title {
-  font-size: var(--text-title);
+  font-size: var(--text-title, 32rpx);
   font-weight: 600;
   color: var(--color-text-primary, #1E293B);
+  letter-spacing: -0.3rpx;
 }
 
 .popup-close {
-  font-size: var(--text-number);
+  font-size: 48rpx;
+  font-weight: 300;
   color: var(--color-text-secondary, #94A3B8);
   padding: 4rpx 12rpx;
+  line-height: 1;
 }
 
 .category-list {
-  /* 在 flex column 容器下，flex:1 让 scroll-view 撑满剩余空间，
-     配合 WdPopup 的 max-height: 70vh 形成确定高度，scroll-view 才能滚动 */
   flex: 1;
   padding: 20rpx 24rpx 40rpx;
-  /* 兜底：部分端 scroll-view 不识别 flex:1 时使用 overflow-y 也能滚动 */
   overflow-y: auto;
 }
 
 .group-section {
   margin-bottom: 24rpx;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .group-header {
@@ -142,9 +143,10 @@ defineExpose({ open, close })
 }
 
 .group-name {
-  font-size: var(--text-body);
+  font-size: var(--text-body, 28rpx);
   color: var(--color-text-primary, #1E293B);
   font-weight: 600;
+  letter-spacing: 0.3rpx;
 }
 
 .category-grid {
@@ -158,25 +160,26 @@ defineExpose({ open, close })
   flex-direction: column;
   align-items: center;
   padding: 8rpx 0;
-  transition: all 0.2s ease;
-}
+  border-radius: 16rpx;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
-.category-item:active {
-  transform: scale(0.92);
+  &:active {
+    transform: scale(0.92);
+  }
 }
 
 .category-icon {
-  width: 80rpx;
-  height: 80rpx;
+  width: 88rpx;
+  height: 88rpx;
   border-radius: 50%;
-  background: var(--color-bg-card, #FFFFFF);
+  background: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 8rpx;
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
   border: 2rpx solid transparent;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--color-text-secondary, #94A3B8);
 }
 
@@ -188,14 +191,21 @@ defineExpose({ open, close })
 }
 
 .category-icon-svg {
-  width: 40rpx;
-  height: 40rpx;
+  width: 48rpx;
+  height: 48rpx;
 }
 
 .category-name {
-  font-size: var(--text-small);
+  font-size: var(--text-small, 24rpx);
   color: var(--color-text-primary, #1E293B);
   text-align: center;
+  line-height: 1.3;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 2rpx;
+  transition: color 0.2s ease;
 }
 
 .category-item.selected .category-name {

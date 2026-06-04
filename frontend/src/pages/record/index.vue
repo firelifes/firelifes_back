@@ -79,6 +79,7 @@
       :initialAmount="displayAmount"
       :initialRemark="remark"
       :transferOperation="currentTransferOperation"
+      :interestCategory="interestCategory"
       @update:date="selectedDate = $event"
       @update:amount="displayAmount = $event"
       @update:remark="remark = $event"
@@ -92,8 +93,17 @@
       @update:implicitAccount="implicitAccount = $event"
       @complete="handleComplete"
       @toggleDatePicker="showDatePicker = true"
+      @openInterestCategoryPicker="handleOpenInterestCategoryPicker"
     />
   </WdPopup>
+
+    <!-- 二级弹框：利息分类选择。放在页面级别（与一级 WdPopup 平级），
+         z-index: 3000 > 一级的 1000，避免嵌套导致的显示问题 -->
+    <InterestCategorySelectorPopup
+      ref="interestCategoryPopupRef"
+      @select="handleInterestCategorySelect"
+      @close="handleInterestCategoryClose"
+    />
 
     <DatePicker :visible="showDatePicker" :date="selectedDate" @update:date="selectedDate = $event" @close="showDatePicker = false" />
     <CustomTabbar />
@@ -115,6 +125,7 @@ import IncomeExpenseForm from './components/IncomeExpenseForm.vue'
 import TransferForm from './components/TransferForm.vue'
 import DatePicker from './components/DatePicker.vue'
 import TransferOperations from './components/TransferOperations.vue'
+import InterestCategorySelectorPopup from './components/InterestCategorySelectorPopup.vue'
 import { recordApi } from '../../api/record'
 import { getAccountList, getImplicitAccounts, getCounterparties } from '../../api/account'
 import type { Account } from '../../types/account'
@@ -150,6 +161,8 @@ const showDraftBanner = ref(false)
 const principalAmount = ref(0)
 const interestAmount = ref(0)
 const interestTypeId = ref(0)
+const interestCategory = ref<{ id: number; name: string; icon?: string } | null>(null)
+const interestCategoryPopupRef = ref()
 const counterparty = ref('')
 const transferDirection = ref<'out' | 'in'>('out')
 const implicitAccount = ref<Account | null>(null)
@@ -314,6 +327,7 @@ const partialReset = () => {
   // selectedDate — 沿用上一笔日期
   // selectedCategory — 保持当前分类，方便继续记同分类
   // selectedAccount / fromAccount / toAccount — 保持当前账户
+  // 利息分类状态保留：连续记录同类贷款还款时无需重新选择
 }
 
 const resetForm = () => {
@@ -325,6 +339,10 @@ const resetForm = () => {
   selectedAccount.value = null
   fromAccount.value = null
   toAccount.value = null
+  principalAmount.value = 0
+  interestAmount.value = 0
+  interestTypeId.value = 0
+  interestCategory.value = null
   categorySelectorRef.value?.reload?.()
 }
 
@@ -575,7 +593,26 @@ const selectCategory = async (category: { id: number; name: string; icon: string
 
 const handleCloseTransactionForm = () => {
   showTransactionForm.value = false
+  // 关键：一级弹框关闭时，必须同步关闭未关闭的二级弹框，避免残留弹框
+  interestCategoryPopupRef.value?.close?.()
   saveDraft()
+}
+
+// 一级弹框（TransferForm）触发：唤起页面级二级弹框（利息分类选择）
+// 关键：弹框在页面级渲染（与一级平级），z-index 3000 > 一级 1000，
+// 避免嵌套弹框之间的显示冲突
+const handleOpenInterestCategoryPicker = () => {
+  interestCategoryPopupRef.value?.open(interestCategory.value?.id)
+}
+
+// 二级弹框选中分类：同步 id 与分类对象，下传到一级弹框
+const handleInterestCategorySelect = (category: { id: number; name: string; icon?: string }) => {
+  interestCategory.value = category
+  interestTypeId.value = category.id
+}
+
+const handleInterestCategoryClose = () => {
+  // 二级弹框关闭，无需特殊处理
 }
 
 const handleCancel = () => {
