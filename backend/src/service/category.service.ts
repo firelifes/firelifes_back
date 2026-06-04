@@ -504,7 +504,6 @@ export class CategoryService {
 
         // 名称映射（更健壮，不依赖索引对齐）
         const userIconNameMap = new Map(userIcons.map(i => [i.name, i.id]));
-        const globalIconNameMap = new Map(globalIcons.map(i => [i.name, i.id]));
         const groupIdToUserGroupIdMap = new Map(
           globalGroups.map((g, idx) => [g.id, userGroupEntities[idx].id])
         );

@@ -1,6 +1,6 @@
 import { Provide } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typeorm';
-import { Repository, Not } from 'typeorm';
+import { Repository, Not, In } from 'typeorm';
 import { Account, AccountType, RepaymentMethod } from '../entity/account.entity';
 import { Record as RecordEntity } from '../entity/record.entity';
 
@@ -203,6 +203,8 @@ export class AccountService {
             depreciable_asset: 'account-icon-mobile',
             liability: 'account-icon-loan',
             credit_card: 'account-icon-credit-card',
+            receivable: 'account-icon-receivable',
+            payable: 'account-icon-payable',
           };
           const fallbackIcon = defaultIconByType[account.type] || 'account-icon-wallet';
           account.icon = fallbackIcon;
@@ -628,7 +630,7 @@ export class AccountService {
     const accounts = await this.accountModel.find({
       where: {
         userId,
-        type: IMPLICIT_ACCOUNT_TYPES,
+        type: In(IMPLICIT_ACCOUNT_TYPES),
         isDeleted: false
       }
     });
