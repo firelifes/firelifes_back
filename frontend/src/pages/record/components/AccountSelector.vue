@@ -4,7 +4,7 @@
       <input class="search-input" v-model="searchKeyword" placeholder="搜索账户..." />
     </view>
 
-    <view class="account-list">
+    <scroll-view class="account-list" scroll-y>
       <view v-show="filteredAccounts.length > 0">
         <view class="section-title">资产账户</view>
         <view
@@ -48,7 +48,7 @@
       <view v-if="filteredAccounts.length === 0 && !loading" class="empty-state">
         <text class="empty-text">{{ emptyText }}</text>
       </view>
-    </view>
+    </scroll-view>
   </view>
 </template>
 
@@ -268,10 +268,14 @@ defineExpose({
 <style scoped>
 .account-selector {
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .account-search {
   padding: 16rpx 24rpx;
+  flex-shrink: 0;
 }
 
 .search-input {
@@ -281,6 +285,11 @@ defineExpose({
   padding: 0 24rpx;
   font-size: var(--text-body);
   color: var(--color-text-primary, #1E293B);
+}
+
+.account-list {
+  flex: 1;
+  height: 100%;
 }
 
 .section-title {

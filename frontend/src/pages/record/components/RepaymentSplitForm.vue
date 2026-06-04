@@ -39,7 +39,10 @@
           @tap="openCategoryPicker"
         >
           <view class="selected-category">
-            <view v-if="selectedCategory" class="selected-category-info">
+            <view v-if="isLoading" class="loading-state">
+              <text class="loading-text">加载中...</text>
+            </view>
+            <view v-else-if="selectedCategory" class="selected-category-info">
               <view class="category-icon-svg" :class="getIconClass(selectedCategory.name)"></view>
               <text class="category-name">{{ selectedCategory.name }}</text>
             </view>
@@ -87,6 +90,7 @@ const interest = ref(0)
 const selectedCategory = ref<CategoryItem | null>(null)
 const categoryPopupRef = ref<InstanceType<typeof InterestCategorySelectorPopup> | null>(null)
 const categories = ref<CategoryItem[]>([])
+const isLoading = ref(true)
 
 const formattedPrincipal = computed(() => {
   return principal.value.toFixed(2)
@@ -158,6 +162,7 @@ const emitValues = () => {
 }
 
 const loadCategories = async () => {
+  isLoading.value = true
   try {
     const res = await categoryApi.getUserCategories('expense')
     if (res.success && res.data) {
@@ -167,8 +172,12 @@ const loadCategories = async () => {
       }
       categories.value = allCategories
       
-      // 默认选择「利息支出」分类
-      const interestCategory = allCategories.find(cat => cat.name === '利息支出')
+      // 默认选择「利息支出」分类，如果找不到则选择第一个分类
+      let interestCategory = allCategories.find(cat => cat.name === '利息支出')
+      if (!interestCategory && allCategories.length > 0) {
+        interestCategory = allCategories[0]
+      }
+      
       if (interestCategory) {
         selectedCategory.value = interestCategory
         emit('update:interestTypeId', interestCategory.id)
@@ -176,6 +185,8 @@ const loadCategories = async () => {
     }
   } catch (error) {
     console.error('加载分类失败:', error)
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -194,16 +205,15 @@ const getIconClass = (name: string): string => {
   return getCategoryIconClass(name)
 }
 
+// 立即加载分类，确保组件初始化时就已选择利息分类
+loadCategories()
+
 // 当总金额变化时，重新计算本金和利息
 watch(() => props.totalAmount, (newTotal) => {
   principal.value = calculateAutoPrincipal()
   interest.value = calculateAutoInterest()
   emitValues()
 }, { immediate: true })
-
-onMounted(() => {
-  loadCategories()
-})
 </script>
 
 <style lang="scss" scoped>
@@ -318,6 +328,16 @@ onMounted(() => {
 }
 
 .placeholder-text {
+  font-size: 28rpx;
+  color: #94A3B8;
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+}
+
+.loading-text {
   font-size: 28rpx;
   color: #94A3B8;
 }

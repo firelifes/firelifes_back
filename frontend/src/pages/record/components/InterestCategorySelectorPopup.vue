@@ -5,37 +5,39 @@
     :z-index="1005"
     :modal="true"
     :close-on-click-modal="true"
-    custom-style="border-radius: 32rpx 32rpx 0 0; background: var(--color-bg-card, #FFFFFF); overflow: hidden;"
+    custom-style="border-radius: 32rpx 32rpx 0 0; background: var(--color-bg-card, #FFFFFF); overflow: hidden; max-height: 70vh;"
     @close="handleClose"
   >
-    <view class="popup-header">
-      <text class="popup-title">选择利息分类</text>
-      <text class="popup-close" @tap="handleClose">×</text>
-    </view>
-    <view class="category-list">
-      <view
-        v-for="group in categoryGroups"
-        :key="group.id"
-        class="group-section"
-      >
-        <view class="group-header">
-          <text class="group-name">{{ group.name }}</text>
-        </view>
-        <view class="category-grid">
-          <view
-            v-for="category in group.children"
-            :key="category.id"
-            class="category-item"
-            :class="{ selected: selectedCategoryId === category.id }"
-            @tap="handleSelectCategory(category)"
-          >
-            <view class="category-icon">
-              <view class="category-icon-svg" :class="getIconClass(category.name)"></view>
+    <view class="popup-wrapper">
+      <view class="popup-header">
+        <text class="popup-title">选择利息分类</text>
+        <text class="popup-close" @tap="handleClose">×</text>
+      </view>
+      <scroll-view class="category-list" scroll-y>
+        <view
+          v-for="group in categoryGroups"
+          :key="group.id"
+          class="group-section"
+        >
+          <view class="group-header">
+            <text class="group-name">{{ group.name }}</text>
+          </view>
+          <view class="category-grid">
+            <view
+              v-for="category in group.children"
+              :key="category.id"
+              class="category-item"
+              :class="{ selected: selectedCategoryId === category.id }"
+              @tap="handleSelectCategory(category)"
+            >
+              <view class="category-icon">
+                <view class="category-icon-svg" :class="getIconClass(category.name)"></view>
+              </view>
+              <text class="category-name">{{ category.name }}</text>
             </view>
-            <text class="category-name">{{ category.name }}</text>
           </view>
         </view>
-      </view>
+      </scroll-view>
     </view>
   </WdPopup>
 </template>
@@ -98,6 +100,13 @@ defineExpose({ open, close })
 </script>
 
 <style scoped>
+.popup-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 70vh;
+}
+
 .popup-header {
   display: flex;
   justify-content: space-between;
@@ -105,7 +114,7 @@ defineExpose({ open, close })
   padding: 28rpx 32rpx 20rpx;
   border-bottom: 1rpx solid var(--color-border, #E2E8F0);
   background: var(--color-bg-card, #FFFFFF);
-  border-radius: 32rpx 32rpx 0 0;
+  flex-shrink: 0;
 }
 
 .popup-title {
@@ -121,10 +130,9 @@ defineExpose({ open, close })
 }
 
 .category-list {
-  max-height: 70vh;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  flex: 1;
   padding: 20rpx;
+  height: 100%;
 }
 
 .group-section {

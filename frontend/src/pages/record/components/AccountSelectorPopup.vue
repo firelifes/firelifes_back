@@ -3,22 +3,26 @@
     position="bottom"
     v-model="visible"
     :z-index="1005"
-    custom-style="border-radius: 32rpx 32rpx 0 0; background: var(--color-bg-card, #FFFFFF); overflow: hidden;"
+    custom-style="border-radius: 32rpx 32rpx 0 0; background: var(--color-bg-card, #FFFFFF); overflow: hidden; max-height: 70vh;"
     :close-on-click-modal="true"
     @close="handleClose"
   >
-    <view class="popup-header">
-      <text class="popup-title">{{ title }}</text>
-      <text class="popup-close" @tap="handleClose">×</text>
+    <view class="popup-wrapper">
+      <view class="popup-header">
+        <text class="popup-title">{{ title }}</text>
+        <text class="popup-close" @tap="handleClose">×</text>
+      </view>
+      <view class="account-selector-wrapper">
+        <AccountSelector
+          ref="selectorRef"
+          :filterType="filterType"
+          :filterRole="filterRole"
+          :excludeAccountId="excludeAccountId"
+          :emptyText="emptyText"
+          @select="handleSelect"
+        />
+      </view>
     </view>
-    <AccountSelector
-      ref="selectorRef"
-      :filterType="filterType"
-      :filterRole="filterRole"
-      :excludeAccountId="excludeAccountId"
-      :emptyText="emptyText"
-      @select="handleSelect"
-    />
   </WdPopup>
 </template>
 
@@ -68,6 +72,13 @@ defineExpose({ open, close })
 </script>
 
 <style scoped>
+.popup-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 70vh;
+}
+
 .popup-header {
   display: flex;
   justify-content: space-between;
@@ -75,7 +86,7 @@ defineExpose({ open, close })
   padding: 28rpx 32rpx 20rpx;
   border-bottom: 1rpx solid var(--color-border, #E2E8F0);
   background: var(--color-bg-card, #FFFFFF);
-  border-radius: 32rpx 32rpx 0 0;
+  flex-shrink: 0;
 }
 
 .popup-title {
@@ -88,5 +99,10 @@ defineExpose({ open, close })
   font-size: var(--text-number);
   color: var(--color-text-secondary, #94A3B8);
   padding: 4rpx 12rpx;
+}
+
+.account-selector-wrapper {
+  flex: 1;
+  overflow: hidden;
 }
 </style>
