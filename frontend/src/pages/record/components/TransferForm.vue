@@ -1,92 +1,92 @@
 <template>
   <view class="transfer-form">
-    <view class="amount-display">
-      <text class="currency">¥</text>
-      <text class="amount">{{ displayAmount || '0.00' }}</text>
-    </view>
-
-    <view class="account-area">
-      <view class="account-row" @tap="openFromAccount">
-        <text class="account-label">{{ getFromAccountLabel() }}</text>
-        <view class="account-value" v-if="fromAccount">
-          <view class="account-value-icon category-icon-svg" :class="getAccountIconClass(fromAccount.icon, fromAccount.type)"></view>
-          <text class="account-value-name">{{ fromAccount.name }}</text>
+      <scroll-view scroll-y class="transfer-content" :show-scrollbar="false">
+        <view class="amount-display">
+          <text class="currency">¥</text>
+          <text class="amount">{{ displayAmount || '0.00' }}</text>
         </view>
-        <text class="account-value placeholder" v-else>点击选择</text>
-        <text class="account-arrow">▼</text>
-      </view>
-      <view class="account-row" @tap="openToAccount">
-        <text class="account-label">{{ getToAccountLabel() }}</text>
-        <view class="account-value" v-if="toAccount">
-          <view class="account-value-icon category-icon-svg" :class="getAccountIconClass(toAccount.icon, toAccount.type)"></view>
-          <text class="account-value-name">{{ toAccount.name }}</text>
+
+        <view class="account-area">
+          <view class="account-row" @tap="openFromAccount">
+            <text class="account-label">{{ getFromAccountLabel() }}</text>
+            <view class="account-value" v-if="fromAccount">
+              <view class="account-value-icon category-icon-svg" :class="getAccountIconClass(fromAccount.icon, fromAccount.type)"></view>
+              <text class="account-value-name">{{ fromAccount.name }}</text>
+            </view>
+            <text class="account-value placeholder" v-else>点击选择</text>
+            <text class="account-arrow">▼</text>
+          </view>
+          <view class="account-row" @tap="openToAccount">
+            <text class="account-label">{{ getToAccountLabel() }}</text>
+            <view class="account-value" v-if="toAccount">
+              <view class="account-value-icon category-icon-svg" :class="getAccountIconClass(toAccount.icon, toAccount.type)"></view>
+              <text class="account-value-name">{{ toAccount.name }}</text>
+            </view>
+            <text class="account-value placeholder" v-else>点击选择</text>
+            <text class="account-arrow">▼</text>
+          </view>
         </view>
-        <text class="account-value placeholder" v-else>点击选择</text>
-        <text class="account-arrow">▼</text>
-      </view>
-    </view>
 
-    <BorrowLendForm
-      v-if="transferOperation === 'lend' || transferOperation === 'borrow'"
-      :type="transferOperation === 'lend' ? 'lend' : 'borrow'"
-      :accounts="[]"
-      :implicitAccounts="implicitAccounts"
-      :counterparties="counterparties"
-      @update:direction="(val) => emit('update:direction', val)"
-      @update:counterparty="(val) => emit('update:counterparty', val)"
-      @update:account="(val) => emit('update:fromAccount', val)"
-      @update:implicitAccount="(val) => emit('update:implicitAccount', val)"
-    />
+        <BorrowLendForm
+          v-if="transferOperation === 'lend' || transferOperation === 'borrow'"
+          :type="transferOperation === 'lend' ? 'lend' : 'borrow'"
+          :accounts="[]"
+          :implicitAccounts="implicitAccounts"
+          :counterparties="counterparties"
+          @update:direction="(val) => emit('update:direction', val)"
+          @update:counterparty="(val) => emit('update:counterparty', val)"
+          @update:account="(val) => emit('update:fromAccount', val)"
+          @update:implicitAccount="(val) => emit('update:implicitAccount', val)"
+        />
 
-    <RepaymentSplitForm
-      v-if="transferOperation === 'repay-loan'"
-      :totalAmount="parseFloat(displayAmount) || 0"
-      :loanAccount="toAccount"
-      :interestCategories="[]"
-      @update:principal="(val) => emit('update:principal', val)"
-      @update:interest="(val) => emit('update:interest', val)"
-      @update:interestTypeId="(val) => emit('update:interestTypeId', val)"
-      @interestCategoryPopupOpen="interestCategoryPopupVisible = true"
-      @interestCategoryPopupClose="interestCategoryPopupVisible = false"
-    />
+        <RepaymentSplitForm
+          v-if="transferOperation === 'repay-loan'"
+          :totalAmount="parseFloat(displayAmount) || 0"
+          :loanAccount="toAccount"
+          @update:principal="(val) => emit('update:principal', val)"
+          @update:interest="(val) => emit('update:interest', val)"
+          @update:interestTypeId="(val) => emit('update:interestTypeId', val)"
+        />
 
-    <view class="remark-area">
-      <WdTextarea
-        v-model="remark"
-        placeholder="点击填写备注"
-        :maxlength="200"
-        autoHeight
-        customStyle="background: rgba(245, 246, 250, 0.8); border-radius: 20rpx; padding: 20rpx 24rpx; font-size: 28rpx;"
-      />
-    </view>
-
-    <view v-if="!interestCategoryPopupVisible" class="keyboard">
-      <view class="keyboard-row">
-        <view class="key-item" @tap="inputAmount('7')"><text>7</text></view>
-        <view class="key-item" @tap="inputAmount('8')"><text>8</text></view>
-        <view class="key-item" @tap="inputAmount('9')"><text>9</text></view>
-        <view class="key-item function" @tap="toggleDatePicker">
-          <text class="date-text">{{ formattedDate }}</text>
+        <view class="remark-area">
+          <WdTextarea
+            v-model="remark"
+            placeholder="点击填写备注"
+            :maxlength="200"
+            autoHeight
+            customStyle="background: rgba(245, 246, 250, 0.8); border-radius: 20rpx; padding: 20rpx 24rpx; font-size: 28rpx;"
+          />
         </view>
-      </view>
-      <view class="keyboard-row">
-        <view class="key-item" @tap="inputAmount('4')"><text>4</text></view>
-        <view class="key-item" @tap="inputAmount('5')"><text>5</text></view>
-        <view class="key-item" @tap="inputAmount('6')"><text>6</text></view>
-        <view class="key-item function" @tap="inputAmount('+')"><text>+</text></view>
-      </view>
-      <view class="keyboard-row">
-        <view class="key-item" @tap="inputAmount('1')"><text>1</text></view>
-        <view class="key-item" @tap="inputAmount('2')"><text>2</text></view>
-        <view class="key-item" @tap="inputAmount('3')"><text>3</text></view>
-        <view class="key-item function" @tap="inputAmount('-')"><text>-</text></view>
-      </view>
-      <view class="keyboard-row">
-        <view class="key-item" @tap="inputAmount('.')"><text>.</text></view>
-        <view class="key-item" @tap="inputAmount('0')"><text>0</text></view>
-        <view class="key-item function" @tap="deleteDigit"><text>⌫</text></view>
-        <view class="key-item confirm" :class="{ disabled: submitting }" @tap="!submitting && handleComplete()">
-          <text>{{ submitting ? '提交中...' : getConfirmText() }}</text>
+      </scroll-view>
+
+      <view class="transfer-keyboard">
+        <view class="keyboard-row">
+          <view class="key-item" @tap="inputAmount('7')"><text>7</text></view>
+          <view class="key-item" @tap="inputAmount('8')"><text>8</text></view>
+          <view class="key-item" @tap="inputAmount('9')"><text>9</text></view>
+          <view class="key-item function" @tap="toggleDatePicker">
+            <text class="date-text">{{ formattedDate }}</text>
+          </view>
+        </view>
+        <view class="keyboard-row">
+          <view class="key-item" @tap="inputAmount('4')"><text>4</text></view>
+          <view class="key-item" @tap="inputAmount('5')"><text>5</text></view>
+          <view class="key-item" @tap="inputAmount('6')"><text>6</text></view>
+          <view class="key-item function" @tap="inputAmount('+')"><text>+</text></view>
+        </view>
+        <view class="keyboard-row">
+          <view class="key-item" @tap="inputAmount('1')"><text>1</text></view>
+          <view class="key-item" @tap="inputAmount('2')"><text>2</text></view>
+          <view class="key-item" @tap="inputAmount('3')"><text>3</text></view>
+          <view class="key-item function" @tap="inputAmount('-')"><text>-</text></view>
+        </view>
+        <view class="keyboard-row">
+          <view class="key-item" @tap="inputAmount('.')"><text>.</text></view>
+          <view class="key-item" @tap="inputAmount('0')"><text>0</text></view>
+          <view class="key-item function" @tap="deleteDigit"><text>⌫</text></view>
+          <view class="key-item confirm" :class="{ disabled: submitting }" @tap="!submitting && handleComplete()">
+            <text>{{ submitting ? '提交中...' : getConfirmText() }}</text>
+          </view>
         </view>
       </view>
     </view>
@@ -135,7 +135,6 @@ const emit = defineEmits<{
   (e: 'toggleDatePicker'): void
 }>()
 
-const interestCategoryPopupVisible = ref(false)
 const displayAmount = ref('')
 const remark = ref('')
 const firstOperand = ref<string>('')
@@ -335,13 +334,14 @@ const getConfirmText = () => {
 .transfer-form {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 32rpx 32rpx 0 0;
-  padding: 24rpx 20rpx;
-  padding-bottom: 100rpx;
   backdrop-filter: blur(20rpx);
   border-top: 1rpx solid rgba(255, 255, 255, 0.5);
-  max-height: 80vh;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  /* 关键：flex column + overflow hidden，让内容区 scroll-view 独立滚动，
+     键盘底部固定，从根本上消除与内嵌分类面板的双滚动条 */
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+  overflow: hidden;
 }
 
 @keyframes slideUp {
@@ -353,6 +353,14 @@ const getConfirmText = () => {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+.transfer-content {
+  /* 内容区是唯一的滚动容器，flex:1 自动撑满剩余空间，键盘高度 + padding 留给键盘 */
+  flex: 1;
+  min-height: 0;
+  padding: 24rpx 20rpx 20rpx;
+  /* 隐藏滚动条但保留滚动能力，避免与分类面板的滚动条冲突 */
 }
 
 .amount-display {
@@ -439,84 +447,84 @@ const getConfirmText = () => {
   margin-left: 12rpx;
 }
 
-.keyboard {
+.transfer-keyboard {
+  /* 键盘固定在底部，不随内容滚动 */
+  flex-shrink: 0;
   background: linear-gradient(180deg, var(--color-border-light, #F1F5F9) 0%, var(--color-border, #E2E8F0) 100%);
-  border-radius: 24rpx;
-  padding: 20rpx;
+  border-top: 1rpx solid var(--color-border, #E2E8F0);
+  padding: 16rpx 20rpx calc(16rpx + env(safe-area-inset-bottom, 0px));
   backdrop-filter: blur(10rpx);
 }
 
-.keyboard-row {
+.transfer-keyboard .keyboard-row {
   display: flex;
-  margin-bottom: 16rpx;
+  margin-bottom: 12rpx;
 }
 
-.keyboard-row:last-child {
+.transfer-keyboard .keyboard-row:last-child {
   margin-bottom: 0;
 }
 
-.key-item {
+.transfer-keyboard .key-item {
   flex: 1;
-  height: 96rpx;
+  height: 88rpx;
   background: var(--color-bg-card, #FFFFFF);
-  border-radius: 20rpx;
+  border-radius: 18rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 8rpx;
-  font-size: var(--text-number);
+  margin: 0 6rpx;
+  font-size: var(--text-number, 36rpx);
   font-weight: 600;
   color: var(--color-text-primary, #1E293B);
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.04);
   border: 1rpx solid rgba(255, 255, 255, 0.8);
   transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(5rpx);
 }
 
-.key-item:active {
-  transform: scale(0.95);
-  background: var(--color-bg-card, #FFFFFF);
-  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.06);
+.transfer-keyboard .key-item:active {
+  transform: scale(0.94);
+  box-shadow: 0 1rpx 3rpx rgba(0, 0, 0, 0.06);
 }
 
-.key-item:first-child {
+.transfer-keyboard .key-item:first-child {
   margin-left: 0;
 }
 
-.key-item:last-child {
+.transfer-keyboard .key-item:last-child {
   margin-right: 0;
 }
 
-.key-item.function {
+.transfer-keyboard .key-item.function {
   background: var(--color-border-light, #F1F5F9);
-  font-size: var(--text-body);
+  font-size: var(--text-body, 28rpx);
   color: var(--color-text-primary, #1E293B);
 }
 
-.key-item.function:active {
+.transfer-keyboard .key-item.function:active {
   background: var(--color-border, #E2E8F0);
 }
 
-.key-item.confirm {
+.transfer-keyboard .key-item.confirm {
   background: linear-gradient(135deg, var(--color-primary, #0D9488) 0%, var(--color-primary-dark, #0B7A70) 100%);
   color: var(--color-text-inverse, #FFFFFF);
-  font-size: var(--text-title);
+  font-size: var(--text-title, 32rpx);
   font-weight: 600;
-  box-shadow: 0 6rpx 20rpx rgba(13, 148, 136, 0.4);
+  box-shadow: 0 4rpx 12rpx rgba(13, 148, 136, 0.35);
 }
 
-.key-item.confirm:active {
-  transform: scale(0.95);
-  box-shadow: 0 4rpx 12rpx rgba(13, 148, 136, 0.3);
+.transfer-keyboard .key-item.confirm:active {
+  transform: scale(0.94);
+  box-shadow: 0 2rpx 6rpx rgba(13, 148, 136, 0.25);
 }
 
-.key-item.confirm.disabled {
+.transfer-keyboard .key-item.confirm.disabled {
   opacity: 0.6;
   pointer-events: none;
 }
 
-.date-text {
-  font-size: var(--text-note);
+.transfer-keyboard .date-text {
+  font-size: var(--text-note, 22rpx);
   color: var(--color-text-primary, #1E293B);
   font-weight: 500;
 }
