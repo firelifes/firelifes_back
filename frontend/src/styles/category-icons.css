@@ -672,3 +672,18 @@
 .category-icon-borrow {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='13' y='12' width='8' height='8' rx='1'/%3E%3Cpath d='M10 8V6h8v2'/%3E%3Cpath d='M6 14l4-4'/%3E%3Cpath d='M6 10h4v4'/%3E%3C/svg%3E");
 }
+
+/* ============================================================
+ * 利息类专属图标 (2) - v6.1 新增
+ * 利息支出/收入用不同方向箭头区分，业务含义更清晰
+ * ============================================================ */
+
+/* 利息支出 - 圆+下箭头+百分比 */
+.category-icon-lixi-zhichu {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cline x1='9' y1='9' x2='15' y2='15'/%3E%3Ccircle cx='9' cy='15' r='1.2' fill='currentColor'/%3E%3Ccircle cx='15' cy='9' r='1.2' fill='currentColor'/%3E%3Cpath d='M12 7v-2'/%3E%3Cpath d='M10.5 6.5l1.5 1.5 1.5-1.5'/%3E%3C/svg%3E");
+}
+
+/* 利息收入 - 圆+上箭头+百分比 */
+.category-icon-lixi-shouru {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cline x1='9' y1='9' x2='15' y2='15'/%3E%3Ccircle cx='9' cy='15' r='1.2' fill='currentColor'/%3E%3Ccircle cx='15' cy='9' r='1.2' fill='currentColor'/%3E%3Cpath d='M12 17v2'/%3E%3Cpath d='M10.5 17.5l1.5-1.5 1.5 1.5'/%3E%3C/svg%3E");
+}
