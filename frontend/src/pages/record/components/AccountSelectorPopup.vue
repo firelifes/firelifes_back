@@ -3,7 +3,7 @@
     position="bottom"
     v-model="visible"
     :z-index="1005"
-    custom-style="border-radius: 32rpx 32rpx 0 0; background: var(--color-bg-card, #FFFFFF);"
+    custom-style="border-radius: 32rpx 32rpx 0 0; background: var(--color-bg-card, #FFFFFF); overflow: hidden;"
     :close-on-click-modal="true"
     @close="handleClose"
   >

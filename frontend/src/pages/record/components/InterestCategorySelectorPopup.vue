@@ -5,7 +5,7 @@
     :z-index="1005"
     :modal="true"
     :close-on-click-modal="true"
-    custom-style="border-radius: 32rpx 32rpx 0 0; background: var(--color-bg-card, #FFFFFF);"
+    custom-style="border-radius: 32rpx 32rpx 0 0; background: var(--color-bg-card, #FFFFFF); overflow: hidden;"
     @close="handleClose"
   >
     <view class="popup-header">
