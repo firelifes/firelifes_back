@@ -1,6 +1,6 @@
 <template>
   <BottomScrollPopup
-    v-model:visible="visible"
+    v-model="visibleModel"
     :z-index="1000"
     :height="80"
     :custom-style="popupCustomStyle"
@@ -144,6 +144,12 @@ const popupCustomStyle = [
   '-webkit-backdrop-filter: blur(20rpx)',
   'border-top: 1rpx solid rgba(255, 255, 255, 0.5)',
 ].join('; ')
+
+/** v-model 代理：桥接父组件的 `visible` prop 到 BottomScrollPopup 的 `modelValue` */
+const visibleModel = computed({
+  get: () => props.visible,
+  set: (val) => emit('update:visible', val),
+})
 
 const displayAmount = ref('')
 const remark = ref('')
