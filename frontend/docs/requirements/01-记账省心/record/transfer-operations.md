@@ -10,6 +10,7 @@
 | v1.2 | 2026-06-03 | 修正自动拆分逻辑：有利率按利率计算，无利率默认全为本金 | AI |
 | v1.3 | 2026-06-03 | 表单组件拆分：支出/收入表单（IncomeExpenseForm）与转账表单（TransferForm）分离；优化二级弹框层级，确保完全覆盖一级弹框 | AI |
 | v1.4 | 2026-06-04 | 利息分类默认选中「利息支出」；修复本金+利息拆分延迟（去掉 watcher 的 `principal===0 && interest===0` 条件）；移除 amount-summary 合计区块 | AI |
+| v1.5 | 2026-06-04 | 修复转账/还贷/借贷操作的账户类型过滤：**TransferForm 传递给 AccountSelectorPopup 的 filterType 为泛化值 `'repayment'`，未能区分 `repay-credit`（仅信用卡）与 `repay-loan`（仅负债）**，导致选择「还信用卡」时债权账户列表包含了非信用卡账户 | AI |
 
 ---
 
@@ -467,6 +468,84 @@ interface CounterpartyListResponse {
 | 收回 | 应收账款 | 仅资产类 |
 | 借入 | 隐式创建应付账款 | 仅资产类 |
 | 偿还 | 仅资产类 | 应付账款 |
+
+---
+
+## 账户类型过滤修复（v1.5）
+
+### 问题
+
+`TransferForm.vue` 在打开二级弹框（AccountSelectorPopup）时，传递给 `filterType` 的值是 `isRepayment ? 'repayment' : 'transfer'`，**没有区分具体的转账操作类型**。
+
+这个泛化值导致：
+
+| 实际操作 | 父组件传入的 filterType | 正确的 filterType | 影响 |
+|----------|------------------------|-------------------|------|
+| `transfer` 转账 | `transfer` ✅ | `transfer` | 正确 |
+| `repay-credit` 还信用卡 | `repayment` ❌ | `repay-credit` | **"到"账户应仅信用卡类，实际混入了所有负债类** |
+| `repay-loan` 还贷款 | `repayment` ❌ | `repay-loan` | 恰好一致("到"=liability)，但语义不对 |
+| `lend` 借出 | `transfer` ❌ | `lend` | **"从"账户已收窄为资产类，但"到"账户应为 receivable** |
+| `borrow` 借入 | `transfer` ❌ | `borrow` | **"从"账户应为 payable，"到"应为资产类** |
+
+### 实际效果
+
+`AccountSelector.getFilteredAccounts` 已完整实现了 8 种过滤规则（`expense` / `income` / `transfer` / `repayment` / `repay-credit` / `repay-loan` / `lend` / `borrow`），代码是正确的。但因为上游 `TransferForm` 传了错误的 `filterType`，这些规则从未被真正执行：
+
+- **还信用卡 → 选择债权账户**：应只显示 `type=credit_card` 的账户，实际显示了所有 `type=liability`（包含房贷、车贷等非信用卡负债账户）
+- **借出**：`lend` 模式下，"从"账户应仅资产类，"到"应自动创建应收账款隐式账户（已在 AccountSelector 中过滤为 `receivable` 类型），但因 `filterType='transfer'`，"到"账户弹框显示了全部账户
+- **借入**：`borrow` 模式下，"从"账户应付账款、"到"仅资产类，同样因 `filterType='transfer'` 而未生效
+
+### 修复方案
+
+#### 1. AccountSelectorPopup.vue — 扩展 filterType 类型
+
+```typescript
+// 从
+filterType?: 'expense' | 'income' | 'transfer' | 'repayment'
+// 改为（与 AccountSelector.vue 保持一致）
+filterType?: 'expense' | 'income' | 'transfer' | 'repayment'
+  | 'repay-credit' | 'repay-loan' | 'lend' | 'borrow'
+```
+
+#### 2. TransferForm.vue — 传递真实操作类型
+
+```vue
+<!-- 从 -->
+<AccountSelectorPopup
+  :filterType="isRepayment ? 'repayment' : 'transfer'"
+/>
+<!-- 改为 -->
+<AccountSelectorPopup
+  :filterType="transferOperation || 'transfer'"
+/>
+```
+
+#### 3. TransactionForm.vue（如仍存在）— 同上
+
+> `transferOperation` prop 由 `index.vue` 传入，值为 `currentTransferOperation`（类型 `TransferOperationType = 'transfer' | 'repay-credit' | 'repay-loan' | 'lend' | 'borrow'`），恰好对应 `getFilteredAccounts` 的全部 case。
+
+### 各操作账户过滤规则（确认版）
+
+| 操作 | filterType | 账户A（from） | 账户B（to） |
+|------|-----------|--------------|------------|
+| 转账 | `transfer` | 全部可见账户 | 全部可见账户（排除A） |
+| 还信用卡 | `repay-credit` | 仅资产类（cash/investment/fixed_asset/depreciable_asset） | 仅信用卡类（credit_card） |
+| 还贷款 | `repay-loan` | 仅资产类 | 仅负债类（liability） |
+| 借出 | `lend` | 仅资产类 | 隐式账户（receivable） |
+| 收回 | `lend`（方向=收回） | 隐式账户（receivable） | 仅资产类 |
+| 借入 | `borrow`（方向=借入） | 隐式账户（payable） | 仅资产类 |
+| 偿还 | `borrow`（方向=偿还） | 仅资产类 | 隐式账户（payable） |
+
+> **注意**：借出/收回 和 借入/偿还 的方向切换是在 `BorrowLendForm` 内部管理的，AccountSelectorPopup 的 `filterRole` 在方向切换时被重新赋值，因此 filterType 只需固定为 `lend` 或 `borrow`。
+
+### 验收标准
+
+- [ ] 还信用卡 — 选择债权账户：仅显示 `type=credit_card` 的账户
+- [ ] 还信用卡 — 无信用卡账户时：显示空状态提示「请先创建信用卡账户」
+- [ ] 还贷款 — 选择债权账户：仅显示 `type=liability` 的账户
+- [ ] 转出账户（所有还款操作）：仅显示资产类账户（不含 credit_card/liability）
+- [ ] 转账 — 转入/转出：显示全部可见账户
+- [ ] 借出/收回 — 账户列表正确按方向过滤
 
 ---
 
