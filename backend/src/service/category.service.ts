@@ -137,7 +137,7 @@ export class CategoryService {
     { id: 'expense_9_3', name: '还信用卡', groupId: 9, iconId: 49, sortOrder: 3, isDefault: true, type: 'expense' },
     { id: 'expense_9_4', name: '还贷款', groupId: 9, iconId: 50, sortOrder: 4, isDefault: true, type: 'expense' },
     { id: 'expense_9_5', name: '借出', groupId: 9, iconId: 51, sortOrder: 5, isDefault: true, type: 'expense' },
-    { id: 'expense_9_6', name: '利息支出', groupId: 9, iconId: 53, sortOrder: 6, isDefault: true, type: 'expense' },
+    { id: 'expense_9_6', name: '利息支出', groupId: 9, iconId: 54, sortOrder: 6, isDefault: true, type: 'expense' },
     { id: 'expense_10_1', name: '其他', groupId: 10, iconId: 35, sortOrder: 1, isDefault: true, type: 'expense' },
     { id: 'expense_10_2', name: '日用', groupId: 10, iconId: 3, sortOrder: 2, isDefault: true, type: 'expense' },
     { id: 'expense_10_3', name: '捐赠', groupId: 10, iconId: 25, sortOrder: 3, isDefault: true, type: 'expense' },
