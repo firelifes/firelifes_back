@@ -2,10 +2,10 @@
   <WdPopup
     position="bottom"
     v-model="visible"
-    :z-index="1005"
+    :z-index="2000"
     :modal="true"
     :close-on-click-modal="true"
-    custom-style="border-radius: 32rpx 32rpx 0 0; background: var(--color-bg-card, #FFFFFF); overflow: hidden; max-height: 70vh;"
+    custom-style="border-radius: 32rpx 32rpx 0 0; background: var(--color-bg-card, #FFFFFF); overflow: hidden; max-height: 80vh;"
     @close="handleClose"
   >
     <view class="popup-wrapper">
