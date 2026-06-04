@@ -15,14 +15,12 @@
     </view>
 
     <view v-else class="edit-body">
-      <TransactionForm
+      <!-- 收支表单 -->
+      <IncomeExpenseForm
+        v-if="recordType !== 'transfer' && recordType !== 'repayment'"
         :date="recordDate"
         :transactionType="recordType === 'income' ? 'income' : 'expense'"
         :categoryName="categoryName"
-        :isTransfer="recordType === 'transfer'"
-        :isRepayment="recordType === 'repayment'"
-        :fromAccount="fromAccount"
-        :toAccount="toAccount"
         :selectedAccount="selectedAccount"
         :submitting="submitting"
         :initialAmount="initialAmount"
@@ -31,10 +29,27 @@
         @update:date="recordDate = $event"
         @update:amount="editAmount = $event"
         @update:remark="editRemark = $event"
-        @update:fromAccount="fromAccount = $event"
-        @update:toAccount="toAccount = $event"
         @update:selectedAccount="selectedAccount = $event"
         @update:assetData="assetDataUpdate = $event"
+        @complete="handleUpdate"
+        @toggleDatePicker="showDatePicker = true"
+      />
+      <!-- 转账表单 -->
+      <TransferForm
+        v-else
+        :date="recordDate"
+        :isTransfer="recordType === 'transfer'"
+        :isRepayment="recordType === 'repayment'"
+        :fromAccount="fromAccount"
+        :toAccount="toAccount"
+        :submitting="submitting"
+        :initialAmount="initialAmount"
+        :initialRemark="initialRemark"
+        @update:date="recordDate = $event"
+        @update:amount="editAmount = $event"
+        @update:remark="editRemark = $event"
+        @update:fromAccount="fromAccount = $event"
+        @update:toAccount="toAccount = $event"
         @complete="handleUpdate"
         @toggleDatePicker="showDatePicker = true"
       />
@@ -57,7 +72,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import TransactionForm from './components/TransactionForm.vue'
+import IncomeExpenseForm from './components/IncomeExpenseForm.vue'
+import TransferForm from './components/TransferForm.vue'
 import DatePicker from './components/DatePicker.vue'
 import { recordApi } from '../../api/record'
 import { getAccountList } from '../../api/account'

@@ -39,43 +39,61 @@
     </view>
 
     <WdPopup
-      position="bottom"
-      v-model="showTransactionForm"
-      :z-index="1000"
-      :modal="true"
-      :close-on-click-modal="true"
-      :safe-area-inset-bottom="true"
-      custom-style="border-radius: 32rpx 32rpx 0 0; background: transparent; max-height: 85vh; overflow: hidden;"
-      @close="handleCloseTransactionForm"
-    >
-      <TransactionForm
-        :date="selectedDate"
-        :transactionType="transactionType"
-        :categoryName="selectedCategory?.name"
-        :isTransfer="isTransfer"
-        :isRepayment="isRepayment"
-        :fromAccount="fromAccount"
-        :toAccount="toAccount"
-        :selectedAccount="selectedAccount"
-        :submitting="submitStatus !== 'idle'"
-        :transferOperation="currentTransferOperation"
-        @update:date="selectedDate = $event"
-        @update:amount="displayAmount = $event"
-        @update:remark="remark = $event"
-        @update:fromAccount="fromAccount = $event"
-        @update:toAccount="toAccount = $event"
-        @update:selectedAccount="selectedAccount = $event"
-        @update:assetData="assetData = $event"
-        @update:principal="principalAmount = $event"
-        @update:interest="interestAmount = $event"
-        @update:interestTypeId="interestTypeId = $event"
-        @update:counterparty="counterparty = $event"
-        @update:direction="transferDirection = $event"
-        @update:implicitAccount="implicitAccount = $event"
-        @complete="handleComplete"
-        @toggleDatePicker="showDatePicker = true"
-      />
-    </WdPopup>
+    position="bottom"
+    v-model="showTransactionForm"
+    :z-index="1000"
+    :modal="true"
+    :close-on-click-modal="true"
+    :safe-area-inset-bottom="true"
+    custom-style="border-radius: 32rpx 32rpx 0 0; background: transparent; max-height: 85vh; overflow: hidden;"
+    @close="handleCloseTransactionForm"
+  >
+    <!-- 收支表单 -->
+    <IncomeExpenseForm
+      v-if="transactionType !== 'transfer' && !currentTransferOperation"
+      :date="selectedDate"
+      :transactionType="transactionType"
+      :categoryName="selectedCategory?.name"
+      :selectedAccount="selectedAccount"
+      :submitting="submitStatus !== 'idle'"
+      :initialAmount="displayAmount"
+      :initialRemark="remark"
+      :initialAssetData="assetData"
+      @update:date="selectedDate = $event"
+      @update:amount="displayAmount = $event"
+      @update:remark="remark = $event"
+      @update:selectedAccount="selectedAccount = $event"
+      @update:assetData="assetData = $event"
+      @complete="handleComplete"
+      @toggleDatePicker="showDatePicker = true"
+    />
+    <!-- 转账表单 -->
+    <TransferForm
+      v-else
+      :date="selectedDate"
+      :isTransfer="isTransfer"
+      :isRepayment="isRepayment"
+      :fromAccount="fromAccount"
+      :toAccount="toAccount"
+      :submitting="submitStatus !== 'idle'"
+      :initialAmount="displayAmount"
+      :initialRemark="remark"
+      :transferOperation="currentTransferOperation"
+      @update:date="selectedDate = $event"
+      @update:amount="displayAmount = $event"
+      @update:remark="remark = $event"
+      @update:fromAccount="fromAccount = $event"
+      @update:toAccount="toAccount = $event"
+      @update:principal="principalAmount = $event"
+      @update:interest="interestAmount = $event"
+      @update:interestTypeId="interestTypeId = $event"
+      @update:counterparty="counterparty = $event"
+      @update:direction="transferDirection = $event"
+      @update:implicitAccount="implicitAccount = $event"
+      @complete="handleComplete"
+      @toggleDatePicker="showDatePicker = true"
+    />
+  </WdPopup>
 
     <DatePicker :visible="showDatePicker" :date="selectedDate" @update:date="selectedDate = $event" @close="showDatePicker = false" />
     <CustomTabbar />
@@ -93,7 +111,8 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import CategorySelector from './components/CategorySelector.vue'
-import TransactionForm from './components/TransactionForm.vue'
+import IncomeExpenseForm from './components/IncomeExpenseForm.vue'
+import TransferForm from './components/TransferForm.vue'
 import DatePicker from './components/DatePicker.vue'
 import TransferOperations from './components/TransferOperations.vue'
 import { recordApi } from '../../api/record'

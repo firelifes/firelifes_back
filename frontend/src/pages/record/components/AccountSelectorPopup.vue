@@ -2,7 +2,7 @@
   <WdPopup
     position="bottom"
     v-model="visible"
-    :z-index="1002"
+    :z-index="1005"
     custom-style="border-radius: 32rpx 32rpx 0 0; background: var(--color-bg-card, #FFFFFF);"
     :close-on-click-modal="true"
     @close="handleClose"
