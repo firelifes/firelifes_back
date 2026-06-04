@@ -118,7 +118,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import CategorySelector from './components/CategorySelector.vue'
 import IncomeExpenseForm from './components/IncomeExpenseForm.vue'
