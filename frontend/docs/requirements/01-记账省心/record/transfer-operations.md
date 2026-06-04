@@ -9,6 +9,7 @@
 | v1.1 | 2026-06-03 | 优化还贷款本金利息拆分，移除手动/自动切换，支持联动调整 | AI |
 | v1.2 | 2026-06-03 | 修正自动拆分逻辑：有利率按利率计算，无利率默认全为本金 | AI |
 | v1.3 | 2026-06-03 | 表单组件拆分：支出/收入表单（IncomeExpenseForm）与转账表单（TransferForm）分离；优化二级弹框层级，确保完全覆盖一级弹框 | AI |
+| v1.4 | 2026-06-04 | 利息分类默认选中「利息支出」；修复本金+利息拆分延迟（去掉 watcher 的 `principal===0 && interest===0` 条件）；移除 amount-summary 合计区块 | AI |
 
 ---
 
@@ -539,6 +540,9 @@ interface CounterpartyListResponse {
 - [ ] 利息分类默认选择"利息支出"
 - [ ] 利息分类选择弹框完全遮住下方内容，有遮罩层
 - [ ] 还款后生成本金repayment记录和利息expense记录
+- [ ] **v1.4** 键盘输入金额时，本金/利息拆分实时联动（principal+interest=totalAmount 始终成立）
+- [ ] **v1.4** 切换到其他转账操作时，利息分类自动清空
+- [ ] **v1.4** RepaymentSplitForm 不显示「合计」行，避免与顶部金额显示重复
 
 ### 借出/收回
 - [ ] 借出时自动创建应收账款隐式账户
@@ -642,15 +646,69 @@ interface CounterpartyListResponse {
 
 **解决方案**：
 - 后端已默认包含「利息支出」分类，位于「金融理财」大类下，icon为「利息」图标
-- RepaymentSplitForm 组件加载时自动查找「利息支出」分类并选中
+- 页面级 `index.vue` 监听 `currentTransferOperation`，当进入 `repay-loan` 模式时调用 `ensureDefaultInterestCategory()`
+- 该函数调用 `categoryApi.getUserCategories('expense')`，遍历所有分组，查找名为「利息支出」的分类，找到则：
+  - 写入 `interestCategory`（用于 picker 显示）
+  - 写入 `interestTypeId`（用于提交时绑定到利息部分的支出记录）
+- 切换到其他转账操作（转账/还信用卡/借出收回/借入偿还）时清空 `interestCategory` 和 `interestTypeId`，避免残留
 - 用户可点击选择器切换到其他分类
-- 组件初始化时立即加载分类并设置默认值
+- 若用户禁用了「利息支出」分类，函数不会找到匹配项，picker 显示「请选择分类」，由用户手动选择
 
 **验收标准**：
 - [x] 打开还贷款表单时，利息分类已自动选择「利息支出」
 - [x] 用户可点击选择器切换到其他分类
 - [x] 选择其他分类后正常保存
 - [x] 新用户注册时自动拥有「利息支出」分类
+- [x] 切换到「转账」等其他操作时，利息分类自动清空
+- [x] 再次进入「还贷款」时，利息分类再次自动选中「利息支出」
+
+### 本金+利息拆分实时联动（v1.4 修复）
+
+**问题**：用户在弹框键盘输入金额时，本金+利息拆分出现延迟，导致 `本金 + 利息 ≠ 用户输入的总金额`。
+
+**根因**：`RepaymentSplitForm` 的 `watch(() => props.totalAmount, ...)` 条件为 `principal === 0 && interest.value === 0`，目的是"只在初次输入时自动拆分"。但这导致：
+- 用户输入 "8" → totalAmount=8 → 拆分生效：principal=8, interest=0
+- 用户继续输入 "9" → totalAmount=89 → 条件 `8 === 0 && 0 === 0` 不满足 → 拆分停留 principal=8, interest=0
+- 拆分总和 = 8 ≠ 89 ❌
+
+**修复**：
+- 去掉 `principal === 0 && interest === 0` 条件
+- 改为：只要 `totalAmount > 0` 就用最新金额重新拆分
+- 拆分算法统一为：先算 `interest = calculateAutoInterest(newTotal)`，再算 `principal = newTotal - interest`，最后用 `Math.round(... * 100) / 100` 处理浮点
+- 保障：`principal + interest = totalAmount` 始终成立（由算法决定，不依赖外部状态）
+
+**用户故事**：作为还房贷的用户，**我想要** 在键盘连续输入金额时，本金/利息拆分能**实时同步**更新，**以便** 拆分的总和始终等于我输入的金额，无需手动调整。
+
+**验收标准**：
+- [x] 用户在键盘输入 "8" → 拆分：principal=8, interest=0
+- [x] 用户继续输入 "9" 组成 "89" → 拆分立即更新：principal=89, interest=0
+- [x] 用户清空金额（displayAmount=""）→ 拆分归零：principal=0, interest=0
+- [x] 用户清空再输入新金额 → 拆分重新计算
+- [x] 拆分永远满足 `principal + interest = totalAmount`（浮点误差由 Math.round 处理）
+- [x] 用户手动编辑本金 → 利息自动联动（保持总和）
+- [x] 用户手动编辑利息 → 本金自动联动（保持总和）
+
+### 移除 amount-summary 合计区块（v1.4）
+
+**问题**：弹框顶部 `.amount-display` 已显示用户输入的总金额（`¥89.00`），RepaymentSplitForm 内又显示一个「合计 ¥89.00」，属于**重复信息**。
+
+**分析**：
+1. 弹框顶部 `TransferForm.amount-display` 已经显示用户输入的总金额
+2. 拆分逻辑（v1.4 修复后）保证 `principal + interest = totalAmount` 始终成立
+3. 「合计」是**推导信息**，不是**录入信息**，用户不需要看到"推导结果"
+4. 重复展示增加视觉噪音，挤占本金/利息输入区域的空间
+
+**解决方案**：
+- 移除 `<view class="amount-summary">` 整个区块（含 `summary-label` 和 `summary-value`）
+- 移除对应的 CSS（`.amount-summary` / `.summary-label` / `.summary-value`）
+- 移除不再使用的 `formattedTotal` computed
+- 拆分输入行直接位于利息分类 picker 之上，布局更紧凑
+
+**验收标准**：
+- [x] 弹框顶部仍然显示用户输入的总金额
+- [x] RepaymentSplitForm 不再显示「合计」行
+- [x] 本金/利息输入仍然实时联动，且总和等于顶部金额
+- [x] 表单整体更聚焦在"录入"而非"展示"
 
 ### 双滚动条问题修复
 

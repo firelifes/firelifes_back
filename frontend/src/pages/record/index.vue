@@ -128,6 +128,7 @@ import TransferOperations from './components/TransferOperations.vue'
 import InterestCategorySelectorPopup from './components/InterestCategorySelectorPopup.vue'
 import { recordApi } from '../../api/record'
 import { getAccountList, getImplicitAccounts, getCounterparties } from '../../api/account'
+import { categoryApi } from '../../api/category'
 import type { Account } from '../../types/account'
 import type { DepreciatingAssetData } from '../../types/asset'
 import type { RecordType, CreateRecordData } from '../../api/record'
@@ -597,6 +598,46 @@ const handleCloseTransactionForm = () => {
   interestCategoryPopupRef.value?.close?.()
   saveDraft()
 }
+
+// 还贷款时，利息分类默认选择「利息支出」
+const ensureDefaultInterestCategory = async () => {
+  try {
+    const res = await categoryApi.getUserCategories('expense')
+    if (res && res.success && Array.isArray(res.data)) {
+      // 遍历所有分组，查找名为「利息支出」的分类
+      for (const group of res.data) {
+        const list: any[] = (group as any).children || []
+        const found = list.find(c => c && c.name === '利息支出')
+        if (found) {
+          interestCategory.value = {
+            id: found.id,
+            name: found.name,
+            icon: found.iconUrl, // 与 InterestCategorySelectorPopup 选中时返回的 icon 字段保持一致
+          }
+          interestTypeId.value = found.id
+          return
+        }
+      }
+    }
+    // 找不到时清空，让用户手动选择
+    interestCategory.value = null
+    interestTypeId.value = 0
+  } catch (e) {
+    console.error('[还贷款] 加载默认利息分类失败:', e)
+    interestCategory.value = null
+    interestTypeId.value = 0
+  }
+}
+
+// 监听转账操作类型：进入还贷款 → 自动选中利息支出；进入其他操作 → 清空
+watch(currentTransferOperation, (op) => {
+  if (op === 'repay-loan') {
+    ensureDefaultInterestCategory()
+  } else {
+    interestCategory.value = null
+    interestTypeId.value = 0
+  }
+})
 
 // 一级弹框（TransferForm）触发：唤起页面级二级弹框（利息分类选择）
 // 关键：弹框在页面级渲染（与一级平级），z-index 3000 > 一级 1000，

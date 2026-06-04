@@ -36,11 +36,6 @@
             </view>
           </view>
         </view>
-
-        <view class="amount-summary">
-          <text class="summary-label">合计</text>
-          <text class="summary-value">¥{{ formattedTotal }}</text>
-        </view>
       </view>
 
       <view
@@ -100,11 +95,6 @@ const formattedInterest = computed(() => {
   return interest.value > 0 ? interest.value.toFixed(2) : ''
 })
 
-const formattedTotal = computed(() => {
-  const t = props.totalAmount || 0
-  return t.toFixed(2)
-})
-
 const calculateAutoPrincipal = (): number => {
   const { loanAccount, totalAmount } = props
   if (loanAccount && loanAccount.annualInterestRate) {
@@ -158,13 +148,27 @@ onMounted(() => {
   emitValues()
 })
 
-watch(() => props.totalAmount, (newTotal) => {
-  if (newTotal > 0 && principal.value === 0 && interest.value === 0) {
-    principal.value = calculateAutoPrincipal()
-    interest.value = calculateAutoInterest()
-    emitValues()
-  }
-})
+// 监听总金额变化，重新自动拆分本金/利息
+// 关键修复：去掉 "principal===0 && interest===0" 条件，
+// 否则用户连续输入 "8"→"89" 时，第一次拆分后 principal=8，第二次条件不满足，
+// 拆分停留在 8，导致 principal + interest ≠ 用户输入的总金额。
+// 修复后：只要 totalAmount > 0 就用最新金额重算，保证本金+利息=总金额始终成立。
+watch(
+  () => props.totalAmount,
+  (newTotal) => {
+    if (newTotal > 0) {
+      const interestAmount = calculateAutoInterest()
+      const principalAmount = Math.max(0, Math.round((newTotal - interestAmount) * 100) / 100)
+      principal.value = principalAmount
+      interest.value = interestAmount
+      emitValues()
+    } else if (newTotal === 0) {
+      principal.value = 0
+      interest.value = 0
+      emitValues()
+    }
+  },
+)
 </script>
 
 <style lang="scss" scoped>
@@ -257,25 +261,10 @@ watch(() => props.totalAmount, (newTotal) => {
   margin: 8rpx 24rpx;
 }
 
-.amount-summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12rpx 0 16rpx;
-  border-top: 1rpx dashed var(--color-border, #E2E8F0);
-}
-
-.summary-label {
-  font-size: var(--text-small, 24rpx);
-  color: var(--color-text-secondary, #64748B);
-}
-
-.summary-value {
-  font-size: var(--text-body, 28rpx);
-  font-weight: 700;
-  color: var(--color-primary, #0D9488);
-  letter-spacing: -0.3rpx;
-}
+/* amount-summary 已移除：
+   1) 顶部弹框 .amount-display 已显示用户输入的总金额
+   2) 拆分逻辑保证 principal + interest = totalAmount（见 watcher）
+   3) 合计是推导信息，不是录入信息，重复展示增加视觉噪音 */
 
 .category-picker {
   display: flex;
