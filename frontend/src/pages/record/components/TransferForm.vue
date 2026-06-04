@@ -339,10 +339,14 @@ const getConfirmText = () => {
   border-radius: 32rpx 32rpx 0 0;
   backdrop-filter: blur(20rpx);
   border-top: 1rpx solid rgba(255, 255, 255, 0.5);
-  /* 关键：flex column + overflow hidden，让内容区 scroll-view 独立滚动，
+  /* 关键：flex column + 固定高度 + overflow hidden，让内容区 scroll-view 独立滚动，
      键盘底部固定，从根本上消除与内嵌分类面板的双滚动条 */
   display: flex;
   flex-direction: column;
+  /* 必须用 height 而不是 max-height：flex 布局下 max-height 不会让容器"撑到"那个值，
+     容器高度仍由内容决定，导致 flex:1 的 scroll-view 可分配空间为 0、高度被压成 0。
+     用 height:85vh 强制容器有确定高度，scroll-view 才能正确伸展到剩余空间 */
+  height: 85vh;
   max-height: 85vh;
   overflow: hidden;
 }

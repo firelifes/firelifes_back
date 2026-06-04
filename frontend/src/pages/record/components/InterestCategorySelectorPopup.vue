@@ -126,6 +126,7 @@ defineExpose({ open, close })
 
 .category-list {
   flex: 1;
+  min-height: 0; /* 关键：覆盖 flex item 默认的 min-height:auto，让 flex:1 能在固定高度父容器里正确收缩并启用内部滚动 */
   padding: 20rpx 24rpx 40rpx;
   overflow-y: auto;
 }
