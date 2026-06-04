@@ -52,6 +52,8 @@
     <InterestCategorySelectorPopup
       ref="categoryPopupRef"
       @select="onCategorySelect"
+      @open="emit('interestCategoryPopupOpen')"
+      @close="emit('interestCategoryPopupClose')"
     />
   </view>
 </template>
@@ -76,6 +78,8 @@ const emit = defineEmits<{
   (e: 'update:principal', value: number): void
   (e: 'update:interest', value: number): void
   (e: 'update:interestTypeId', value: number): void
+  (e: 'interestCategoryPopupOpen'): void
+  (e: 'interestCategoryPopupClose'): void
 }>()
 
 const principal = ref(0)

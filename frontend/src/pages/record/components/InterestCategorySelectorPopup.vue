@@ -47,6 +47,8 @@ import { getCategoryIconClass } from '../../../utils/category-icon-map'
 
 const emit = defineEmits<{
   (e: 'select', category: CategoryItem): void
+  (e: 'open'): void
+  (e: 'close'): void
 }>()
 
 const categoryGroups = ref<CategoryGroup[]>([])
@@ -55,6 +57,7 @@ const selectedCategoryId = ref<number>(0)
 
 const open = async (selectedId?: number) => {
   visible.value = true
+  emit('open')
   await loadCategories()
   if (selectedId) {
     selectedCategoryId.value = selectedId
@@ -63,6 +66,7 @@ const open = async (selectedId?: number) => {
 
 const close = () => {
   visible.value = false
+  emit('close')
 }
 
 const loadCategories = async () => {

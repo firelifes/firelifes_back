@@ -98,6 +98,8 @@
       @update:principal="(val) => emit('update:principal', val)"
       @update:interest="(val) => emit('update:interest', val)"
       @update:interestTypeId="(val) => emit('update:interestTypeId', val)"
+      @interestCategoryPopupOpen="interestCategoryPopupVisible = true"
+      @interestCategoryPopupClose="interestCategoryPopupVisible = false"
     />
 
     <view class="account-area" v-if="!isTransfer && !isRepayment && !transferOperation">
@@ -132,7 +134,7 @@
       @update:assetData="handleAssetDataChange"
     />
 
-    <view v-if="!showAssetFields" class="keyboard">
+    <view v-if="!showAssetFields && !interestCategoryPopupVisible" class="keyboard">
       <view class="keyboard-row">
         <view class="key-item" @tap="inputAmount('7')"><text>7</text></view>
         <view class="key-item" @tap="inputAmount('8')"><text>8</text></view>
@@ -221,6 +223,8 @@ const emit = defineEmits<{
   (e: 'complete'): void
   (e: 'toggleDatePicker'): void
 }>()
+
+const interestCategoryPopupVisible = ref(false)
 
 const displayAmount = ref('')
 const remark = ref('')
