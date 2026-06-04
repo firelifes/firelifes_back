@@ -271,6 +271,7 @@ defineExpose({
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-height: 0; /* flex 链上：让 .account-list scroll-view 能拿到非 0 高度 */
 }
 
 .account-search {
@@ -288,8 +289,10 @@ defineExpose({
 }
 
 .account-list {
+  /* 关键：flex:1 + min-height:0 才能让 <scroll-view> 在定高父容器里正确滚动
+     （缺 min-height:0 时，flex item 默认 min-height:auto = 内容高度，无法收缩） */
   flex: 1;
-  height: 100%;
+  min-height: 0;
 }
 
 .section-title {

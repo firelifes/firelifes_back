@@ -73,10 +73,11 @@ defineExpose({ open, close })
 
 <style scoped>
 .popup-wrapper {
+  /* 关键：height:100% 父级必须是定高容器（由 WdPopup custom-style 的 height:80vh 保障） */
   display: flex;
   flex-direction: column;
   height: 100%;
-  max-height: 70vh;
+  min-height: 0; /* 覆盖 flex item 默认的 min-height:auto，让 flex:1 子项能正确收缩 */
 }
 
 .popup-header {
@@ -103,6 +104,7 @@ defineExpose({ open, close })
 
 .account-selector-wrapper {
   flex: 1;
-  overflow: hidden;
+  min-height: 0; /* 关键：flex 链上每一层都要 min-height:0，最终 scroll-view 才能拿到非 0 高度 */
+  overflow: hidden; /* 不在 wrapper 上滚动，让内层 .account-list scroll-view 自己处理滚动 */
 }
 </style>
