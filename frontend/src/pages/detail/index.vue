@@ -148,6 +148,10 @@ const handleFunctionClick = (item: FunctionItem) => {
     uni.navigateTo({ url: '/pages/detail/bill' })
     return
   }
+  if (item.key === 'cashflow') {
+    uni.navigateTo({ url: '/pages/detail/cashflow' })
+    return
+  }
   if (item.key === 'fire') {
     uni.navigateTo({ url: '/pages/detail/fire-progress' })
     return

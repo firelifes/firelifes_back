@@ -60,6 +60,14 @@
 			}
 		},
 		{
+			"path": "pages/detail/cashflow",
+			"style": {
+				"navigationBarTitleText": "现金流",
+				"navigationStyle": "custom",
+				"backgroundColor": "#f5f6fa"
+			}
+		},
+		{
 			"path": "pages/detail/budget/index",
 			"style": {
 				"navigationBarTitleText": "预算",
