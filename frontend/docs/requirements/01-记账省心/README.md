@@ -1,5 +1,5 @@
 # 01 - 记账省心
-> 模块版本：v1.6 | 功能数：15 | 最后更新：2026-05-21 | 中文名称：快速记账与智能辅助功能模块
+> 模块版本：v1.7 | 功能数：12 | 最后更新：2026-06-17 | 中文名称：快速记账与智能辅助功能模块
 
 ## 模块概述
 
@@ -12,22 +12,17 @@
 | 功能 | 文件 | 版本 | 状态 | 优先级 |
 |------|------|------|------|--------|
 | 记账功能（核心+账户选择+转账+还债） | record/record.md | v2.0 | 开发中 | P0 |
-| 明细页（账单明细首页） | detail/detail-month-switch.md | v1.1 | 已完成 | P0 |
-| FIRE进度追踪面板 | detail/fire-progress.md | v1.0 | 已完成 | P0 |
-| 储蓄率追踪分析 | detail/savings-rate.md | v1.1 | 已完成 | P1 |
-| 继续记下一笔 | record/record-continue.md | v1.0 | 已废弃 | P0 |
-| 账户选择器 | record/account-selector.md | v1.0 | 已废弃（已合并） | P0 |
+| 明细页（账单明细首页） | detail/detail-list.md | v1.1 | 已完成 | P0 |
+| FIRE进度追踪面板 | moreFunctions/fire-progress.md | v1.0 | 已完成 | P0 |
+| 储蓄率追踪分析 | moreFunctions/savings-rate.md | v1.1 | 已完成 | P1 |
+| 统计分析页面（圆环图+趋势图+排行榜） | statistics.md | v1.1 | 已完成 | P0 |
 | 智能备注 | record/smart-remark.md | v1.0 | 设计中 | P1 |
-| 记账确认卡片 | record/record-confirm-card.md | v1.0 | 已废弃 | P0 |
 | 分类置顶 | record/category-pinned.md | v1.0 | 设计中 | P1 |
-| 记账提醒 | record/record-reminder.md | v1.0 | 已废弃 | P2 |
-| 自动记账 | auto-record.md | v1.0 | 已废弃 | P2 |
-| 快捷金额 | quick-amount.md | v1.0 | 已废弃 | P1 |
-| 记账模板 | record/record-template.md | v1.0 | 已废弃 | P2 |
-| 转账记录 | record/transfer-record.md | v1.0 | 已废弃（已合并） | P1 |
-| 图标兜底 | icon-fallback-fix.md | v1.0 | 已实现（iconfont方案） | P2 |
+| 图标兜底 | record/icon-fallback-fix.md | v1.0 | 已实现 | P2 |
 | 金额格式化 | record/amount-format.md | v1.0 | 设计中 | P2 |
 | 草稿自动保存 | record/draft-auto-save.md | v1.0 | 设计中 | P1 |
+| 智能记忆 | record/smart-memory.md | v1.0 | 已完成 | P1 |
+| 转账操作 | record/transfer-operations.md | v1.0 | 已完成 | P1 |
 
 ## 三支柱全链路审视
 
@@ -43,9 +38,9 @@
 | 方向 | 说明 | 状态 |
 |------|------|------|
 | 记账即资产 | 支出购买大件时一键记入折旧资产 | 已完成（AssetFields开关+事务双写） |
-| 记账即反馈 | 每次记账后展示净资产+FIRE距离 | 开发中（RecordConfirmCard） |
+| 记账即反馈 | 每次记账后展示净资产+FIRE距离 | 已完成 |
 | 记账即省心 | 品类智能匹配、金额阈值提醒 | 设计中 |
-| 连续记账 | 记账成功后选择"继续记" | 开发中（合并到确认卡片） |
+| 统计分析 | 分类占比圆环图、收支趋势图、消费排行榜 | 已完成 |
 
 ## 模块数据流
 
@@ -86,8 +81,9 @@
 
 | 版本 | 日期 | 变更内容 | 作者 |
 |------|------|---------|------|
+| v1.7 | 2026-06-17 | 新增统计分析页面文档；移除已废弃功能；更新功能状态 | AI |
 | v1.6 | 2026-05-21 | 预算设置/进度/双体系文档迁移至 04-系统配置/budget-setting/ | AI |
-| v1.5 | 2026-05-21 | 迁移 FIRE进度/储蓄率/预算 至 detail/ 子目录，重构文档结构 | AI |
+| v1.5 | 2026-05-21 | 迁移 FIRE进度/储蓄率/预算 至 moreFunctions/ 子目录，重构文档结构 | AI |
 | v1.4 | 2026-05-21 | 明细页文档更新至v1.1：补充完整页面结构、组件拆解、数据流、API接口 | AI |
 | v1.3 | 2026-05-16 | 模块版本迭代 | AI |
 | v1.2 | 2026-05-15 | 新增三支柱全链路审视；更新功能状态与数据流 | AI |

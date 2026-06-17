@@ -108,7 +108,7 @@ work_for_fire/
 | detail | `pages/detail/*` | 明细首页、账单、FIRE进度、预算 |
 | record | `pages/record/*` | 记账入口、编辑记录 |
 | analysis | `pages/analysis/*` | 收支分析、账户交易明细 |
-| statistics | `pages/statistics/index` | 统计概览（分类占比圆环图、收支趋势图、消费排行榜） |
+| statistics | `pages/statistics/index` | 统计概览（分类占比圆环图、收支趋势折线图、消费排行榜、最高消费日+日均概览卡）|
 | my | `pages/my/*` | 个人中心、分类设置、账户设置、主题设置 |
 
 ### 状态管理
@@ -254,4 +254,14 @@ cd backend && npm run dev
 
 ---
 
-*项目版本: v1.0*
+*项目版本: v1.1*
+
+---
+
+## 更新日志
+
+### v1.1 (2026-06-18)
+- 统计分析页面：新增分类占比圆环图、收支趋势折线图、消费排行榜
+- 统计页面自定义导航栏：移除系统默认 `uni-page-head`，使用自定义头部
+- 概览卡片：新增最高消费日和日均消费/收入展示
+- 需求文档：更新各模块版本号、功能状态、文档结构

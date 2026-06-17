@@ -1,5 +1,6 @@
 # FIRE生活家 - 需求文档索引
-> 全局版本：v1.5 | 最后更新：2026-05-24
+> 全局版本：v1.7 | 最后更新：2026-06-18
+
 
 ## 文档结构
 
@@ -12,28 +13,29 @@ requirements/
 │   ├── detail/                         ← 明细页子模块
 │   │   ├── detail-list.md
 │   │   ├── detail-delete.md
+│   │   └── savings-rate.md
+│   ├── moreFunctions/                  ← 更多功能子模块
 │   │   ├── fire-progress.md
 │   │   └── savings-rate.md
-│   └── record/                         ← 记账功能子模块
-│       ├── record.md
-│       ├── record-core.md
-│       ├── account-selector.md
-│       ├── amount-format.md
-│       ├── category-pinned.md
-│       ├── draft-auto-save.md
-│       ├── icon-fallback-fix.md
-│       ├── smart-remark.md
-│       └── transfer-record.md
-│   ├── auto-record.md
-│   ├── quick-amount.md
-│   ├── record-confirm-card.md
-│   ├── record-continue.md
-│   ├── record-reminder.md
-│   └── record-template.md
+│   ├── record/                         ← 记账功能子模块
+│   │   ├── record.md
+│   │   ├── account-selector.md
+│   │   ├── amount-format.md
+│   │   ├── category-pinned.md
+│   │   ├── default-categories.md
+│   │   ├── draft-auto-save.md
+│   │   ├── icon-fallback-fix.md
+│   │   ├── smart-memory.md
+│   │   ├── smart-remark.md
+│   │   └── transfer-operations.md
+│   └── statistics.md                   ← 统计分析页面
 │
 ├── 02-资产有数/                         ← 模块2
 │   ├── README.md                       ← 模块概述
+│   ├── analysis/                       ← 分析页子模块
+│   │   └── analysis.md
 │   ├── account-detail.md
+│   ├── account-records.md
 │   ├── asset-overview.md
 │   ├── depreciating-asset.md
 │   ├── fixed-asset.md
@@ -53,10 +55,13 @@ requirements/
     ├── login/                          ← 登录注册子模块
     │   ├── login.md
     │   ├── register.md
-    │   └── forgot-password.md
+    │   ├── forgot-password.md
+    │   ├── new-user-default-config.md
+    │   └── user-config.md
     ├── account-setting/                ← 账户设置子模块
     │   ├── account-list.md
     │   ├── account-edit.md
+    │   ├── credit-card-rules.md
     │   └── liability-rules.md
     ├── budget-setting/                 ← 预算设置子模块
     │   ├── budget-setting.md
@@ -66,25 +71,21 @@ requirements/
     │   ├── category-group-list.md
     │   ├── category-group-edit.md
     │   ├── category-list.md
-    │   ├── category-edit.md
-    │   └── category-protect-and-ui.md
+    │   └── category-edit.md
     ├── theme-settings/                 ← 主题设置子模块
     │   └── theme.md
-    ├── user-auth.md
-    ├── user-config.md                  ← 用户配置表设计
-    ├── new-user-default-config.md      ← 新用户默认配置
-    └── settings.md
+    └── my.md                           ← 个人中心
 ```
 
 ## 模块概览
 
 | 模块 | 功能数 | 状态 |
 |------|--------|------|
-| 01-记账省心 | 19 |  开发中 |
-| 02-资产有数 | 7 |  开发中 |
-| 03-FIRE可期 | 4 |  开发中 |
-| 04-系统配置 | 18 |  部分完成 |
-| **总计** | **48** | - |
+| 01-记账省心 | 12 | 开发中 |
+| 02-资产有数 | 8 | 开发中 |
+| 03-FIRE可期 | 4 | 开发中 |
+| 04-系统配置 | 10 | 部分完成 |
+| **总计** | **34** | - |
 
 ## 三支柱全链路设计
 
