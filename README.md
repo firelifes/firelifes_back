@@ -108,7 +108,7 @@ work_for_fire/
 | detail | `pages/detail/*` | 明细首页、账单、FIRE进度、预算 |
 | record | `pages/record/*` | 记账入口、编辑记录 |
 | analysis | `pages/analysis/*` | 收支分析、账户交易明细 |
-| statistics | `pages/statistics/index` | 统计概览（分类占比圆环图、收支趋势折线图、消费排行榜、最高消费日+日均概览卡）|
+| statistics | `pages/statistics/index` | 统计概览（支出+收入两栏概览卡、分类占比圆环图、收支趋势折线图、消费排行榜）|
 | my | `pages/my/*` | 个人中心、分类设置、账户设置、主题设置 |
 
 ### 状态管理
@@ -254,11 +254,15 @@ cd backend && npm run dev
 
 ---
 
-*项目版本: v1.1*
+*项目版本: v1.2*
 
 ---
 
 ## 更新日志
+
+### v1.2 (2026-06-18)
+- 统计分析页面：概览卡还原为简单的支出/收入两栏（绿色渐变背景），移除最高消费日、日均等复杂功能
+- 代码清理：移除不再使用的 topDay、dailyAverage、onTopDayTap 等计算属性和函数
 
 ### v1.1 (2026-06-18)
 - 统计分析页面：新增分类占比圆环图、收支趋势折线图、消费排行榜

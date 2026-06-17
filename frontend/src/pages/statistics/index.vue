@@ -47,27 +47,19 @@
 
     <!-- 内容区 -->
     <view v-else class="content-area">
-      <!-- 概览卡：最高消费日 + 日均（最高消费日可下钻到对应日期明细） -->
-      <view v-if="activeType !== 'transfer' && linePoints.length > 0" class="overview-strip">
-        <view
-          class="overview-item overview-item-clickable"
-          :class="{ 'overview-item-disabled': !topDay }"
-          hover-class="overview-item-hover"
-          :hover-stay-time="100"
-          @tap="onTopDayTap"
-        >
-          <text class="overview-label">最高消费日</text>
-          <text class="overview-value">{{ topDayLabel }}</text>
-          <text v-if="topDayAmount > 0" class="overview-amount">¥{{ formatAmount(topDayAmount) }}</text>
-          <text v-if="topDay" class="overview-hint">点击查看 →</text>
+      <!-- 概览卡：支出 + 收入 -->
+      <view class="summary-row">
+        <view class="summary-item">
+          <text class="summary-label">支出</text>
+          <text class="summary-value expense">-¥{{ formatAmount(monthExpense) }}</text>
         </view>
-        <view class="overview-divider"></view>
-        <view class="overview-item">
-          <text class="overview-label">日均{{ activeType === 'expense' ? '支出' : '收入' }}</text>
-          <text class="overview-value">{{ dailyAverageLabel }}</text>
-          <text v-if="totalAmount > 0" class="overview-amount">¥{{ formatAmount(dailyAverage) }}</text>
+        <view class="summary-divider"></view>
+        <view class="summary-item">
+          <text class="summary-label">收入</text>
+          <text class="summary-value income">¥{{ formatAmount(monthIncome) }}</text>
         </view>
       </view>
+
       <!-- 转账 Tab：总额卡片 -->
       <view v-if="activeType === 'transfer'" class="transfer-card">
         <text class="transfer-total-label">转账总额</text>
@@ -195,6 +187,8 @@ const loading = ref(false)
 const errorState = ref<{ type: string; show: boolean }>({ type: 'unknown', show: false })
 
 const totalAmount = ref(0)
+const monthExpense = ref(0)
+const monthIncome = ref(0)
 const transferCount = ref(0)
 const ringCategories = ref<{ name: string; amount: number; percent: number; color: string; typeId: number }[]>([])
 const linePoints = ref<{ label: string; value: number; isMax: boolean }[]>([])
@@ -254,29 +248,6 @@ const totalPeriodDays = computed(() => {
   return new Date(y, m, 0).getDate()
 })
 
-// ── C2 概览卡：最高消费日 + 日均 ──
-const topDay = computed(() => {
-  if (linePoints.value.length === 0) return null
-  return linePoints.value.reduce((max, p) => p.value > max.value ? p : max, linePoints.value[0])
-})
-const topDayLabel = computed(() => {
-  if (!topDay.value) return '-'
-  if (dimension.value === 'year') {
-    return `${topDay.value.label}月`
-  }
-  return `${topDay.value.label}日`
-})
-const topDayAmount = computed(() => topDay.value?.value || 0)
-
-const dailyAverage = computed(() => {
-  const days = totalPeriodDays.value || 1
-  return Math.round(totalAmount.value / days)
-})
-const dailyAverageLabel = computed(() => {
-  const days = totalPeriodDays.value || 1
-  return `过去 ${days} ${dimension.value === 'year' ? '月' : '天'}`
-})
-
 // ── 类型选项 ──
 const typeOptions: { value: 'expense' | 'income' | 'transfer'; label: string }[] = [
   { value: 'expense', label: '支出' },
@@ -331,27 +302,6 @@ const onRankingItemTap = (item: { name: string; typeId: number; type: string }) 
   uni.navigateTo({
     url: `/pages/statistics/category-detail?categoryName=${encodeURIComponent(item.name)}&typeId=${item.typeId}&type=${item.type}&yearMonth=${selectedPeriod.value}`,
   })
-}
-
-// ── 概览卡「最高消费日」点击 → 跳到对应日期的明细页 ──
-const onTopDayTap = () => {
-  if (!topDay.value) return
-  const target = topDay.value
-  // 折线点是 day-index（0~30）还是 month-index 取决于 dimension
-  if (dimension.value === 'month') {
-    // day-index，转成 yyyy-MM-dd
-    const ym = selectedPeriod.value // "2026-06"
-    const day = String(target.label).padStart(2, '0')
-    const date = `${ym}-${day}`
-    uni.navigateTo({
-      url: `/pages/detail/detail-list?month=${ym}&day=${day}&type=${activeType.value}`,
-    })
-  } else {
-    // year dimension，target.label 是 "2026-06" 格式
-    uni.navigateTo({
-      url: `/pages/detail/detail-list?month=${target.label}&type=${activeType.value}`,
-    })
-  }
 }
 
 // ── 类型选择 ──
@@ -468,7 +418,9 @@ const loadMonthData = async () => {
   if (summaryRes.success && summaryRes.data) {
     totalAmount.value = activeType.value === 'expense' ? summaryRes.data.expense
       : activeType.value === 'income' ? summaryRes.data.income
-      : summaryRes.data.expense // transfers handled differently
+      : summaryRes.data.expense
+    monthExpense.value = summaryRes.data.expense
+    monthIncome.value = summaryRes.data.income
   }
 
   if (recordsRes.success && recordsRes.data) {
@@ -569,6 +521,8 @@ const loadYearData = async () => {
   const currentYear = now.getFullYear()
 
   let yearTotal = 0
+  let yearExpense = 0
+  let yearIncome = 0
   const monthPoints: { label: string; value: number; isMax: boolean }[] = []
   const catYearMap = new Map<number, number>()
 
@@ -586,18 +540,18 @@ const loadYearData = async () => {
       let monthVal = 0
       if (recordsRes.success && recordsRes.data) {
         if (activeType.value === 'transfer') {
-          // 转账：从记录中累加 transfer + repayment
           const transferRecords = recordsRes.data.list.filter(
             (r: any) => r.type === 'transfer' || r.type === 'repayment'
           )
           monthVal = transferRecords.reduce((s: number, r: any) => s + Math.abs(r.amount), 0)
           yearTotal += monthVal
         } else {
-          // 支出/收入：用 summary 数据
           if (summaryRes.success && summaryRes.data) {
             monthVal = activeType.value === 'expense' ? summaryRes.data.expense
               : summaryRes.data.income
             yearTotal += monthVal
+            yearExpense += summaryRes.data.expense
+            yearIncome += summaryRes.data.income
           }
           // 分类统计（仅非转账类型）
           const filtered = recordsRes.data.list.filter((r: any) => r.type === activeType.value)
@@ -614,6 +568,8 @@ const loadYearData = async () => {
   }
 
   totalAmount.value = yearTotal
+  monthExpense.value = yearExpense
+  monthIncome.value = yearIncome
   const maxMonthVal = Math.max(...monthPoints.map(p => p.value), 1)
   linePoints.value = monthPoints.map(p => ({
     ...p,
@@ -827,73 +783,52 @@ onBeforeUnmount(() => {
   box-shadow: 0 2rpx 12rpx rgba(13, 148, 136, 0.04);
 }
 
-/* ── C2 概览卡 ── */
-.overview-strip {
+/* ── C2 概览卡：支出 + 收入 ── */
+.summary-row {
   display: flex;
   flex-direction: row;
   align-items: center;
-  background: var(--color-bg-card, #FFFFFF);
+  background: linear-gradient(135deg, var(--color-primary, #0D9488), var(--color-primary-dark, #0B7A70));
   border-radius: 24rpx;
   padding: 28rpx 24rpx;
-  box-shadow: 0 2rpx 12rpx rgba(13, 148, 136, 0.04);
   margin-bottom: 24rpx;
 }
 
-.overview-item {
+.summary-item {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8rpx;
   padding: 0 8rpx;
-  transition: transform 0.15s ease;
 }
 
-.overview-item-clickable {
-  cursor: pointer;
-}
-
-.overview-item-hover {
-  transform: scale(0.97);
-}
-
-.overview-item-disabled {
-  opacity: 0.5;
-}
-
-.overview-hint {
-  font-size: 18rpx;
-  color: var(--color-primary, #0D9488);
-  margin-top: 2rpx;
-  opacity: 0.7;
-}
-
-.overview-label {
+.summary-label {
   font-size: 22rpx;
-  color: var(--color-text-secondary, #94A3B8);
+  color: rgba(255, 255, 255, 0.7);
   letter-spacing: 1rpx;
 }
 
-.overview-value {
+.summary-value {
   font-size: 36rpx;
   font-weight: 700;
-  color: var(--color-text-primary, #1E293B);
+  color: #FFFFFF;
   font-feature-settings: 'tnum';
   font-variant-numeric: tabular-nums;
 }
 
-.overview-amount {
-  font-size: 22rpx;
-  color: var(--color-primary, #0D9488);
-  font-weight: 600;
-  font-feature-settings: 'tnum';
-  font-variant-numeric: tabular-nums;
+.summary-value.expense {
+  color: #F8FAFC;
 }
 
-.overview-divider {
+.summary-value.income {
+  color: #FFE082;
+}
+
+.summary-divider {
   width: 1rpx;
   height: 64rpx;
-  background: var(--color-border-light, #F1F5F9);
+  background: rgba(255, 255, 255, 0.2);
   flex-shrink: 0;
 }
 
