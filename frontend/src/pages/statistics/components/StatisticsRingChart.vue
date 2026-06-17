@@ -120,20 +120,31 @@ const legendItems = computed(() => {
   }))
 })
 
+// 圆环图只绘制前5个分类 + 其他（与图例保持一致）
 const segments = computed(() => {
   if (props.categories.length === 0) return []
-  const total = props.categories.reduce((s, c) => s + c.amount, 0) || 1
+  // 构建圆环数据：前5个 + 其他（合并第6个及以后）
+  const top5 = props.categories.slice(0, 5)
+  const ringData = top5.map((c, i) => ({
+    ...c,
+    color: c.color || RING_COLORS[i % RING_COLORS.length],
+  }))
+  if (props.categories.length > 5) {
+    const othersAmount = props.categories.slice(5).reduce((s, c) => s + c.amount, 0)
+    ringData.push({ name: '其他', amount: othersAmount, percent: 0, color: '#94A3B8' })
+  }
+  const total = ringData.reduce((s, c) => s + c.amount, 0) || 1
   let accumulated = 0
   const segs: { color: string; dashArray: string; dashOffset: number }[] = []
 
-  props.categories.forEach((cat, i) => {
+  ringData.forEach((cat) => {
     const fraction = cat.amount / total
     const length = Math.max(fraction * CIRCUMFERENCE, 0.5)
     // SVG 圆默认从 3 点方向开始绘制；rotate(-90deg) 把起点转到 12 点方向
     // 需要 dashOffset = C/4（= 圆周/4）使图案的"颜色起点"也对齐到 12 点
     // 再减去 accumulated 把已绘制的段长"吃掉"，即顺时针跳过已占弧长
     segs.push({
-      color: cat.color || RING_COLORS[i % RING_COLORS.length],
+      color: cat.color,
       dashArray: `${length} ${CIRCUMFERENCE - length}`,
       dashOffset: CIRCUMFERENCE / 4 - accumulated,
     })
