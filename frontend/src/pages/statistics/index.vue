@@ -28,20 +28,45 @@
     </view>
 
     <view v-else class="content">
-      <view v-if="categoryBreakdown.length > 0" class="section">
-        <text class="section-title">支出分类排行</text>
-        <view class="category-list">
-          <view v-for="(item, index) in categoryBreakdown" :key="item.typeId" class="category-row">
-            <text class="rank-num">{{ index + 1 }}</text>
-            <view class="category-icon" :style="{ backgroundColor: getIconBg() }">
-              <view class="category-icon-svg" :class="item.icon"></view>
+      <view v-if="ringChartData.length > 0" class="section">
+        <text class="section-title">支出分类占比</text>
+        <view class="ring-chart-wrap">
+          <view class="ring-chart">
+            <view class="ring-svg-wrap">
+              <svg viewBox="0 0 100 100" class="ring-svg">
+                <circle cx="50" cy="50" r="34" fill="none" stroke="#F1F5F9" stroke-width="12" />
+                <circle
+                  v-for="(seg, idx) in ringChartData"
+                  :key="'seg-' + seg.typeId"
+                  cx="50"
+                  cy="50"
+                  r="34"
+                  fill="none"
+                  :stroke="seg.color"
+                  stroke-width="12"
+                  :stroke-dasharray="seg.segmentLength + ' ' + ringCircumference"
+                  :stroke-dashoffset="seg.segmentOffset"
+                  stroke-linecap="butt"
+                  transform="rotate(-90 50 50)"
+                />
+              </svg>
+              <view class="ring-chart-inner">
+                <text class="ring-chart-amount">¥{{ formatAmount(monthExpense) }}</text>
+                <text class="ring-chart-label">总支出</text>
+              </view>
             </view>
-            <text class="category-name">{{ item.name }}</text>
-            <view class="category-bar-wrap">
-              <view class="category-bar" :style="{ width: item.percent + '%' }"></view>
+          </view>
+          <view class="legend-area">
+            <view
+              v-for="(item, index) in ringChartData"
+              :key="'leg-' + item.typeId"
+              class="legend-row"
+            >
+              <view class="legend-color" :style="{ backgroundColor: item.color }"></view>
+              <text class="legend-name">{{ item.name }}</text>
+              <text class="legend-percent">{{ item.displayPercent.toFixed(1) }}%</text>
+              <text class="legend-amount">¥{{ formatAmount(item.amount) }}</text>
             </view>
-            <text class="category-amount">-¥{{ formatAmount(item.amount) }}</text>
-            <text class="category-percent">{{ item.percent.toFixed(0) }}%</text>
           </view>
         </view>
       </view>
@@ -107,6 +132,106 @@ const categoryBreakdown = ref<{ typeId: number; name: string; icon: string; amou
 const trendData = ref<{ month: string; label: string; income: number; expense: number }[]>([])
 
 const maxTrend = ref(0)
+
+const RING_COLORS = ['#0D9488', '#3B82F6', '#F59E0B', '#8B5CF6', '#EF4444', '#10B981']
+
+type RingSegment = {
+  typeId: number
+  name: string
+  amount: number
+  percent: number
+  displayPercent: number
+  color: string
+  segmentLength: number
+  segmentOffset: number
+}
+
+const ringChartData = computed<RingSegment[]>(() => {
+  const raw = categoryBreakdown.value
+  if (!raw || raw.length === 0) return []
+
+  // ≤6 个分类：全部展示；>6：前5个 + "其他"
+  let segments: RingSegment[]
+  if (raw.length <= 6) {
+    segments = raw.map((item, idx) => ({
+      typeId: item.typeId,
+      name: item.name,
+      amount: item.amount,
+      percent: item.percent,
+      displayPercent: 0,
+      color: RING_COLORS[idx % RING_COLORS.length],
+      segmentLength: 0,
+      segmentOffset: 0,
+    }))
+  } else {
+    const top5 = raw.slice(0, 5)
+    const rest = raw.slice(5)
+    const restAmount = rest.reduce((sum, c) => sum + c.amount, 0)
+    const total = monthExpense.value || 1
+    const restPercent = (restAmount / total) * 100
+
+    segments = [
+      ...top5.map((item, idx) => ({
+        typeId: item.typeId,
+        name: item.name,
+        amount: item.amount,
+        percent: item.percent,
+        displayPercent: 0,
+        color: RING_COLORS[idx % RING_COLORS.length],
+        segmentLength: 0,
+        segmentOffset: 0,
+      })),
+      {
+        typeId: -1,
+        name: '其他',
+        amount: restAmount,
+        percent: restPercent,
+        displayPercent: 0,
+        color: RING_COLORS[5],
+        segmentLength: 0,
+        segmentOffset: 0,
+      },
+    ]
+  }
+
+  // 计算比例（0-1）用于 SVG 弧长
+  const total = monthExpense.value || 1
+  segments.forEach(s => {
+    s.percent = (s.amount / total) * 100
+  })
+
+  // 让 displayPercent 总和精确等于 100（四舍五入后修正最后一项，避免 99.9% 或 100.1%）
+  const n = segments.length
+  const rounded = segments.map(s => Math.round(s.percent * 10) / 10)
+  const sumRounded = rounded.reduce((a, b) => a + b, 0)
+  const diff = Math.round((100 - sumRounded) * 10) / 10
+  // 把差值加到最大的一项上（避免负数修正导致 0% 项变负）
+  if (Math.abs(diff) >= 0.1 && n > 0) {
+    let maxIdx = 0
+    for (let i = 1; i < n; i++) {
+      if (rounded[i] > rounded[maxIdx]) maxIdx = i
+    }
+    rounded[maxIdx] = Math.round((rounded[maxIdx] + diff) * 10) / 10
+  }
+  segments.forEach((s, i) => {
+    s.displayPercent = rounded[i]
+  })
+
+  // 计算 SVG 圆环段：周长 C = 2*PI*r；每段长度 = C * (percent/100)；累计偏移用于 dashoffset
+  const C = 2 * Math.PI * 34 // r=34（SVG viewBox 100，留出边距）
+  let accumulated = 0
+  for (const s of segments) {
+    const ratio = Math.max(0, Math.min(1, s.percent / 100))
+    s.segmentLength = C * ratio
+    // 起点：从 12 点方向顺时针 → 先 -90deg rotate；再以累计长度作为偏移
+    s.segmentOffset = C - accumulated
+    accumulated += s.segmentLength
+  }
+
+  return segments
+})
+
+const ringCircumference = 2 * Math.PI * 34
 
 const formatAmount = (val: number) => Math.abs(val).toFixed(2)
 
@@ -179,7 +304,6 @@ const loadData = async () => {
           percent: (amount / total) * 100,
         }))
         .sort((a, b) => b.amount - a.amount)
-        .slice(0, 10)
 
       categoryBreakdown.value = breakdown
     }
@@ -318,6 +442,104 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 20rpx;
+}
+
+.ring-chart-wrap {
+  display: flex;
+  align-items: center;
+  gap: 32rpx;
+}
+
+.ring-chart {
+  flex-shrink: 0;
+  width: 280rpx;
+  height: 280rpx;
+  position: relative;
+}
+
+.ring-svg-wrap {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.ring-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.ring-chart-inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+  text-align: center;
+}
+
+.ring-chart-amount {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--color-text-primary, #1E293B);
+  line-height: 1.2;
+}
+
+.ring-chart-label {
+  font-size: 20rpx;
+  color: var(--color-text-secondary, #94A3B8);
+}
+
+.legend-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  min-width: 0;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  flex-wrap: nowrap;
+}
+
+.legend-color {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 4rpx;
+  flex-shrink: 0;
+}
+
+.legend-name {
+  font-size: 24rpx;
+  color: var(--color-text-primary, #1E293B);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.legend-percent {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--color-text-primary, #1E293B);
+  min-width: 76rpx;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.legend-amount {
+  font-size: 22rpx;
+  color: var(--color-text-secondary, #94A3B8);
+  min-width: 120rpx;
+  text-align: right;
+  flex-shrink: 0;
 }
 
 .category-row {
