@@ -1,101 +1,151 @@
 <!--
-  pages/statistics/index.vue - 统计页面
-  功能：月度支出分类分析、近6月收支趋势、TOP排行
-  技术：Vue3 + TypeScript + uni-app
+  pages/statistics/index.vue - 统计页面 v3.1
+  对标鲨鱼记账图表页：环形图 + 折线图 + 排行榜
+  类型切换 / 维度切换 / 时段切换 / 状态持久化
 -->
 <template>
   <view class="page">
-    <view class="month-selector">
-      <view class="month-arrow" @tap="prevMonth">◀</view>
-      <text class="month-text">{{ displayYearMonth }}</text>
-      <view class="month-arrow" @tap="nextMonth">▶</view>
-    </view>
-
-    <view class="summary-row">
-      <view class="summary-item">
-        <text class="summary-label">支出</text>
-        <text class="summary-value expense">-¥{{ formatAmount(monthExpense) }}</text>
-      </view>
-      <view class="summary-divider"></view>
-      <view class="summary-item">
-        <text class="summary-label">收入</text>
-        <text class="summary-value income">¥{{ formatAmount(monthIncome) }}</text>
-      </view>
-    </view>
-
-    <view v-if="loading" class="loading-state">
-      <text class="loading-text">加载中...</text>
-    </view>
-
-    <view v-else class="content">
-      <view v-if="ringChartData.length > 0" class="section">
-        <text class="section-title">支出分类占比</text>
-        <view class="ring-chart-wrap">
-          <view class="ring-chart">
-            <view class="ring-svg-wrap">
-              <svg viewBox="0 0 100 100" class="ring-svg">
-                <circle cx="50" cy="50" r="34" fill="none" stroke="#F1F5F9" stroke-width="12" />
-                <circle
-                  v-for="(seg, idx) in ringChartData"
-                  :key="'seg-' + seg.typeId"
-                  cx="50"
-                  cy="50"
-                  r="34"
-                  fill="none"
-                  :stroke="seg.color"
-                  stroke-width="12"
-                  :stroke-dasharray="seg.segmentLength + ' ' + ringCircumference"
-                  :stroke-dashoffset="seg.segmentOffset"
-                  stroke-linecap="butt"
-                  transform="rotate(-90 50 50)"
-                />
-              </svg>
-              <view class="ring-chart-inner">
-                <text class="ring-chart-amount">¥{{ formatAmount(monthExpense) }}</text>
-                <text class="ring-chart-label">总支出</text>
-              </view>
-            </view>
-          </view>
-          <view class="legend-area">
-            <view
-              v-for="(item, index) in ringChartData"
-              :key="'leg-' + item.typeId"
-              class="legend-row"
-            >
-              <view class="legend-color" :style="{ backgroundColor: item.color }"></view>
-              <text class="legend-name">{{ item.name }}</text>
-              <text class="legend-percent">{{ item.displayPercent.toFixed(1) }}%</text>
-              <text class="legend-amount">¥{{ formatAmount(item.amount) }}</text>
-            </view>
-          </view>
+    <!-- 固定头部区 -->
+    <view class="sticky-header">
+      <!-- Header 标题区 -->
+      <view class="header-bar">
+        <view class="header-spacer"></view>
+        <view class="header-center" @tap="showTypeDropdown = true">
+          <text class="header-type-text">{{ typeText }}</text>
+          <text class="header-type-arrow">▼</text>
+        </view>
+        <view class="header-right" @tap="toggleDimension">
+          <text class="dimension-text">{{ dimension === 'month' ? '月' : '年' }}</text>
         </view>
       </view>
 
-      <view v-if="trendData.length > 0" class="section">
-        <text class="section-title">近6月收支趋势</text>
-        <view class="trend-chart">
-          <view v-for="(m, i) in trendData" :key="m.month" class="trend-col">
-            <view class="trend-bars">
-              <view class="trend-bar income-bar" :style="{ height: barHeight(i, 'income') }"></view>
-              <view class="trend-bar expense-bar" :style="{ height: barHeight(i, 'expense') }"></view>
-            </view>
-            <text class="trend-label">{{ m.label }}</text>
-          </view>
+      <!-- 时间 Tab 栏 -->
+      <scroll-view class="tab-bar" scroll-x :show-scrollbar="false">
+        <view
+          v-for="period in availablePeriods"
+          :key="period.value"
+          class="tab-item"
+          :class="{ 'tab-active': period.value === selectedPeriod }"
+          @tap="selectPeriod(period.value)"
+        >
+          <text class="tab-text">{{ period.label }}</text>
         </view>
-        <view class="trend-legend">
-          <view class="legend-item">
-            <view class="legend-dot income-dot"></view>
-            <text class="legend-text">收入</text>
-          </view>
-          <view class="legend-item">
-            <view class="legend-dot expense-dot"></view>
-            <text class="legend-text">支出</text>
-          </view>
+      </scroll-view>
+    </view>
+
+    <!-- 错误态 -->
+    <ErrorState
+      v-if="errorState.show"
+      :type="(errorState.type as any)"
+      show-retry
+      retry-text="重新加载"
+      @retry="onErrorRetry"
+    />
+
+    <!-- 加载态 -->
+    <LoadingState v-else-if="loading" text="正在加载统计数据..." />
+
+    <!-- 内容区 -->
+    <view v-else class="content-area">
+      <!-- 概览卡：最高消费日 + 日均（最高消费日可下钻到对应日期明细） -->
+      <view v-if="activeType !== 'transfer' && linePoints.length > 0" class="overview-strip">
+        <view
+          class="overview-item overview-item-clickable"
+          :class="{ 'overview-item-disabled': !topDay }"
+          hover-class="overview-item-hover"
+          :hover-stay-time="100"
+          @tap="onTopDayTap"
+        >
+          <text class="overview-label">最高消费日</text>
+          <text class="overview-value">{{ topDayLabel }}</text>
+          <text v-if="topDayAmount > 0" class="overview-amount">¥{{ formatAmount(topDayAmount) }}</text>
+          <text v-if="topDay" class="overview-hint">点击查看 →</text>
+        </view>
+        <view class="overview-divider"></view>
+        <view class="overview-item">
+          <text class="overview-label">日均{{ activeType === 'expense' ? '支出' : '收入' }}</text>
+          <text class="overview-value">{{ dailyAverageLabel }}</text>
+          <text v-if="totalAmount > 0" class="overview-amount">¥{{ formatAmount(dailyAverage) }}</text>
         </view>
       </view>
+      <!-- 转账 Tab：总额卡片 -->
+      <view v-if="activeType === 'transfer'" class="transfer-card">
+        <text class="transfer-total-label">转账总额</text>
+        <text class="transfer-total-value">¥{{ formatAmount(totalAmount) }}</text>
+        <text class="transfer-count">共 {{ transferCount }} 笔</text>
+      </view>
 
-      <view v-if="categoryBreakdown.length === 0 && trendData.length === 0" class="empty-state">
-        <text class="empty-text">暂无数据</text>
+      <!-- 支出/收入：环形图 -->
+      <StatisticsRingChart
+        v-if="activeType !== 'transfer'"
+        :categories="ringCategories"
+        :total-amount="totalAmount"
+        :type="activeType"
+      />
+
+      <!-- 折线图 -->
+      <StatisticsLineChart
+        :points="linePoints"
+        :total-amount="totalAmount"
+        :type="activeType"
+        :dimension="dimension"
+        :total-days="totalPeriodDays"
+        @day-tap="onDayTap"
+      />
+
+      <!-- 排行榜 -->
+      <StatisticsRanking
+        :items="rankingItems"
+        :type="activeType"
+        @item-tap="onRankingItemTap"
+      />
+
+      <!-- 空状态 -->
+      <EmptyState
+        v-if="!loading && rankingItems.length === 0 && linePoints.length === 0"
+        type="no-data"
+        title="还没有记账数据"
+        description="记一笔账单，统计就开始有内容啦"
+        action-text="去记账"
+        show-action
+        @action="goRecord"
+      />
+    </view>
+
+    <!-- 类型下拉 - 全屏遮罩弹框 -->
+    <view v-if="showTypeDropdown" class="dropdown-overlay" @tap="showTypeDropdown = false">
+      <view class="dropdown-spacer"></view>
+      <view class="dropdown-card" @tap.stop="">
+        <view
+          v-for="option in typeOptions"
+          :key="option.value"
+          class="dropdown-item"
+          :class="{ 'dropdown-active': option.value === activeType }"
+          @tap="selectType(option.value)"
+        >
+          <view v-if="option.value === activeType" class="dropdown-dot"></view>
+          <text class="dropdown-text">{{ option.label }}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 每日 TOP3 弹层 -->
+    <view v-if="showDayPopup" class="day-popup-mask" @tap="closeDayPopup">
+      <view class="day-popup-card" @tap.stop>
+        <text class="day-popup-title">{{ dayPopupTitle }}</text>
+        <view v-for="(rec, idx) in selectedDayRecords" :key="idx" class="day-popup-row">
+          <view class="day-popup-cat">{{ getDayRecordLabel(rec) }}</view>
+          <view class="day-popup-right">
+            <text class="day-popup-amount">{{ dayPopupPrefix }}{{ formatAmount(rec.amount) }}</text>
+            <text v-if="rec.remark" class="day-popup-remark">{{ rec.remark }}</text>
+          </view>
+        </view>
+        <view v-if="selectedDayRecords.length === 0" class="day-popup-empty">
+          暂无记录
+        </view>
+        <view class="day-popup-close" @tap="closeDayPopup">
+          <text>关闭</text>
+        </view>
       </view>
     </view>
 
@@ -104,589 +154,901 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { onLoad, onPageScroll } from '@dcloudio/uni-app'
 import { recordApi } from '../../api/record'
 import { categoryApi } from '../../api/category'
 import CustomTabbar from '../../components/CustomTabbar.vue'
+import EmptyState from '../../components/EmptyState.vue'
+import LoadingState from '../../components/LoadingState.vue'
+import StatisticsRingChart from './components/StatisticsRingChart.vue'
+import StatisticsLineChart from './components/StatisticsLineChart.vue'
+import StatisticsRanking from './components/StatisticsRanking.vue'
 import { getCategoryIconClass } from '../../utils/category-icon-map'
+import { formatCurrency } from '../../utils/format'
 
-const ICON_BG = 'rgba(0, 191, 255, 0.08)'
+// ── 状态持久化 Keys ──
+const STORAGE_TYPE = 'stats-type'
+const STORAGE_DIMENSION = 'stats-dimension'
+const STORAGE_PERIOD = 'stats-period'
 
-const getIconBg = () => ICON_BG
-
-const getCategoryIcon = (categoryName: string): string => {
-  return getCategoryIconClass(categoryName)
+// ── 滚动位置缓存 ──
+const SCROLL_CACHE_KEY = 'stats_scroll_pos'
+let pageScrollTop = 0
+const trackScroll = () => {
+  if (pageScrollTop > 0) {
+    uni.setStorageSync(SCROLL_CACHE_KEY, pageScrollTop)
+  }
 }
 
-const today = new Date()
-const currentYear = ref(today.getFullYear())
-const currentMonth = ref(today.getMonth() + 1)
-
-const displayYearMonth = computed(() => `${currentYear.value}年${String(currentMonth.value).padStart(2, '0')}月`)
-const yearMonth = computed(() => `${currentYear.value}-${String(currentMonth.value).padStart(2, '0')}`)
-
-const monthIncome = ref(0)
-const monthExpense = ref(0)
-const loading = ref(false)
-const categoryBreakdown = ref<{ typeId: number; name: string; icon: string; amount: number; percent: number }[]>([])
-const trendData = ref<{ month: string; label: string; income: number; expense: number }[]>([])
-
-const maxTrend = ref(0)
-
-const RING_COLORS = ['#0D9488', '#3B82F6', '#F59E0B', '#8B5CF6', '#EF4444', '#10B981']
-
-type RingSegment = {
-  typeId: number
-  name: string
-  amount: number
-  percent: number
-  displayPercent: number
-  color: string
-  segmentLength: number
-  segmentOffset: number
-}
-
-const ringChartData = computed<RingSegment[]>(() => {
-  const raw = categoryBreakdown.value
-  if (!raw || raw.length === 0) return []
-
-  // ≤6 个分类：全部展示；>6：前5个 + "其他"
-  let segments: RingSegment[]
-  if (raw.length <= 6) {
-    segments = raw.map((item, idx) => ({
-      typeId: item.typeId,
-      name: item.name,
-      amount: item.amount,
-      percent: item.percent,
-      displayPercent: 0,
-      color: RING_COLORS[idx % RING_COLORS.length],
-      segmentLength: 0,
-      segmentOffset: 0,
-    }))
-  } else {
-    const top5 = raw.slice(0, 5)
-    const rest = raw.slice(5)
-    const restAmount = rest.reduce((sum, c) => sum + c.amount, 0)
-    const total = monthExpense.value || 1
-    const restPercent = (restAmount / total) * 100
-
-    segments = [
-      ...top5.map((item, idx) => ({
-        typeId: item.typeId,
-        name: item.name,
-        amount: item.amount,
-        percent: item.percent,
-        displayPercent: 0,
-        color: RING_COLORS[idx % RING_COLORS.length],
-        segmentLength: 0,
-        segmentOffset: 0,
-      })),
-      {
-        typeId: -1,
-        name: '其他',
-        amount: restAmount,
-        percent: restPercent,
-        displayPercent: 0,
-        color: RING_COLORS[5],
-        segmentLength: 0,
-        segmentOffset: 0,
-      },
-    ]
-  }
-
-  // 计算比例（0-1）用于 SVG 弧长
-  const total = monthExpense.value || 1
-  segments.forEach(s => {
-    s.percent = (s.amount / total) * 100
-  })
-
-  // 让 displayPercent 总和精确等于 100（四舍五入后修正最后一项，避免 99.9% 或 100.1%）
-  const n = segments.length
-  const rounded = segments.map(s => Math.round(s.percent * 10) / 10)
-  const sumRounded = rounded.reduce((a, b) => a + b, 0)
-  const diff = Math.round((100 - sumRounded) * 10) / 10
-  // 把差值加到最大的一项上（避免负数修正导致 0% 项变负）
-  if (Math.abs(diff) >= 0.1 && n > 0) {
-    let maxIdx = 0
-    for (let i = 1; i < n; i++) {
-      if (rounded[i] > rounded[maxIdx]) maxIdx = i
-    }
-    rounded[maxIdx] = Math.round((rounded[maxIdx] + diff) * 10) / 10
-  }
-  segments.forEach((s, i) => {
-    s.displayPercent = rounded[i]
-  })
-
-  // 计算 SVG 圆环段：周长 C = 2*PI*r；每段长度 = C * (percent/100)；累计偏移用于 dashoffset
-  const C = 2 * Math.PI * 34 // r=34（SVG viewBox 100，留出边距）
-  let accumulated = 0
-  for (const s of segments) {
-    const ratio = Math.max(0, Math.min(1, s.percent / 100))
-    s.segmentLength = C * ratio
-    // 起点：从 12 点方向顺时针 → 先 -90deg rotate；再以累计长度作为偏移
-    s.segmentOffset = C - accumulated
-    accumulated += s.segmentLength
-  }
-
-  return segments
+onPageScroll((e) => {
+  pageScrollTop = e.scrollTop
+  trackScroll()
 })
 
-const ringCircumference = 2 * Math.PI * 34
+// ── 响应式状态 ──
+const activeType = ref<'expense' | 'income' | 'transfer'>('expense')
+const dimension = ref<'month' | 'year'>('month')
+const selectedPeriod = ref('')
+const showTypeDropdown = ref(false)
+const loading = ref(false)
+const errorState = ref<{ type: string; show: boolean }>({ type: 'unknown', show: false })
 
-const formatAmount = (val: number) => Math.abs(val).toFixed(2)
+const totalAmount = ref(0)
+const transferCount = ref(0)
+const ringCategories = ref<{ name: string; amount: number; percent: number; color: string; typeId: number }[]>([])
+const linePoints = ref<{ label: string; value: number; isMax: boolean }[]>([])
+const rankingItems = ref<{ name: string; icon: string; amount: number; percent: number; color: string; type: string; typeId: number }[]>([])
+const availablePeriods = ref<{ value: string; label: string }[]>([])
 
-const barHeight = (i: number, type: 'income' | 'expense'): string => {
-  const val = type === 'income' ? trendData.value[i].income : trendData.value[i].expense
-  if (maxTrend.value <= 0) return '0rpx'
-  return Math.max((val / maxTrend.value) * 160, 4) + 'rpx'
-}
+const RING_COLORS = ['#0D9488', '#F59E0B', '#3B82F6', '#EF4444', '#8B5CF6', '#64748B']
 
-const prevMonth = () => {
-  if (currentMonth.value === 1) {
-    currentYear.value -= 1
-    currentMonth.value = 12
-  } else {
-    currentMonth.value -= 1
+// 日维度记录详情（按 day 分组存储当月全部记录，用于点击折线图弹出 TOP3）
+const dayRecordsMap = ref<Map<number, any[]>>(new Map())
+const categoryNameMap = ref<Map<number, string>>(new Map())
+const selectedDay = ref(0)
+const selectedDayRecords = computed(() => {
+  if (selectedDay.value <= 0) return []
+  const records = dayRecordsMap.value.get(selectedDay.value) || []
+  return [...records].sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount)).slice(0, 3)
+})
+const getCategoryName = (typeId: number) => categoryNameMap.value.get(typeId) || '未知'
+
+// 每日弹层标题 — 根据当前 Tab 动态显示
+const dayPopupTitle = computed(() => {
+  const typeLabel = activeType.value === 'expense' ? '支出' : activeType.value === 'income' ? '收入' : '转账'
+  return `${selectedPeriod.value}月${selectedDay.value}日 ${typeLabel} TOP3`
+})
+
+// 每日弹层金额前缀
+const dayPopupPrefix = computed(() => {
+  if (activeType.value === 'expense') return '-'
+  if (activeType.value === 'income') return '+'
+  return ''
+})
+
+// 每日弹层记录标签 — 转账类用备注，其余用分类名
+const getDayRecordLabel = (rec: any) => {
+  if (activeType.value === 'transfer') {
+    return rec.remark || (rec.type === 'repayment' ? '还款' : '转账')
   }
-  loadData()
+  return getCategoryName(rec.typeId)
 }
 
-const nextMonth = () => {
+const formatAmount = (v: number) => formatCurrency(Math.abs(v))
+
+// 平均值计算用的真实天数：当月未过完=截止今天，过完了=当月总天数
+const totalPeriodDays = computed(() => {
+  if (dimension.value === 'year') {
+    const year = parseInt(selectedPeriod.value)
+    const now = new Date()
+    return (year === now.getFullYear()) ? (now.getMonth() + 1) : 12
+  }
+  // month
+  const parts = selectedPeriod.value.split('-')
+  const y = parseInt(parts[0])
+  const m = parseInt(parts[1])
   const now = new Date()
-  if (currentYear.value === now.getFullYear() && currentMonth.value === now.getMonth() + 1) return
-  if (currentMonth.value === 12) {
-    currentYear.value += 1
-    currentMonth.value = 1
-  } else {
-    currentMonth.value += 1
+  const isCurrentMonth = y === now.getFullYear() && m === now.getMonth() + 1
+  if (isCurrentMonth) return now.getDate()
+  return new Date(y, m, 0).getDate()
+})
+
+// ── C2 概览卡：最高消费日 + 日均 ──
+const topDay = computed(() => {
+  if (linePoints.value.length === 0) return null
+  return linePoints.value.reduce((max, p) => p.value > max.value ? p : max, linePoints.value[0])
+})
+const topDayLabel = computed(() => {
+  if (!topDay.value) return '-'
+  if (dimension.value === 'year') {
+    return `${topDay.value.label}月`
   }
+  return `${topDay.value.label}日`
+})
+const topDayAmount = computed(() => topDay.value?.value || 0)
+
+const dailyAverage = computed(() => {
+  const days = totalPeriodDays.value || 1
+  return Math.round(totalAmount.value / days)
+})
+const dailyAverageLabel = computed(() => {
+  const days = totalPeriodDays.value || 1
+  return `过去 ${days} ${dimension.value === 'year' ? '月' : '天'}`
+})
+
+// ── 类型选项 ──
+const typeOptions: { value: 'expense' | 'income' | 'transfer'; label: string }[] = [
+  { value: 'expense', label: '支出' },
+  { value: 'income', label: '收入' },
+  { value: 'transfer', label: '转账' },
+]
+
+const typeText = computed(() => {
+  const opt = typeOptions.find(o => o.value === activeType.value)
+  return opt ? opt.label : '支出'
+})
+
+// ── 持久化读写 ──
+const saveState = () => {
+  uni.setStorageSync(STORAGE_TYPE, activeType.value)
+  uni.setStorageSync(STORAGE_DIMENSION, dimension.value)
+  uni.setStorageSync(STORAGE_PERIOD, selectedPeriod.value)
+}
+
+const restoreState = () => {
+  const savedType = uni.getStorageSync(STORAGE_TYPE)
+  const savedDim = uni.getStorageSync(STORAGE_DIMENSION)
+  if (savedType) activeType.value = savedType
+  if (savedDim) dimension.value = savedDim
+}
+
+// ── 维度切换 ──
+const toggleDimension = () => {
+  dimension.value = dimension.value === 'month' ? 'year' : 'month'
+  saveState()
+  selectedPeriod.value = ''
+  loadPeriods()
+}
+
+// ── 折线图点击 ──
+const showDayPopup = ref(false)
+const onDayTap = (day: number) => {
+  selectedDay.value = day
+  showDayPopup.value = true
+}
+const closeDayPopup = () => {
+  showDayPopup.value = false
+}
+
+// ── 空状态按钮：跳记账页 ──
+const goRecord = () => {
+  uni.switchTab({ url: '/pages/record/index' })
+}
+
+// ── 排行榜点击 → 分类明细页 ──
+const onRankingItemTap = (item: { name: string; typeId: number; type: string }) => {
+  uni.navigateTo({
+    url: `/pages/statistics/category-detail?categoryName=${encodeURIComponent(item.name)}&typeId=${item.typeId}&type=${item.type}&yearMonth=${selectedPeriod.value}`,
+  })
+}
+
+// ── 概览卡「最高消费日」点击 → 跳到对应日期的明细页 ──
+const onTopDayTap = () => {
+  if (!topDay.value) return
+  const target = topDay.value
+  // 折线点是 day-index（0~30）还是 month-index 取决于 dimension
+  if (dimension.value === 'month') {
+    // day-index，转成 yyyy-MM-dd
+    const ym = selectedPeriod.value // "2026-06"
+    const day = String(target.label).padStart(2, '0')
+    const date = `${ym}-${day}`
+    uni.navigateTo({
+      url: `/pages/detail/detail-list?month=${ym}&day=${day}&type=${activeType.value}`,
+    })
+  } else {
+    // year dimension，target.label 是 "2026-06" 格式
+    uni.navigateTo({
+      url: `/pages/detail/detail-list?month=${target.label}&type=${activeType.value}`,
+    })
+  }
+}
+
+// ── 类型选择 ──
+const selectType = (type: 'expense' | 'income' | 'transfer') => {
+  activeType.value = type
+  showTypeDropdown.value = false
+  saveState()
+  loadPeriods()
+}
+
+// ── 时段选择 ──
+const selectPeriod = (period: string) => {
+  if (period === selectedPeriod.value) return
+  selectedPeriod.value = period
+  saveState()
   loadData()
 }
 
-const loadData = async () => {
-  loading.value = true
+// ── 数据加载 ──
+const loadPeriods = async () => {
   try {
-    const [summaryRes, recordsRes] = await Promise.all([
-      recordApi.getMonthSummary(yearMonth.value),
-      recordApi.getRecordsByMonth(yearMonth.value, 1, 500),
-    ])
+    const now = new Date()
+    const currentYear = now.getFullYear()
+    const currentMonth = now.getMonth() + 1
 
-    if (summaryRes.success && summaryRes.data) {
-      monthIncome.value = summaryRes.data.income
-      monthExpense.value = summaryRes.data.expense
-    }
-
-    if (recordsRes.success && recordsRes.data) {
-      const expenseRecords = recordsRes.data.list.filter((r: any) => r.type === 'expense')
-
-      const categoryMap = new Map<number, number>()
-      expenseRecords.forEach((r: any) => {
-        categoryMap.set(r.typeId, (categoryMap.get(r.typeId) || 0) + Math.abs(r.amount))
-      })
-
-      const categories = await categoryApi.getUserCategories('expense')
-      const nameMap = new Map<number, string>()
-      if (categories.success && categories.data) {
-        categories.data.forEach((g: any) => {
-          g.children?.forEach((c: any) => {
-            nameMap.set(c.id, c.name)
-          })
-        })
+    if (dimension.value === 'year') {
+      // 年维度：扫描有记录的所有年份
+      const periods: { value: string; label: string }[] = []
+      for (let y = currentYear; y >= currentYear - 5; y--) {
+        try {
+          const res = await recordApi.getMonthSummary(`${y}-01`)
+          if (res.success) {
+            const hasData = res.data && (res.data.income > 0 || res.data.expense > 0 || (res.data.transfer || 0) > 0)
+            if (hasData) {
+              const label = y === currentYear ? '今年' : y === currentYear - 1 ? '去年' : `${y}年`
+              periods.unshift({ value: `${y}`, label })
+            }
+          }
+        } catch { /* skip */ }
       }
-
-      const total = monthExpense.value || 1
-      const breakdown = Array.from(categoryMap.entries())
-        .map(([typeId, amount]) => ({
-          typeId,
-          name: nameMap.get(typeId) || '未知',
-          icon: getCategoryIcon(nameMap.get(typeId) || ''),
-          amount,
-          percent: (amount / total) * 100,
-        }))
-        .sort((a, b) => b.amount - a.amount)
-
-      categoryBreakdown.value = breakdown
+      availablePeriods.value = periods
+      // 默认选中最新有数据的年份
+      if (!selectedPeriod.value && periods.length > 0) {
+        selectedPeriod.value = periods[periods.length - 1].value
+      }
+    } else {
+      // 月维度：扫描当前年有记录的所有月份
+      const periods: { value: string; label: string }[] = []
+      const year = selectedPeriod.value ? parseInt(selectedPeriod.value.split('-')[0]) : currentYear
+      for (let m = 1; m <= 12; m++) {
+        try {
+          const yyyymm = `${year}-${String(m).padStart(2, '0')}`
+          const res = await recordApi.getMonthSummary(yyyymm)
+          if (res.success) {
+            const hasData = res.data && (res.data.income > 0 || res.data.expense > 0 || (res.data.transfer || 0) > 0)
+            if (hasData) {
+              const label = m === currentMonth && year === currentYear ? '本月'
+                : m === currentMonth - 1 && year === currentYear ? '上月'
+                : `${String(m).padStart(2, '0')}月`
+              periods.push({ value: yyyymm, label })
+            }
+          }
+        } catch { /* skip */ }
+      }
+      availablePeriods.value = periods
+      if (!selectedPeriod.value && periods.length > 0) {
+        const current = periods.find(p => p.label === '本月')
+        selectedPeriod.value = current ? current.value : periods[periods.length - 1].value
+      }
     }
+
+    if (!selectedPeriod.value && availablePeriods.value.length > 0) {
+      selectedPeriod.value = availablePeriods.value[availablePeriods.value.length - 1].value
+    }
+    saveState()
+    loadData()
   } catch {
     // ignore
   }
-
-  await loadTrend()
-  loading.value = false
 }
 
-const loadTrend = async () => {
-  const months: { year: number; month: number; label: string }[] = []
-  for (let i = 5; i >= 0; i--) {
-    let y = currentYear.value
-    let m = currentMonth.value - i
-    if (m <= 0) { y -= 1; m += 12 }
-    months.push({ year: y, month: m, label: `${m}月` })
+const loadData = async () => {
+  if (!selectedPeriod.value || availablePeriods.value.length === 0) return
+  loading.value = true
+  errorState.value.show = false
+  try {
+    if (dimension.value === 'month') {
+      await loadMonthData()
+    } else {
+      await loadYearData()
+    }
+  } catch (error: any) {
+    console.error('加载统计数据失败:', error)
+    errorState.value = {
+      type: error?.code === 'NETWORK' || error?.code === 'TIMEOUT' ? error.code.toLowerCase() : 'unknown',
+      show: true
+    }
+  } finally {
+    loading.value = false
+  }
+}
+
+const onErrorRetry = () => {
+  loadData()
+}
+
+const loadMonthData = async () => {
+  const yearMonth = selectedPeriod.value
+  const [summaryRes, recordsRes] = await Promise.all([
+    recordApi.getMonthSummary(yearMonth),
+    recordApi.getRecordsByMonth(yearMonth, 1, 500),
+  ])
+
+  if (summaryRes.success && summaryRes.data) {
+    totalAmount.value = activeType.value === 'expense' ? summaryRes.data.expense
+      : activeType.value === 'income' ? summaryRes.data.income
+      : summaryRes.data.expense // transfers handled differently
   }
 
-  const trend: { month: string; label: string; income: number; expense: number }[] = []
-  for (const mo of months) {
-    try {
-      const yyyymm = `${mo.year}-${String(mo.month).padStart(2, '0')}`
-      const res = await recordApi.getMonthSummary(yyyymm)
-      if (res.success && res.data) {
-        trend.push({ month: yyyymm, label: mo.label, income: res.data.income, expense: res.data.expense })
+  if (recordsRes.success && recordsRes.data) {
+    const filtered = recordsRes.data.list.filter((r: any) => {
+      if (activeType.value === 'transfer') return r.type === 'transfer' || r.type === 'repayment'
+      return r.type === activeType.value
+    })
+
+    // Transfer count
+    transferCount.value = activeType.value === 'transfer' ? filtered.length : 0
+    if (activeType.value === 'transfer') {
+      totalAmount.value = filtered.reduce((s: number, r: any) => s + Math.abs(r.amount), 0)
+    }
+
+    // Ring chart categories (expense/income only)
+    if (activeType.value !== 'transfer') {
+      const categories = await categoryApi.getUserCategories(activeType.value)
+      const nameMap = new Map<number, string>()
+      if (categories.success && categories.data) {
+        categories.data.forEach((g: any) => {
+          g.children?.forEach((c: any) => nameMap.set(c.id, c.name))
+        })
       }
+      categoryNameMap.value = nameMap
+
+      const catMap = new Map<number, number>()
+      filtered.forEach((r: any) => {
+        catMap.set(r.typeId, (catMap.get(r.typeId) || 0) + Math.abs(r.amount))
+      })
+
+      const total = totalAmount.value || 1
+      ringCategories.value = Array.from(catMap.entries())
+        .map(([typeId, amount]) => {
+          const name = nameMap.get(typeId) || '未知'
+          return {
+            name,
+            typeId,
+            amount,
+            percent: Math.round((amount / total) * 100),
+            color: '', // 排序后再按排名分配颜色
+          }
+        })
+        .sort((a, b) => b.amount - a.amount)
+        .map((c, i) => ({ ...c, color: RING_COLORS[i % RING_COLORS.length] }))
+
+      // Ranking (same as ring but with icon)
+      rankingItems.value = ringCategories.value.map(c => {
+        const iconClass = getCategoryIconClass(c.name)
+        return {
+          ...c,
+          icon: c.name.charAt(0),
+          iconClass: iconClass || undefined,
+          type: activeType.value,
+        }
+      })
+    } else {
+      // Transfer ranking by account
+      rankingItems.value = [] // simplified for now
+      ringCategories.value = []
+    }
+
+    // 按日分组存储原始记录（用于点击折线图弹出每日 TOP3）
+    const newDayRecordsMap = new Map<number, any[]>()
+    filtered.forEach((r: any) => {
+      const day = parseInt(r.date.split('-')[2] || '1')
+      if (!newDayRecordsMap.has(day)) newDayRecordsMap.set(day, [])
+      newDayRecordsMap.get(day)!.push(r)
+    })
+    dayRecordsMap.value = newDayRecordsMap
+
+    // Line chart: group by day
+    const dayMap = new Map<number, number>()
+    filtered.forEach((r: any) => {
+      const day = parseInt(r.date.split('-')[2] || '1')
+      dayMap.set(day, (dayMap.get(day) || 0) + Math.abs(r.amount))
+    })
+
+    const maxDayVal = Math.max(...Array.from(dayMap.values()), 1)
+    const [yearStr, monthStr] = yearMonth.split('-')
+    const daysInMonth = new Date(parseInt(yearStr), parseInt(monthStr), 0).getDate()
+    const points: { label: string; value: number; isMax: boolean }[] = []
+    for (let d = 1; d <= daysInMonth; d++) {
+      const val = dayMap.get(d) || 0
+      points.push({
+        label: `${d}日`,
+        value: val,
+        isMax: val > 0 && val === maxDayVal,
+      })
+    }
+    linePoints.value = points
+  }
+}
+
+const loadYearData = async () => {
+  const year = parseInt(selectedPeriod.value)
+  const now = new Date()
+  const currentMonth = now.getMonth() + 1
+  const currentYear = now.getFullYear()
+
+  let yearTotal = 0
+  const monthPoints: { label: string; value: number; isMax: boolean }[] = []
+  const catYearMap = new Map<number, number>()
+
+  const monthsToLoad = (year === currentYear) ? currentMonth : 12
+
+  for (let m = 1; m <= monthsToLoad; m++) {
+    const yyyymm = `${year}-${String(m).padStart(2, '0')}`
+    const label = `${String(m).padStart(2, '0')}月`
+    try {
+      const [summaryRes, recordsRes] = await Promise.all([
+        recordApi.getMonthSummary(yyyymm),
+        recordApi.getRecordsByMonth(yyyymm, 1, 500),
+      ])
+
+      let monthVal = 0
+      if (recordsRes.success && recordsRes.data) {
+        if (activeType.value === 'transfer') {
+          // 转账：从记录中累加 transfer + repayment
+          const transferRecords = recordsRes.data.list.filter(
+            (r: any) => r.type === 'transfer' || r.type === 'repayment'
+          )
+          monthVal = transferRecords.reduce((s: number, r: any) => s + Math.abs(r.amount), 0)
+          yearTotal += monthVal
+        } else {
+          // 支出/收入：用 summary 数据
+          if (summaryRes.success && summaryRes.data) {
+            monthVal = activeType.value === 'expense' ? summaryRes.data.expense
+              : summaryRes.data.income
+            yearTotal += monthVal
+          }
+          // 分类统计（仅非转账类型）
+          const filtered = recordsRes.data.list.filter((r: any) => r.type === activeType.value)
+          filtered.forEach((r: any) => {
+            catYearMap.set(r.typeId, (catYearMap.get(r.typeId) || 0) + Math.abs(r.amount))
+          })
+        }
+      }
+
+      monthPoints.push({ label, value: monthVal, isMax: false })
     } catch {
-      trend.push({ month: '', label: mo.label, income: 0, expense: 0 })
+      monthPoints.push({ label, value: 0, isMax: false })
     }
   }
 
-  trendData.value = trend
-  maxTrend.value = Math.max(...trend.map(t => Math.max(t.income, t.expense)), 1)
+  totalAmount.value = yearTotal
+  const maxMonthVal = Math.max(...monthPoints.map(p => p.value), 1)
+  linePoints.value = monthPoints.map(p => ({
+    ...p,
+    isMax: p.value > 0 && p.value === maxMonthVal,
+  }))
+
+  // Ring chart for year
+  if (activeType.value !== 'transfer') {
+    const categories = await categoryApi.getUserCategories(activeType.value)
+    const nameMap = new Map<number, string>()
+    if (categories.success && categories.data) {
+      categories.data.forEach((g: any) => {
+        g.children?.forEach((c: any) => nameMap.set(c.id, c.name))
+      })
+    }
+
+    ringCategories.value = Array.from(catYearMap.entries())
+      .map(([typeId, amount]) => {
+        const name = nameMap.get(typeId) || '未知'
+        return {
+          name,
+          typeId,
+          amount,
+          percent: Math.round((amount / (yearTotal || 1)) * 100),
+          color: '', // 排序后再按排名分配颜色
+        }
+      })
+      .sort((a, b) => b.amount - a.amount)
+      .map((c, i) => ({ ...c, color: RING_COLORS[i % RING_COLORS.length] }))
+
+    rankingItems.value = ringCategories.value.map(c => {
+      const iconClass = getCategoryIconClass(c.name)
+      return {
+        ...c,
+        icon: c.name.charAt(0),
+        iconClass: iconClass || undefined,
+        type: activeType.value,
+      }
+    })
+  }
+
+  transferCount.value = 0
 }
 
-onMounted(() => {
+// ── 监听 ──
+watch(activeType, () => {
   loadData()
+})
+
+watch(dimension, () => {
+  // loadPeriods handles loadData internally
+})
+
+// ── 生命周期 ──
+onLoad((options: any) => {
+  if (options?.tab) {
+    activeType.value = options.tab
+  }
+})
+
+onMounted(async () => {
+  restoreState()
+  await loadPeriods()
+  // 数据加载完成后恢复滚动位置
+  await nextTick()
+  const saved = uni.getStorageSync(SCROLL_CACHE_KEY)
+  if (saved) {
+    uni.pageScrollTo({ scrollTop: saved, duration: 0 })
+    uni.removeStorageSync(SCROLL_CACHE_KEY)
+  }
+})
+
+// 离开页面时保存滚动位置
+onBeforeUnmount(() => {
+  trackScroll()
 })
 </script>
 
 <style scoped>
 .page {
-  min-height: 100vh;
+  height: 100vh;
   background: var(--color-bg-page, #F5F7FA);
-  padding-bottom: 80px;
+  display: flex;
+  flex-direction: column;
 }
 
-.month-selector {
+/* ── Sticky Header ── */
+.sticky-header {
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
+}
+
+/* ── Header ── */
+.header-bar {
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(env(safe-area-inset-top) + 20rpx) 16rpx 20rpx;
+  background: linear-gradient(135deg, var(--color-primary, #0D9488), var(--color-primary-dark, #0B7A70));
+}
+
+.header-spacer {
+  width: 64rpx;
+  height: 48rpx;
+}
+
+.header-center {
+  display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding: 24rpx 0;
-  gap: 40rpx;
-  background: var(--color-bg-card, #FFFFFF);
+  gap: 8rpx;
 }
 
-.month-arrow {
-  font-size: var(--text-body);
-  color: var(--color-text-secondary, #94A3B8);
-  padding: 12rpx 20rpx;
-}
-
-.month-text {
-  font-size: var(--text-title);
+.header-type-text {
+  font-size: 34rpx;
   font-weight: 600;
-  color: var(--color-text-primary, #1E293B);
-  min-width: 180rpx;
-  text-align: center;
+  color: #FFFFFF;
 }
 
-.summary-row {
+.header-type-arrow {
+  font-size: 20rpx;
+  color: #FFFFFF;
+}
+
+.header-right {
+  width: 64rpx;
+  height: 44rpx;
   display: flex;
   align-items: center;
-  background: linear-gradient(135deg, var(--color-primary, #0D9488), var(--color-primary-dark, #0B7A70));
-  margin: 20rpx;
-  border-radius: 20rpx;
-  padding: 32rpx 0;
+  justify-content: flex-end;
 }
 
-.summary-item {
+.dimension-text {
+  font-size: 22rpx;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 20rpx;
+  padding: 4rpx 18rpx;
+}
+
+/* ── Tab Bar ── */
+.tab-bar {
+  white-space: nowrap;
+  background: var(--color-bg-card, #FFFFFF);
+  height: 88rpx;
+  padding: 12rpx 24rpx;
+  overflow-x: auto;
+  border-bottom: 1rpx solid #F1F5F9;
+}
+
+/* H5 & 小程序 scroll-view 内部容器：允许水平滚动 */
+:deep(.uni-scroll-view-content) {
+  display: flex;
+  flex-direction: row;
+}
+
+.tab-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24rpx;
+  height: 64rpx;
+  border-radius: 32rpx;
+  background: #F1F5F9;
+  margin-right: 16rpx;
+  vertical-align: middle;
+}
+
+.tab-active {
+  background: var(--color-primary, #0D9488);
+}
+
+.tab-text {
+  font-size: 26rpx;
+  font-weight: 400;
+  color: #64748B;
+}
+
+.tab-active .tab-text {
+  color: #FFFFFF;
+  font-weight: 500;
+}
+
+/* ── Content ── */
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+  padding: 24rpx 32rpx 120rpx;
+}
+
+.content-area > * {
+  margin-bottom: 24rpx;
+}
+
+/* ── Transfer Card ── */
+.transfer-card {
+  background: var(--color-bg-card, #FFFFFF);
+  border-radius: 24rpx;
+  padding: 48rpx 32rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(13, 148, 136, 0.04);
+}
+
+/* ── C2 概览卡 ── */
+.overview-strip {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: var(--color-bg-card, #FFFFFF);
+  border-radius: 24rpx;
+  padding: 28rpx 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(13, 148, 136, 0.04);
+  margin-bottom: 24rpx;
+}
+
+.overview-item {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8rpx;
+  padding: 0 8rpx;
+  transition: transform 0.15s ease;
 }
 
-.summary-label {
-  font-size: var(--text-small);
-  color: rgba(255, 255, 255, 0.7);
+.overview-item-clickable {
+  cursor: pointer;
 }
 
-.summary-value {
-  font-size: var(--text-title);
-  font-weight: 700;
-  color: var(--color-text-inverse, #FFFFFF);
+.overview-item-hover {
+  transform: scale(0.97);
 }
 
-.summary-divider {
-  width: 1rpx;
-  height: 56rpx;
-  background: rgba(255, 255, 255, 0.25);
+.overview-item-disabled {
+  opacity: 0.5;
 }
 
-.loading-state {
-  padding: 100rpx 0;
-  text-align: center;
+.overview-hint {
+  font-size: 18rpx;
+  color: var(--color-primary, #0D9488);
+  margin-top: 2rpx;
+  opacity: 0.7;
 }
 
-.loading-text {
-  font-size: var(--text-body);
+.overview-label {
+  font-size: 22rpx;
   color: var(--color-text-secondary, #94A3B8);
+  letter-spacing: 1rpx;
 }
 
-.content {
-  padding: 0 20rpx;
-}
-
-.section {
-  background: var(--color-bg-card, #FFFFFF);
-  border-radius: 20rpx;
-  padding: 28rpx;
-  margin-bottom: 20rpx;
-}
-
-.section-title {
-  font-size: var(--text-body);
-  font-weight: 600;
+.overview-value {
+  font-size: 36rpx;
+  font-weight: 700;
   color: var(--color-text-primary, #1E293B);
-  margin-bottom: 24rpx;
+  font-feature-settings: 'tnum';
+  font-variant-numeric: tabular-nums;
 }
 
-.category-list {
+.overview-amount {
+  font-size: 22rpx;
+  color: var(--color-primary, #0D9488);
+  font-weight: 600;
+  font-feature-settings: 'tnum';
+  font-variant-numeric: tabular-nums;
+}
+
+.overview-divider {
+  width: 1rpx;
+  height: 64rpx;
+  background: var(--color-border-light, #F1F5F9);
+  flex-shrink: 0;
+}
+
+.transfer-total-label {
+  font-size: 26rpx;
+  color: #94A3B8;
+}
+
+.transfer-total-value {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: var(--color-text-primary, #1E293B);
+}
+
+.transfer-count {
+  font-size: 24rpx;
+  color: #94A3B8;
+}
+
+/* ── Dropdown Overlay ── */
+.dropdown-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 999;
+}
+
+.dropdown-spacer {
+  height: 112rpx;
+}
+
+.dropdown-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  margin: 0 32rpx;
+  padding: 8rpx 0;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.15);
+}
+
+.dropdown-item {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
+  padding: 24rpx 40rpx;
+  height: 88rpx;
   gap: 20rpx;
 }
 
-.ring-chart-wrap {
-  display: flex;
-  align-items: center;
-  gap: 32rpx;
+.dropdown-active {
+  background: #F0FDFA;
+  border-radius: 16rpx;
 }
 
-.ring-chart {
-  flex-shrink: 0;
-  width: 280rpx;
-  height: 280rpx;
-  position: relative;
+.dropdown-dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 6rpx;
+  background: var(--color-primary, #0D9488);
 }
 
-.ring-svg-wrap {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-.ring-svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.ring-chart-inner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4rpx;
-  text-align: center;
-}
-
-.ring-chart-amount {
-  font-size: 28rpx;
-  font-weight: 700;
+.dropdown-text {
+  font-size: 30rpx;
   color: var(--color-text-primary, #1E293B);
-  line-height: 1.2;
 }
 
-.ring-chart-label {
-  font-size: 20rpx;
-  color: var(--color-text-secondary, #94A3B8);
+.dropdown-active .dropdown-text {
+  font-weight: 600;
+  color: var(--color-primary, #0D9488);
 }
 
-.legend-area {
-  flex: 1;
+/* ── 每日 TOP3 弹层 ── */
+.day-popup-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
   display: flex;
-  flex-direction: column;
-  gap: 16rpx;
-  min-width: 0;
+  align-items: flex-end;
+  justify-content: center;
 }
 
-.legend-row {
-  display: flex;
-  align-items: center;
-  gap: 12rpx;
-  flex-wrap: nowrap;
+.day-popup-card {
+  width: 100%;
+  background: var(--color-bg-card, #FFFFFF);
+  border-radius: 28rpx 28rpx 0 0;
+  padding: 40rpx 32rpx calc(40rpx + env(safe-area-inset-bottom));
+  animation: popupSlideUp 0.25s ease-out;
 }
 
-.legend-color {
-  width: 16rpx;
-  height: 16rpx;
-  border-radius: 4rpx;
-  flex-shrink: 0;
+@keyframes popupSlideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
 }
 
-.legend-name {
-  font-size: 24rpx;
-  color: var(--color-text-primary, #1E293B);
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.legend-percent {
-  font-size: 24rpx;
+.day-popup-title {
+  font-size: 30rpx;
   font-weight: 600;
   color: var(--color-text-primary, #1E293B);
-  min-width: 76rpx;
-  text-align: right;
-  flex-shrink: 0;
+  display: block;
+  margin-bottom: 28rpx;
 }
 
-.legend-amount {
-  font-size: 22rpx;
-  color: var(--color-text-secondary, #94A3B8);
-  min-width: 120rpx;
-  text-align: right;
-  flex-shrink: 0;
-}
-
-.category-row {
+.day-popup-row {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 16rpx;
+  justify-content: space-between;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #F1F5F9;
 }
 
-.rank-num {
-  font-size: var(--text-small);
-  color: var(--color-text-secondary, #94A3B8);
-  min-width: 32rpx;
-  text-align: center;
-}
-
-.category-icon {
-  width: 56rpx;
-  height: 56rpx;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.category-icon .category-icon-svg {
-  width: 32rpx;
-  height: 32rpx;
-}
-
-.category-name {
-  font-size: var(--text-small);
+.day-popup-cat {
+  font-size: 28rpx;
   color: var(--color-text-primary, #1E293B);
-  min-width: 100rpx;
 }
 
-.category-bar-wrap {
-  flex: 1;
-  height: 12rpx;
-  background: var(--color-border-light, #F1F5F9);
-  border-radius: 6rpx;
-  overflow: hidden;
-}
-
-.category-bar {
-  height: 100%;
-  background: linear-gradient(90deg, var(--color-primary, #0D9488), var(--color-primary-dark, #0B7A70));
-  border-radius: 6rpx;
-  transition: width 0.5s ease;
-}
-
-.category-amount {
-  font-size: var(--text-small);
-  color: var(--color-text-secondary, #94A3B8);
-  font-weight: 500;
-  min-width: 120rpx;
-  text-align: right;
-}
-
-.category-percent {
-  font-size: var(--text-note);
-  color: var(--color-text-secondary, #94A3B8);
-  min-width: 60rpx;
-  text-align: right;
-}
-
-.trend-chart {
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-end;
-  height: 240rpx;
-  padding-top: 40rpx;
-}
-
-.trend-col {
+.day-popup-right {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 10rpx;
-  flex: 1;
-}
-
-.trend-bars {
-  display: flex;
-  gap: 6rpx;
   align-items: flex-end;
-  height: 200rpx;
+  gap: 4rpx;
 }
 
-.trend-bar {
-  width: 28rpx;
-  border-radius: 6rpx 6rpx 0 0;
-  transition: height 0.4s ease;
+.day-popup-amount {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-text-primary, #1E293B);
 }
 
-.income-bar {
-  background: var(--color-success, #10B981);
+.day-popup-remark {
+  font-size: 22rpx;
+  color: #94A3B8;
+  max-width: 260rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.expense-bar {
-  background: var(--color-primary, #0D9488);
-}
-
-.trend-label {
-  font-size: var(--text-note);
-  color: var(--color-text-secondary, #94A3B8);
-}
-
-.trend-legend {
-  display: flex;
-  justify-content: center;
-  gap: 40rpx;
-  margin-top: 20rpx;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 10rpx;
-}
-
-.legend-dot {
-  width: 16rpx;
-  height: 16rpx;
-  border-radius: 4rpx;
-}
-
-.income-dot {
-  background: var(--color-success, #10B981);
-}
-
-.expense-dot {
-  background: var(--color-primary, #0D9488);
-}
-
-.legend-text {
-  font-size: var(--text-note);
-  color: var(--color-text-secondary, #94A3B8);
-}
-
-.empty-state {
-  padding: 120rpx 0;
+.day-popup-empty {
   text-align: center;
+  padding: 40rpx 0;
+  font-size: 26rpx;
+  color: #CBD5E1;
 }
 
-.empty-text {
-  font-size: var(--text-body);
-  color: var(--color-text-tertiary, #CBD5E1);
+.day-popup-close {
+  margin-top: 32rpx;
+  padding: 20rpx 0;
+  text-align: center;
+  background: #F1F5F9;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  color: var(--color-text-primary, #1E293B);
 }
 </style>
