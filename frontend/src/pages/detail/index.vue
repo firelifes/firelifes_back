@@ -495,20 +495,7 @@ const handleDeleteRecord = (record: BillCardRecord) => {
 }
 
 onMounted(async () => {
-  const currentYM = `${currentYear.value}-${currentMonth.value}`
-  try {
-    const nearestRes = await recordApi.getNearestMonth(currentYM, 'prev')
-    if (nearestRes.success && nearestRes.data && nearestRes.data !== currentYM) {
-      const [y, m] = nearestRes.data.split('-')
-      currentYear.value = y
-      currentMonth.value = m.padStart(2, '0')
-      selectedYearMonth.value = nearestRes.data
-    } else {
-      await loadMonthData()
-    }
-  } catch {
-    await loadMonthData()
-  }
+  await loadMonthData()
 })
 
 onShow(() => {
