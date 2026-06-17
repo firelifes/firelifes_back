@@ -104,13 +104,28 @@ const typeLabel = computed(() => {
 
 const maxAmount = computed(() => Math.max(...props.items.map(i => i.amount), 1))
 
-const formattedItems = computed<FormattedRankItem[]>(() =>
-  props.items.map(item => ({
+const formattedItems = computed<FormattedRankItem[]>(() => {
+  // 用最大余数法确保百分比相加=100%
+  const items = props.items.map(item => ({
     ...item,
     barWidth: maxAmount.value > 0 ? Math.round((item.amount / maxAmount.value) * 100) : 0,
-    percent: Math.round(item.percent),
+    rawPercent: item.percent,
   }))
-)
+  const floors = items.map(it => ({ ...it, floorPct: Math.floor(it.rawPercent) }))
+  const floorSum = floors.reduce((s, it) => s + it.floorPct, 0)
+  const diff = 100 - floorSum
+  if (diff > 0 && floors.length > 0) {
+    const remainders = floors.map((it, idx) => ({
+      idx,
+      rem: it.rawPercent - Math.floor(it.rawPercent),
+    }))
+    remainders.sort((a, b) => b.rem - a.rem)
+    for (let k = 0; k < diff && k < remainders.length; k++) {
+      floors[remainders[k].idx].floorPct += 1
+    }
+  }
+  return floors.map(it => ({ ...it, percent: it.floorPct }))
+})
 </script>
 
 <style scoped>

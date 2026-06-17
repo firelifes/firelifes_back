@@ -89,16 +89,35 @@ const typeLabel = computed(() => {
 const legendItems = computed(() => {
   const top5 = props.categories.slice(0, 5).map((c, i) => ({
     name: c.name,
-    percent: Math.round(c.percent),
+    rawPercent: c.percent,
     color: c.color || RING_COLORS[i % RING_COLORS.length],
   }))
   if (props.categories.length > 5) {
-    const othersPercent = Math.round(
-      props.categories.slice(5).reduce((sum, c) => sum + c.percent, 0)
-    )
-    top5.push({ name: '其他', percent: othersPercent, color: '#94A3B8' })
+    const othersRaw = props.categories.slice(5).reduce((sum, c) => sum + c.percent, 0)
+    top5.push({ name: '其他', rawPercent: othersRaw, color: '#94A3B8' })
   }
-  return top5
+  // 用最大余数法：先向下取整，把差额按小数部分从大到小补齐，保证总和=100%
+  const floors = top5.map(item => ({ ...item, floorPct: Math.floor(item.rawPercent) }))
+  const floorSum = floors.reduce((s, it) => s + it.floorPct, 0)
+  const diff = 100 - floorSum
+  if (diff > 0 && floors.length > 0) {
+    // 计算小数部分
+    const remainders = floors.map((it, idx) => ({
+      idx,
+      rem: it.rawPercent - Math.floor(it.rawPercent),
+    }))
+    // 按小数部分从大到小排序
+    remainders.sort((a, b) => b.rem - a.rem)
+    // 把差额依次分给小数部分最大的项
+    for (let k = 0; k < diff && k < remainders.length; k++) {
+      floors[remainders[k].idx].floorPct += 1
+    }
+  }
+  return floors.map(item => ({
+    name: item.name,
+    percent: item.floorPct,
+    color: item.color,
+  }))
 })
 
 const segments = computed(() => {

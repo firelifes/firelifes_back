@@ -47,17 +47,10 @@
 
     <!-- 内容区 -->
     <view v-else class="content-area">
-      <!-- 概览卡：支出 + 收入 -->
-      <view class="summary-row">
-        <view class="summary-item">
-          <text class="summary-label">支出</text>
-          <text class="summary-value expense">-¥{{ formatAmount(monthExpense) }}</text>
-        </view>
-        <view class="summary-divider"></view>
-        <view class="summary-item">
-          <text class="summary-label">收入</text>
-          <text class="summary-value income">¥{{ formatAmount(monthIncome) }}</text>
-        </view>
+      <!-- 概览卡：当前类型总金额 -->
+      <view class="summary-card">
+        <text class="summary-card-label">{{ activeType === 'income' ? '本月收入' : '本月支出' }}</text>
+        <text class="summary-card-amount">¥{{ formatAmount(activeType === 'income' ? monthIncome : monthExpense) }}</text>
       </view>
 
       <!-- 转账 Tab：总额卡片 -->
@@ -459,7 +452,7 @@ const loadMonthData = async () => {
             name,
             typeId,
             amount,
-            percent: Math.round((amount / total) * 100),
+            percent: (amount / total) * 100,
             color: '', // 排序后再按排名分配颜色
           }
         })
@@ -593,7 +586,7 @@ const loadYearData = async () => {
           name,
           typeId,
           amount,
-          percent: Math.round((amount / (yearTotal || 1)) * 100),
+          percent: (amount / (yearTotal || 1)) * 100,
           color: '', // 排序后再按排名分配颜色
         }
       })
@@ -783,53 +776,31 @@ onBeforeUnmount(() => {
   box-shadow: 0 2rpx 12rpx rgba(13, 148, 136, 0.04);
 }
 
-/* ── C2 概览卡：支出 + 收入 ── */
-.summary-row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  background: linear-gradient(135deg, var(--color-primary, #0D9488), var(--color-primary-dark, #0B7A70));
-  border-radius: 24rpx;
-  padding: 28rpx 24rpx;
-  margin-bottom: 24rpx;
-}
-
-.summary-item {
-  flex: 1;
+/* ── C2 概览卡：当前类型总金额 ── */
+.summary-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8rpx;
-  padding: 0 8rpx;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-primary, #0D9488), var(--color-primary-dark, #0B7A70));
+  border-radius: 24rpx;
+  padding: 36rpx 24rpx;
+  margin-bottom: 24rpx;
+  gap: 12rpx;
 }
 
-.summary-label {
-  font-size: 22rpx;
-  color: rgba(255, 255, 255, 0.7);
-  letter-spacing: 1rpx;
+.summary-card-label {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.75);
+  letter-spacing: 2rpx;
 }
 
-.summary-value {
-  font-size: 36rpx;
+.summary-card-amount {
+  font-size: 48rpx;
   font-weight: 700;
   color: #FFFFFF;
   font-feature-settings: 'tnum';
   font-variant-numeric: tabular-nums;
-}
-
-.summary-value.expense {
-  color: #F8FAFC;
-}
-
-.summary-value.income {
-  color: #FFE082;
-}
-
-.summary-divider {
-  width: 1rpx;
-  height: 64rpx;
-  background: rgba(255, 255, 255, 0.2);
-  flex-shrink: 0;
 }
 
 .transfer-total-label {
