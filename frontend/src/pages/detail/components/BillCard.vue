@@ -131,6 +131,7 @@ const amountPrefix = (item: BillCardRecord) => {
 
 .bill-item-wrap {
   border-bottom: 1rpx solid var(--color-border, #E2E8F0);
+  overflow: hidden;
 }
 
 .bill-item-wrap:last-child,
